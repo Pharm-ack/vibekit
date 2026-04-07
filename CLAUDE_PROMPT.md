@@ -73,4 +73,4 @@ Example: "I want to build a platform where freelancers can create a profile, lis
 
 ---
 
-*Powered by the Vibe Coding Pro Framework — github.com/MUKE-coder/vibe-coding-pro*
+*Powered by the Vibe Coding Pro Framework — github.com/MUKE-coder/vibekit*

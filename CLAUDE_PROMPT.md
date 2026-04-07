@@ -11,7 +11,7 @@ Read this framework in full before responding:
 **https://github.com/MUKE-coder/vibekit**
 
 The framework contains:
-- The standard tech stack (Next.js + Neon + Better Auth UI + Resend + Stripe + Vercel + Cloudflare)
+- The standard tech stack (Next.js 16 + Neon + Prisma + Better Auth UI + React Query + Zod + API Routes + Resend + Stripe + @react-pdf/renderer + xlsx + Vercel + Cloudflare)
 - The full JB Component Registry with 30 production-ready components and their install commands
 - The 5-phase build structure (Foundation → Core Features → Payments → Email → Deployment)
 - The output document format you must follow exactly

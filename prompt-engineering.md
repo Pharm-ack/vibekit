@@ -188,9 +188,14 @@ What it does: [1–2 sentence description]
 Current build phase: Phase [X] — [phase name]
 
 Tech stack:
-- Framework: Next.js 14 (App Router)
+- Framework: Next.js 16 (App Router)
 - Database: Neon Postgres + Prisma
 - Auth: Better Auth UI (already installed and working)
+- Data Fetching: React Query + Fetch API
+- API: API Routes (Route Handlers) — all data goes through API routes
+- Validation: Zod
+- PDF: @react-pdf/renderer (always)
+- Excel: xlsx (always)
 - Styling: Tailwind CSS + shadcn/ui
 
 Design system:
@@ -273,10 +278,16 @@ OUT OF SCOPE FOR VERSION 1
 - [Feature you do not want built yet]
 
 TECH STACK
-- Framework: Next.js 14 (App Router)
+- Framework: Next.js 16 (App Router)
 - Database: Neon Postgres + Prisma
 - Auth: Better Auth UI (JB Registry)
 - Email: Resend
+- PDF: @react-pdf/renderer (always use this for PDF generation)
+- Excel: xlsx (always use this for spreadsheet export)
+- Data Fetching: React Query + Fetch API (always)
+- API: API Routes (Next.js Route Handlers) — all data through API routes
+- Validation: Zod (always use for request/form validation)
+- File Storage: [Cloudflare R2 / UploadThing] — ask user preference
 - Payments: [Stripe / None]
 - Deployment: Vercel
 ```

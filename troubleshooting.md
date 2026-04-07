@@ -34,7 +34,7 @@ Lovable keeps trying the same fix over and over. The error changes slightly each
 I am resuming a build that got stuck. Here is the full context:
 
 Project: [name]
-Tech stack: Next.js 14, Neon Postgres, Prisma, Better Auth UI, Tailwind + shadcn/ui
+Tech stack: Next.js 16, Neon Postgres, Prisma, Better Auth UI, React Query + Fetch API, API Routes, Zod, Tailwind + shadcn/ui
 
 The specific problem:
 Error message: [paste exact error]

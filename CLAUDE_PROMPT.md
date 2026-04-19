@@ -15,7 +15,7 @@ Read these files in full before responding:
 3. **JB Component Registry reference:** https://raw.githubusercontent.com/MUKE-coder/vibekit/main/jb-components.md
 
 The framework contains:
-- The standard tech stack (Next.js 16 + Neon + Prisma v7 + Better Auth + React Query + Zod + API Routes + Resend + Stripe + @react-pdf/renderer + xlsx + Vercel + Cloudflare)
+- The standard tech stack (Next.js 16 + Convex + @convex-dev/better-auth + Zod + Convex (Real-time database and serverless functions) + Resend + paystack + Vercel + Cloudflare)
 - The master prompt that Claude Code will follow when building
 - The phase-based build structure
 - The design style guide template (you will customize this per project)
@@ -23,7 +23,7 @@ The framework contains:
 
 ## What You Must Generate
 
-After interviewing me, generate **exactly 4 files** in separate code blocks. These files will be placed in the project root and used by Claude Code to build the app.
+After interviewing me, generate **exactly 4 files** in separate code blocks. These files will be placed in the project root and used by Claude Code or any agents to build the app.
 
 ---
 
@@ -66,10 +66,10 @@ A comprehensive project description document. This is the single source of truth
 [Continue for ALL pages]
 
 ## Integrations
-- **Auth:** Better Auth + [Google OAuth / GitHub OAuth / Email only]
+- **Auth:** @convex-dev/better-auth + [Google OAuth / GitHub OAuth / Email only]
 - **Email:** [Resend / None]
-- **Payments:** [Stripe / DGateway / None]
-- **File uploads:** [Cloudflare R2 / AWS S3 / UploadThing / None]
+- **Payments:** [Paystack / None]
+- **File uploads:** [Cloudflare R2 / None]
 - **AI features:** [Vercel AI SDK / None]
 - **Dark mode:** [Yes / No] — if No, skip ThemeProvider and next-themes entirely
 
@@ -99,20 +99,19 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 - [ ] Initialize Next.js 16 project with TypeScript, Tailwind v4, shadcn/ui
 - [ ] Create `.env.example` (committed) and `.env.local` (gitignored) with EVERY env var this project needs (Database, Better Auth, OAuth, Resend, Stripe, file storage — whichever apply). Each var commented with what it is and where to get it.
 - [ ] Add `.env.local` to `.gitignore`
-- [ ] Set up Prisma v7 with Neon PostgreSQL (schema, config, db client)
+- [ ] Set up Convex schema and backend functions.
 - [ ] Apply design-style-guide.md tokens to globals.css
-- [ ] Create root layout with correct font, QueryClientProvider, [if dark mode = Yes: ThemeProvider + next-themes; if No: skip]
+- [ ] Create root layout [if dark mode = Yes: ThemeProvider + next-themes; if No: skip]
 - [ ] Build sidebar layout (collapsible, nav items, user section[, dark mode toggle if enabled])
 - [ ] Build page header component (breadcrumb + title + actions)
-- [ ] Install JB Better Auth UI: `pnpm dlx shadcn@latest add https://better-auth-ui.desishub.com/r/auth-components.json`
-- [ ] **Integrate installed auth files into existing routes — do NOT overwrite existing `page.tsx` or `layout.tsx`. Edit and merge.**
+- [ ] Follow the documentation for convex better: `https://www.convex.dev/components/better-auth/better-auth.md` and `https://www.convex.dev/components/better-auth/llms.txt`
 - [ ] Configure Better Auth env vars (BETTER_AUTH_SECRET, BETTER_AUTH_URL, OAuth keys if in scope)
-- [ ] Create protected route middleware
+- [ ] Create protected route proxy
 - [ ] Build custom 404, error, and loading pages
 - [ ] Verify: login, signup, OAuth (if configured), protected routes all work
 
 ### Dependencies
-- Neon database created, DATABASE_URL set in .env.local
+- Convex database created, URL set in .env.local
 - Resend account created, RESEND_API_KEY set (for auth emails)
 
 ---
@@ -121,11 +120,11 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 **Goal:** All primary screens built and connected to real data.
 
 ### Tasks
-- [ ] Define Prisma schema for: [list ALL models specific to this project]
-- [ ] Run database migration: `pnpm db:push && pnpm db:generate`
+- [ ] Define Convex schema for: [list ALL models specific to this project]
+- [ ] Run database migration
 - [ ] Install JB Data Table: `pnpm dlx shadcn@latest add https://jb.desishub.com/r/data-table.json`
-- [ ] Build API routes (Route Handlers) with server-side pagination for: [list endpoints]
-- [ ] Build list pages with Data Table (search, filters, pagination, Excel + PDF export)
+- [ ] Build convex api functions with server-side pagination for: [list endpoints]
+- [ ] Build list pages with Data Table (search, filters, pagination)
 - [ ] Build detail/view pages for: [list entities]
 - [ ] Build create/edit forms (React Hook Form + Zod validation)
 - [ ] Build stat cards for dashboard overview
@@ -142,17 +141,15 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 
 ### Tasks
 - [ ] Install JB Zustand Cart: `pnpm dlx shadcn@latest add https://jb.desishub.com/r/zustand-cart.json`
-- [ ] Install JB Stripe UI: `pnpm dlx shadcn@latest add https://stripe-ui-component.desishub.com/r/stripe-ui-component.json`
-- [ ] Configure Stripe env vars (STRIPE_SECRET_KEY, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 - [ ] Create products and pricing in Stripe dashboard
-- [ ] Build checkout flow (use installed Stripe UI)
-- [ ] Set up Stripe webhook handler at /api/webhooks/stripe
+- [ ] Build checkout flow
+- [ ] Set up paystack webhook handler at /api/webhooks/paystack
 - [ ] Gate premium features behind subscription status
 - [ ] Build billing management page (upgrade, cancel, invoices)
 
 ### Dependencies
 - Phase 2 must be complete (user accounts + core data exist)
-- Better Auth installed (Stripe UI requires it)
+- Better Auth installed
 
 ---
 
@@ -162,7 +159,6 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 ### Tasks
 - [ ] [If R2/S3] Install JB File Storage UI: `pnpm dlx shadcn@latest add https://file-storage-registry.vercel.app/r/file-storage.json`
 - [ ] [If R2/S3] Configure storage env vars (R2 or S3 credentials)
-- [ ] [If UploadThing] Install UploadThing SDK and follow https://jb.desishub.com/blog/image-upload-with-uploadthing
 - [ ] Build upload UI in relevant feature pages
 
 ### Dependencies
@@ -178,7 +174,7 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 - [ ] Build email templates with React Email
 - [ ] Wire welcome email (on signup)
 - [ ] Wire password reset email (Better Auth already handles this)
-- [ ] Wire payment receipt email (if Stripe enabled)
+- [ ] Wire payment receipt email (if paystack enabled)
 
 ### Dependencies
 - Phase 1 (auth) must be complete
@@ -238,7 +234,7 @@ The prompt the user will paste into Claude Code to start building.
 # Claude Code — Build Prompt
 
 Read the following files in order before doing anything:
-1. `master_prompt.md` — Your tech stack rules, Prisma v7 patterns, and coding standards. Follow EXACTLY.
+1. `master_prompt.md` — Your tech stack rules, and coding standards. Follow EXACTLY.
 2. `design-style-guide.md` — The visual design system for this project. Apply to every component you build.
 3. `jb-components.md` — The JB component reference. Use these components before writing from scratch.
 4. `project-description.md` — What we are building. Every decision must align with this.

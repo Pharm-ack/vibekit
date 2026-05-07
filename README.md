@@ -188,7 +188,24 @@ Production-ready shadcn components for auth, data tables, forms, file uploads, e
 
 ## Contributing
 
-If you build something with this framework and want to contribute a template, component suggestion, or improvement — PRs are welcome.
+VibeKit is community-driven — every component in the registry was built by someone shipping with AI in production. **We're actively looking for new components.**
+
+If you've built something reusable — auth flow, payment widget, AI feature, dashboard primitive, search component — please contribute it. Once merged:
+
+- Your component gets a permanent doc page at `vibekit.desishub.com/components/<slug>`
+- It's listed in [`jb-components.md`](./jb-components.md), which every Claude Code agent reads
+- It becomes part of the framework's default toolkit across thousands of builds
+
+**Read the full contribution guide:** [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+**Quick start:**
+
+1. Build & host your component (shadcn-compatible registry)
+2. Write a doc page anywhere accessible
+3. Fork, edit `web/src/lib/components-data.ts`, append your entry using [the schema](./CONTRIBUTING.md#the-component-schema)
+4. Open a PR with the `new-component.md` template — we review weekly
+
+Other contributions (docs fixes, framework refinements, bug reports) are also welcome — open an issue or PR.
 
 ---
 

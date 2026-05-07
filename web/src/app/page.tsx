@@ -1,4 +1,5 @@
 import { AgentsStrip } from "@/components/agents-strip";
+import { ContributeBanner } from "@/components/contribute-banner";
 import { Creator } from "@/components/creator";
 import { CTA } from "@/components/cta";
 import { Footer } from "@/components/footer";
@@ -29,6 +30,7 @@ export default function HomePage() {
         <FrameworkFiles />
         <PreDeploy />
         <JBRegistry />
+        <ContributeBanner />
         <Testimonials />
         <Creator />
         <CTA />

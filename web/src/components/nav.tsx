@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/components", label: "Components" },
   { href: "/docs", label: "Docs" },
   { href: "/compare", label: "Compare" },
+  { href: "/contribute", label: "Contribute" },
   { href: "/faq", label: "FAQ" },
 ];
 

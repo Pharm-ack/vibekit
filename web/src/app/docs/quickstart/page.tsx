@@ -96,7 +96,7 @@ export default function Quickstart() {
                 <div className="font-mono text-[40px] font-light leading-none text-[color:var(--accent)] tabular-nums">
                   {String(s.n).padStart(2, "0")}
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h2 className="font-mono text-[18px] uppercase tracking-tight text-[color:var(--text-primary)]">
                     {s.title}
                   </h2>

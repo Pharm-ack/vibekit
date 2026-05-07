@@ -353,32 +353,46 @@ export default function TutorialPage() {
             code={hardwarePosIdea}
           />
 
-          <h3>Step 3 — Answer Claude's questions</h3>
-          <p>Claude will ask 6–10 questions. Suggested answers for HardwarePOS:</p>
-          <ul>
-            <li><strong>Data model:</strong> Category, Product, Sale, SaleItem (line items per sale). User owns everything.</li>
-            <li><strong>User roles:</strong> single role — the shop owner. No multi-user.</li>
-            <li><strong>Auth:</strong> Better Auth with Email + Google OAuth.</li>
-            <li><strong>Email:</strong> Resend (welcome email + password reset only — no transactional email for sales).</li>
-            <li><strong>Payments:</strong> None on the gateway side. Payment method is just a label captured at checkout (Cash / Mobile Money / Card) — no Stripe integration.</li>
-            <li><strong>File uploads:</strong> None.</li>
-            <li><strong>PDF:</strong> Yes — for sale receipts and the daily sales report.</li>
-            <li><strong>Excel:</strong> Optional — nice to have for the sales history export.</li>
-            <li><strong>Dark mode:</strong> Yes.</li>
-            <li><strong>Brand color:</strong> indigo (#4F46E5).</li>
-            <li><strong>Typography:</strong> Geist + JetBrains Mono.</li>
-            <li><strong>Aesthetic:</strong> "fast, focused, large numbers" — Linear / Vercel dashboard energy. The cashier reads totals at a glance.</li>
-          </ul>
+          <h3>Step 3 — Wait for Claude's confirmation summary</h3>
+          <p>
+            The HardwarePOS brief above is detailed, so Claude will probably skip the interview. Instead, it will write a structured summary like this:
+          </p>
+          <CopyBlock
+            label="What Claude will produce"
+            code={`## What I understood
 
-          <h3>Step 4 — Save the 4 files</h3>
-          <p>Claude will output 4 files in code blocks. Create a project folder and save each one:</p>
+App: HardwarePOS — a single-user POS for a hardware shop in Uganda
+Primary user: the shop owner / cashier
+Core features:
+  - POS sale flow (search → cart → payment → receipt)
+  - Inventory with low-stock alerts
+  - Sales history with date filters
+  - Dashboard with daily revenue + top products + weekly chart
+Data model: Category, Product, Sale, SaleItem (with snapshot fields)
+Integrations: Better Auth (email + Google OAuth), Resend (auth emails only),
+  Payments: NONE (payment method is just a captured label),
+  File uploads: NONE, Dark mode: Yes
+Visual design: indigo (#4F46E5), Geist + JetBrains Mono,
+  "fast, focused, large numbers", Linear/Vercel inspiration
+Out of scope (v1): online ordering, customer accounts, multi-cashier roles
+
+Does this match your intent? Reply 'Yes, generate the files' to proceed,
+or tell me what to adjust.`}
+          />
+          <p>If anything's wrong, correct it now (e.g., "Add Excel export to the sales history"). Otherwise, reply:</p>
+          <CopyBlock
+            label="Reply to Claude"
+            code={`Yes, generate the files`}
+          />
+
+          <h3>Step 4 — Download the 4 files</h3>
+          <p>Claude will produce 4 downloadable Artifacts (one per file) in the right-side panel. Each has a download icon — click it to save the file.</p>
 
           <CopyBlock
             filename="terminal"
-            label="Create the project folder"
+            label="Create the project folder first"
             code={`mkdir hardware-pos && cd hardware-pos
-
-# Save Claude's output into these 4 files (copy each code block):
+# Then drop the 4 downloaded files into this folder:
 # - project-description.md
 # - project-phases.md
 # - design-style-guide.md
@@ -386,7 +400,11 @@ export default function TutorialPage() {
           />
 
           <Tip>
-            If Claude leaves any placeholders like <code>[App Name]</code> or <code>[Feature]</code>, ask: <em>"Fill every placeholder with HardwarePOS specifics — no brackets remaining."</em>
+            <em>Prefer one-shot creation?</em> At the end of Claude's message there's a single bash heredoc block that creates all 4 files at once — copy it, paste into your terminal inside <code>hardware-pos/</code>, hit enter. Done.
+          </Tip>
+
+          <Tip>
+            If Claude tries to skip the confirmation step and dives straight into generating, paste: <em>"Stop. First show me the structured 'What I understood' summary and wait for my confirmation. Don't generate anything yet."</em>
           </Tip>
         </ModuleSection>
 

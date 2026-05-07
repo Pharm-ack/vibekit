@@ -269,35 +269,99 @@ Begin with **Phase 1 — Foundation** from project-phases.md. Read the phase tas
 ### Step 1 — Acknowledge
 Confirm you understand the framework. List the tech stack and the 4 files you will generate.
 
-### Step 2 — Interview Me
-Ask me questions to fill in the 4 files above. Follow these rules:
-- Ask **one question at a time** (max 2-3 if tightly related)
-- Be smart — skip obvious questions (e.g. don't ask "does an e-commerce app need a cart?")
-- **Required coverage:**
+### Step 2 — Decide if an interview is needed (CRITICAL)
+
+Read my app idea carefully. Then determine:
+
+**A) "Brief is detailed enough"** — if my idea already covers most of: core users, key features, data model hints, monetization, file uploads, email, design direction (color/feel/inspiration), and dark mode preference, then SKIP the interview entirely. Tell me explicitly:
+
+> *"Your brief is detailed enough — no interview needed. Here's everything I understood."*
+
+…then jump to Step 3.
+
+**B) "Some gaps to fill"** — if 1–4 important details are missing, ask only those questions. Don't pad the interview to hit a quota.
+
+**C) "Brief is too thin"** — if the idea is vague (e.g. "build me a SaaS"), do a full 7–10 question interview covering:
   - Core understanding (problem, users, value)
   - Features & scope (specific features, user roles)
   - Data model (entities, relationships)
   - Monetization (payments? Stripe or DGateway? Subscriptions or one-time?)
-  - File uploads (needed? R2/S3 or UploadThing?)
-  - Email (needed? which triggers?)
-  - **Visual design (CRITICAL — needed to customize the style guide):**
-    - Brand/primary color (hex or description)
-    - Typography preference (Inter, Onest, Geist, or other)
-    - Aesthetic feel (3 words — e.g. "premium, minimal, trustworthy")
-    - Inspiration (apps they admire visually)
-    - Anything to avoid visually
-    - **Dark mode support: Yes or No?** (if No, skip dark mode entirely — no toggle, no dark palette)
+  - File uploads (R2/S3 / UploadThing / None?)
+  - Email (which triggers?)
+  - **Visual design (always ask):** brand color, typography, aesthetic feel, inspiration, what to avoid, **dark mode Yes/No**
   - Timeline / scope v1
-- Minimum 7 questions, maximum 12
-- Stop when you have enough detail to generate all 4 files completely
 
-### Step 3 — Confirm Understanding
-Before generating, write a short summary of what you understood. Ask me to confirm or correct.
+Rules for interview mode:
+- Ask **one question at a time** (max 2-3 if tightly related)
+- Be smart — skip obvious questions (e.g. don't ask "does an e-commerce app need a cart?")
 
-### Step 4 — Generate the 4 Files
-Output each file in its own code block with the filename as a header. Every field must be filled in — no placeholders, no `[BRACKET]` values left unfilled.
+### Step 3 — Confirm understanding & ask for consent (MANDATORY — never skip)
 
-**For File 3 (design-style-guide.md):** Actually write out the full customized style guide — all sections 1 through 16 with project-specific content. Don't link to the template; write the entire file.
+Before generating ANY file, you MUST do this exact sequence:
+
+1. Write a structured summary using these section headers:
+
+   ```
+   ## What I understood
+
+   **App:** [name + 1-sentence description]
+   **Primary user:** [who]
+   **Core features:** [bulleted list of 3–6]
+   **Data model:** [entities + relationships]
+   **Integrations:** Auth ([Better Auth + which OAuth]), Email ([Resend / None]), Payments ([Stripe / DGateway / None]), File uploads ([R2 / S3 / UploadThing / None]), Dark mode ([Yes / No])
+   **Visual design:** Color [hex], Typography [font], Aesthetic [3 words], Inspiration [apps]
+   **Out of scope (v1):** [what we're NOT building yet]
+   ```
+
+2. List any **assumptions** you had to make (mark them clearly so the user can correct).
+
+3. Then ask exactly this:
+
+   > *"Does this match your intent? Reply **'Yes, generate the files'** to proceed, or tell me what to adjust."*
+
+**Do NOT generate any file in this turn.** Wait for explicit user confirmation. Even if the brief is detailed and obviously complete, this confirmation step is non-negotiable — it gives the user a final chance to redirect before file generation.
+
+### Step 4 — Generate the 4 Files (only after explicit confirmation)
+
+When the user confirms (some variation of "yes" / "go" / "generate"), produce all 4 files using **Claude Artifacts** so they're individually downloadable.
+
+**Output requirements:**
+- Create 4 separate Artifacts, one per file. Use markdown artifact type. Each must be downloadable from the Artifact panel.
+- Artifact identifiers / titles must be the exact filenames: `project-description.md`, `project-phases.md`, `design-style-guide.md`, `prompt.md`.
+- Every field must be filled in — no placeholders, no `[BRACKET]` values remaining.
+- For `design-style-guide.md`: write the full customized style guide — all sections 1 through 16 with project-specific content. Don't link to the template; write the entire file.
+
+**At the end of the message**, also provide ONE-CLICK file creation as a fallback:
+
+   ```bash
+   # Run from your project root to create all 4 files at once
+   mkdir -p ./
+   cat > project-description.md << 'EOF'
+   ...full project-description.md content...
+   EOF
+
+   cat > project-phases.md << 'EOF'
+   ...full project-phases.md content...
+   EOF
+
+   cat > design-style-guide.md << 'EOF'
+   ...full design-style-guide.md content...
+   EOF
+
+   cat > prompt.md << 'EOF'
+   ...full prompt.md content...
+   EOF
+
+   echo "✓ Created 4 VibeKit project files"
+   ```
+
+This way the user has TWO ways to get the files into their project:
+1. **Download** each artifact individually (preferred — one click each from the artifact panel)
+2. **Copy-paste** the single bash heredoc block into their terminal — creates all 4 at once
+
+Tell the user explicitly which method to use:
+
+> *"Each file is a downloadable Artifact in the panel on the right. Click the download icon on each one. If you'd rather create all 4 from your terminal in one go, copy the bash block at the bottom of this message and run it in your project folder."*
 
 ---
 

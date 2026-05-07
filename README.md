@@ -71,6 +71,18 @@ Every project built with this framework uses this stack. Do not deviate unless t
 
 ---
 
+## 📺 Watch the Crash Course
+
+The fastest way to learn VibeKit is to watch the full crash course where I build a real Hardware POS system from scratch in about 3 hours — every prompt, every command, end-to-end.
+
+[![VibeKit Framework Crash Course](https://14j7oh8kso.ufs.sh/f/HLxTbDBCDLwf0VdAvuLtvnF3cx4uPCTU9aqg2f0oY8klybGQ)](https://youtu.be/TvGu_Tu-6UI)
+
+▶ **[Watch on YouTube → VibeKit Framework Crash Course](https://youtu.be/TvGu_Tu-6UI)**
+
+The written version with copyable prompts is also on the site: [vibekit.desishub.com/tutorial](https://vibekit.desishub.com/tutorial).
+
+---
+
 ## How To Use This Framework
 
 ### Step 1 — Copy the planning prompt

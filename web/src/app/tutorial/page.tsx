@@ -18,6 +18,7 @@ import { Nav } from "@/components/nav";
 import { Section } from "@/components/section";
 import { Button } from "@/components/ui/button";
 import { CopyBlock } from "@/components/copy-block";
+import { VideoEmbed } from "@/components/video-embed";
 import { SITE } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -175,6 +176,16 @@ export default function TutorialPage() {
                 Join the community
               </Button>
             </div>
+          </div>
+
+          {/* Video — full crash course companion */}
+          <div className="mx-auto mt-16 max-w-4xl px-4 sm:px-6">
+            <VideoEmbed
+              videoId="TvGu_Tu-6UI"
+              thumbnail="https://14j7oh8kso.ufs.sh/f/HLxTbDBCDLwf0VdAvuLtvnF3cx4uPCTU9aqg2f0oY8klybGQ"
+              title="VibeKit Crash Course — full walkthrough"
+              caption="Watch the full crash course on YouTube as you follow the modules below"
+            />
           </div>
         </section>
 

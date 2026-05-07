@@ -22,12 +22,12 @@ const cols = [
     ],
   },
   {
-    label: "Components",
+    label: "Community",
     links: [
+      { name: "Join WhatsApp community", href: SITE.community },
+      { name: "GitHub Discussions", href: `${SITE.github}/discussions` },
+      { name: "Contribute a component", href: "/contribute" },
       { name: "JB Component Registry", href: "https://jb.desishub.com/blog/jb-component-registry-complete-reference" },
-      { name: "Better Auth UI", href: "https://jb.desishub.com/components/jb-better-auth-ui-components" },
-      { name: "Stripe UI", href: "https://jb.desishub.com/components/stripe-ui-component" },
-      { name: "Data Table", href: "https://jb.desishub.com/components/data-table-component" },
     ],
   },
   {
@@ -35,8 +35,9 @@ const cols = [
     links: [
       { name: "JB · Desishub", href: SITE.authorUrl },
       { name: "Desishub Technologies", href: "https://desishub.com" },
-      { name: "Twitter", href: "https://twitter.com/jbwebdeveloper" },
-      { name: "YouTube", href: "https://youtube.com/@jbwebdeveloper" },
+      { name: "YouTube", href: "https://www.youtube.com/@JBWEBDEVELOPER" },
+      { name: "LinkedIn", href: "https://www.linkedin.com/in/muke-johnbaptist/" },
+      { name: "TikTok", href: "https://www.tiktok.com/@jbdesishub" },
     ],
   },
 ];

@@ -1,4 +1,5 @@
 import { AgentsStrip } from "@/components/agents-strip";
+import { CommunityBanner } from "@/components/community-banner";
 import { ContributeBanner } from "@/components/contribute-banner";
 import { Creator } from "@/components/creator";
 import { CTA } from "@/components/cta";
@@ -33,6 +34,7 @@ export default function HomePage() {
         <ContributeBanner />
         <Testimonials />
         <Creator />
+        <CommunityBanner />
         <CTA />
       </main>
       <Footer />

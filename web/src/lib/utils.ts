@@ -14,6 +14,7 @@ export const SITE = {
     "VibeKit is a structured framework for vibe coders building production-grade Next.js apps with Claude Code or any agent — without burning tokens, shipping broken auth, or getting stuck.",
   twitter: "@jbwebdeveloper",
   github: "https://github.com/MUKE-coder/vibekit",
+  community: "https://chat.whatsapp.com/LKQUiM0dExJ60EiBDgoqRq",
   author: "JB (Muke Johnbaptist) · Desishub Technologies",
   authorUrl: "https://jb.desishub.com",
 } as const;

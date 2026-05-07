@@ -306,21 +306,30 @@ export default function ContributePage() {
 
           <div className="reveal mt-12 rounded-md border border-[color:var(--border)] bg-[color:var(--bg-subtle)] p-6 text-center">
             <p className="text-[14px] text-[color:var(--text-secondary)]">
-              Not ready to PR? Star the{" "}
+              Not ready to PR? Join the{" "}
+              <a
+                href={SITE.community}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[color:var(--accent)] underline underline-offset-4"
+              >
+                WhatsApp community
+              </a>
+              , star the{" "}
               <Link
                 href={SITE.github}
                 className="text-[color:var(--accent)] underline underline-offset-4"
               >
                 GitHub repo
               </Link>
-              , share VibeKit with someone shipping with AI, or join the discussion on{" "}
+              , or chime in on{" "}
               <a
                 href={`${SITE.github}/discussions`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[color:var(--accent)] underline underline-offset-4"
               >
-                Discussions
+                GitHub Discussions
               </a>
               .
             </p>

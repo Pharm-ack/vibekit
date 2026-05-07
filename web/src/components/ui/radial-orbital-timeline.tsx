@@ -12,7 +12,7 @@ export interface TimelineItem {
   date: string;
   content: string;
   category: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   relatedIds: number[];
   status: "completed" | "in-progress" | "pending";
   energy: number;

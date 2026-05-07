@@ -103,11 +103,10 @@ export function OrbitalCore({ className, size = 96, animate = true }: IconProps 
       >
         <ellipse cx="48" cy="48" rx="32" ry="10" stroke="currentColor" strokeWidth="0.75" fill="none" opacity="0.6" />
       </svg>
-      {/* Core icosahedron */}
+      {/* Core icosahedron — viewBox comes from baseProps (0 0 64 64) */}
       <svg
         width={size * 0.5}
         height={size * 0.5}
-        viewBox="0 0 64 64"
         {...baseProps}
         className={cn("relative text-[color:var(--accent)]", animate && "animate-pulse-glow")}
       >

@@ -38,3 +38,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prompt files synced from repo root by scripts/sync-prompts.mjs
+/CLAUDE_PROMPT.md
+/pre-deploy-review.md

@@ -4,6 +4,8 @@
   "private": true,
   "description": "VibeKit Framework landing site — vibekit.desishub.com",
   "scripts": {
+    "predev": "node scripts/sync-prompts.mjs",
+    "prebuild": "node scripts/sync-prompts.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

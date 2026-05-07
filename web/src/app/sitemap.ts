@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE.url}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/compare`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE.url}/compare/claude-code-vs-cursor-vs-cline`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
+    { url: `${SITE.url}/compare/vibekit-vs-create-next-app`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
   ];
 
   const componentRoutes: MetadataRoute.Sitemap = components.map((c) => ({

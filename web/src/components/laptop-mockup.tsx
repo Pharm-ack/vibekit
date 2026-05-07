@@ -3,9 +3,24 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Check, FileText, ListTodo, Palette, Sparkles } from "lucide-react";
+import {
+  Archive,
+  ArrowUp,
+  AudioLines,
+  ChevronDown,
+  Check,
+  Code,
+  FileText,
+  ListTodo,
+  MessageSquare,
+  Notebook,
+  Palette,
+  Plus,
+  Search,
+  Sparkles,
+  Wrench,
+} from "lucide-react";
 import { useRef } from "react";
-import { Section } from "./section";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -15,7 +30,18 @@ const generatedFiles = [
   { name: "project-description.md", Icon: FileText, sub: "What the app is" },
   { name: "project-phases.md", Icon: ListTodo, sub: "Build blueprint" },
   { name: "design-style-guide.md", Icon: Palette, sub: "Visual system" },
-  { name: "prompt.md", Icon: Sparkles, sub: "Paste into agent" },
+  { name: "prompt.md", Icon: Sparkles, sub: "Paste into your agent" },
+];
+
+const sidebarIcons = [
+  Notebook,
+  Plus,
+  Search,
+  MessageSquare,
+  Archive,
+  Code,
+  Wrench,
+  Palette,
 ];
 
 export function LaptopMockup() {
@@ -35,45 +61,51 @@ export function LaptopMockup() {
       tl.from(".laptop-frame", {
         y: 40,
         opacity: 0,
-        rotateX: 18,
+        rotateX: 12,
         duration: 1,
         ease: "power3.out",
       })
-        // User message types in
-        .from(
-          ".chat-user",
-          { opacity: 0, y: 8, duration: 0.4 },
-          "-=0.3"
-        )
-        .to(".chat-user .typed", {
-          width: "100%",
-          duration: 1.6,
-          ease: "steps(46)",
-        })
-        // Claude responds
-        .from(".chat-claude", { opacity: 0, y: 8, duration: 0.4 })
-        .from(".typing-dots", { opacity: 0, duration: 0.2 })
-        .to(".typing-dots", { opacity: 0, duration: 0.2, delay: 0.6 })
-        // Files appear sequentially
+        // Stage 1: greeting visible, then typewriter into input
+        .to(".stage-1-input", { opacity: 1, duration: 0.3 })
+        .to(".stage-1-input .typed", { width: "100%", duration: 1.8, ease: "steps(58)" })
+        // Pause to read
+        .to({}, { duration: 0.4 })
+        // Transition: fade greeting out, conversation appears
+        .to(".stage-1", { opacity: 0, y: -16, duration: 0.4 })
+        .set(".stage-1", { display: "none" })
+        .set(".stage-2", { display: "flex" })
+        .from(".stage-2-user", { opacity: 0, y: 12, duration: 0.4 })
+        // Claude thinking
+        .from(".stage-2-thinking", { opacity: 0, y: 8, duration: 0.3 })
+        .to(".stage-2-thinking", { opacity: 0, duration: 0.3, delay: 0.9 })
+        .set(".stage-2-thinking", { display: "none" })
+        // Claude question
+        .from(".stage-2-claude-q", { opacity: 0, y: 8, duration: 0.4 })
+        .to(".stage-2-claude-q .typed-q", { width: "100%", duration: 1.4, ease: "steps(46)" })
+        // User answer typewriter
+        .from(".stage-2-user-2", { opacity: 0, y: 8, duration: 0.4 })
+        .to(".stage-2-user-2 .typed", { width: "100%", duration: 0.9, ease: "steps(28)" })
+        // Generating files
+        .from(".stage-2-generating", { opacity: 0, y: 8, duration: 0.4 })
         .from(".gen-file", {
           opacity: 0,
           x: -16,
-          stagger: 0.18,
+          stagger: 0.22,
           duration: 0.45,
           ease: "power2.out",
         })
         .from(".file-check", {
           scale: 0,
-          stagger: 0.18,
+          stagger: 0.22,
           duration: 0.3,
           ease: "back.out(2)",
-        }, "-=0.6")
+        }, "-=0.8")
         .from(".success-pill", { y: 8, opacity: 0, duration: 0.4 });
 
       // Continuous: subtle laptop hover float
       gsap.to(".laptop-frame", {
-        y: -4,
-        duration: 2.6,
+        y: -6,
+        duration: 3,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
@@ -106,12 +138,12 @@ export function LaptopMockup() {
             Idea in. <em className="not-italic gradient-text">Four files out.</em>
           </h2>
           <p className="mt-5 text-[16px] leading-relaxed text-[color:var(--text-secondary)]">
-            Paste your one-line idea into Claude. Answer a handful of questions. Watch the framework generate exactly what your coding agent needs.
+            Paste your idea into Claude. It interviews you, then generates exactly what your coding agent needs.
           </p>
         </div>
 
         {/* Laptop */}
-        <div className="laptop-frame relative mx-auto mt-16 max-w-4xl" style={{ perspective: "2000px" }}>
+        <div className="laptop-frame relative mx-auto mt-16 max-w-5xl" style={{ perspective: "2000px" }}>
           {/* Glow under laptop */}
           <div
             aria-hidden
@@ -124,131 +156,204 @@ export function LaptopMockup() {
           />
 
           {/* Screen */}
-          <div className="relative rounded-t-2xl border border-[color:var(--border-strong)] bg-[color:var(--bg-elevated)] shadow-[var(--shadow-xl)]">
-            {/* Top bezel */}
-            <div className="flex items-center justify-center gap-1 border-b border-[color:var(--border)] py-1.5">
-              <span className="h-1 w-12 rounded-full bg-[color:var(--bg-muted)]" />
-              <span className="h-1 w-1 rounded-full bg-[color:var(--bg-muted)]" />
+          <div className="relative rounded-t-2xl border border-[color:var(--border-strong)] bg-[#1a1a1a] shadow-[var(--shadow-xl)] overflow-hidden">
+            {/* Top bezel + camera */}
+            <div className="flex items-center justify-center gap-2 bg-[#0a0a0a] py-1.5">
+              <span className="h-1 w-1 rounded-full bg-[#333]" />
             </div>
 
             {/* Browser chrome */}
-            <div className="flex items-center gap-3 border-b border-[color:var(--border)] bg-[color:var(--bg-subtle)] px-4 py-2.5">
+            <div className="flex items-center gap-3 border-b border-black/40 bg-[#0d0d0d] px-4 py-2.5">
               <div className="flex gap-1.5">
-                <span className="h-3 w-3 rounded-full bg-[#FF5F57]/80" />
-                <span className="h-3 w-3 rounded-full bg-[#FEBC2E]/80" />
-                <span className="h-3 w-3 rounded-full bg-[#28C840]/80" />
+                <span className="h-3 w-3 rounded-full bg-[#FF5F57]" />
+                <span className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
+                <span className="h-3 w-3 rounded-full bg-[#28C840]" />
               </div>
-              <div className="flex-1 rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-3 py-1 text-center font-mono text-[11px] text-[color:var(--text-tertiary)]">
-                claude.ai/new
+              <div className="flex-1 max-w-md mx-auto rounded-md border border-white/10 bg-black/40 px-3 py-1 text-center font-mono text-[11px] text-white/40">
+                claude.ai
               </div>
+              <div className="w-12" />
             </div>
 
-            {/* App body — Claude-style chat */}
-            <div className="grid h-[460px] grid-cols-[200px_1fr] sm:grid-cols-[240px_1fr]">
+            {/* Claude UI body */}
+            <div className="relative grid grid-cols-[64px_1fr] h-[520px] bg-[#262624]">
               {/* Sidebar */}
-              <aside className="hidden sm:block border-r border-[color:var(--border)] bg-[color:var(--bg-subtle)]/40 p-4">
-                <div className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--text-tertiary)]">
-                  Claude
+              <aside className="flex flex-col items-center justify-between border-r border-white/5 bg-[#1f1f1d] py-4">
+                <div className="flex flex-col items-center gap-3">
+                  {sidebarIcons.map((Icon, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className="grid h-8 w-8 place-items-center rounded-md text-white/45 transition-colors hover:bg-white/5 hover:text-white/80"
+                      tabIndex={-1}
+                    >
+                      <Icon className="h-[18px] w-[18px]" />
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="grid h-8 w-8 place-items-center rounded-md text-white/45 hover:bg-white/5"
+                    tabIndex={-1}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
                 </div>
-                <div className="mt-4 space-y-1">
-                  <div className="flex items-center gap-2 rounded border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-2.5 py-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent)]" />
-                    <span className="text-[12px] text-[color:var(--text-primary)] truncate">
-                      VibeKit planning
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 px-2.5 py-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--text-tertiary)]" />
-                    <span className="text-[12px] text-[color:var(--text-tertiary)] truncate">
-                      School mgmt brief
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 px-2.5 py-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--text-tertiary)]" />
-                    <span className="text-[12px] text-[color:var(--text-tertiary)] truncate">
-                      Invoice app v2
-                    </span>
-                  </div>
+                <div className="grid h-9 w-9 place-items-center rounded-full bg-[#C7956D] font-mono text-[11px] font-semibold uppercase text-[#1f1f1d]">
+                  MJ
                 </div>
               </aside>
 
-              {/* Chat content */}
-              <div className="flex flex-col">
-                {/* Messages */}
-                <div className="flex-1 space-y-4 overflow-hidden p-5 sm:p-6">
-                  {/* User msg */}
-                  <div className="chat-user flex justify-end">
-                    <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-[color:var(--text-primary)] px-4 py-2.5 text-[13px] text-[color:var(--text-inverse)]">
+              {/* Main content */}
+              <div className="relative flex flex-col">
+                {/* STAGE 1 — Empty Claude greeting */}
+                <div className="stage-1 absolute inset-0 flex flex-col items-center justify-center px-8">
+                  {/* Greeting */}
+                  <div className="flex items-center gap-3">
+                    <ClaudeStar />
+                    <h3
+                      className="text-[28px] sm:text-[32px] text-[#E8DCC4]"
+                      style={{ fontFamily: "Georgia, serif", fontWeight: 400 }}
+                    >
+                      Coffee and Claude time?
+                    </h3>
+                  </div>
+
+                  {/* Input box */}
+                  <div className="stage-1-input mt-8 w-full max-w-2xl rounded-2xl border border-white/8 bg-[#1f1f1d] shadow-2xl" style={{ opacity: 0 }}>
+                    <div className="px-5 pt-4 pb-3">
                       <div className="overflow-hidden">
-                        <span className="typed inline-block overflow-hidden whitespace-nowrap" style={{ width: 0 }}>
+                        <span
+                          className="typed inline-block overflow-hidden whitespace-nowrap font-sans text-[15px] text-white/85"
+                          style={{ width: 0 }}
+                        >
                           I want to build a school management system for Uganda...
                         </span>
-                        <span className="typing-cursor inline-block w-[1px] h-[1em] bg-[color:var(--text-inverse)] align-middle ml-0.5" />
+                        <span className="typing-cursor inline-block w-[2px] h-[1em] bg-white/85 align-middle ml-0.5" />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between border-t border-white/5 px-3 py-2">
+                      <button type="button" tabIndex={-1} className="grid h-7 w-7 place-items-center rounded-full text-white/50 hover:bg-white/5">
+                        <Plus className="h-4 w-4" />
+                      </button>
+                      <div className="flex items-center gap-3 text-[12px] text-white/55">
+                        <span className="font-medium text-white/75">Sonnet 4.5</span>
+                        <span className="opacity-70">Extended</span>
+                        <ChevronDown className="h-3 w-3" />
+                        <AudioLines className="h-3.5 w-3.5 ml-1 opacity-70" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Claude response */}
-                  <div className="chat-claude flex justify-start">
-                    <div className="max-w-[85%] space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="grid h-5 w-5 place-items-center rounded-full bg-[color:var(--accent)] font-mono text-[9px] font-bold text-[color:var(--accent-fg)]">
-                          C
-                        </span>
-                        <span className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--text-tertiary)]">
-                          Claude
-                        </span>
-                      </div>
-                      <div className="rounded-2xl rounded-tl-sm border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-4 py-2.5 text-[12.5px] leading-relaxed text-[color:var(--text-primary)]">
-                        Reading the VibeKit framework...
-                        <div className="typing-dots mt-2 flex gap-1">
-                          <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--text-tertiary)] animate-pulse" />
-                          <span
-                            className="h-1.5 w-1.5 rounded-full bg-[color:var(--text-tertiary)] animate-pulse"
-                            style={{ animationDelay: "0.15s" }}
-                          />
-                          <span
-                            className="h-1.5 w-1.5 rounded-full bg-[color:var(--text-tertiary)] animate-pulse"
-                            style={{ animationDelay: "0.3s" }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Generated files */}
-                  <div className="space-y-2 pt-2">
-                    <div className="font-mono text-[10px] uppercase tracking-wider text-[color:var(--text-tertiary)]">
-                      ✓ Generated 4 files
-                    </div>
-                    {generatedFiles.map(({ name, Icon, sub }) => (
-                      <div
-                        key={name}
-                        className="gen-file flex items-center gap-3 rounded-md border border-[color:var(--border)] bg-[color:var(--bg-subtle)]/60 px-3 py-2"
+                  {/* Action chips */}
+                  <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+                    {[
+                      { label: "Write" },
+                      { label: "Learn" },
+                      { label: "Code" },
+                      { label: "Life stuff" },
+                      { label: "Claude's choice" },
+                    ].map((chip) => (
+                      <span
+                        key={chip.label}
+                        className="rounded-full border border-white/8 bg-[#1f1f1d] px-3.5 py-1.5 text-[12px] text-white/55"
                       >
-                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded border border-[color:var(--border)] bg-[color:var(--bg-elevated)] text-[color:var(--text-secondary)]">
-                          <Icon className="h-3.5 w-3.5" />
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-mono text-[12px] text-[color:var(--text-primary)] truncate">
-                            {name}
-                          </div>
-                          <div className="text-[11px] text-[color:var(--text-tertiary)] truncate">
-                            {sub}
-                          </div>
-                        </div>
-                        <span className="file-check grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[color:var(--accent)]/15 text-[color:var(--accent)]">
-                          <Check className="h-3 w-3" />
-                        </span>
-                      </div>
+                        {chip.label}
+                      </span>
                     ))}
                   </div>
+                </div>
 
-                  {/* Success pill */}
-                  <div className="success-pill mt-3 flex justify-center">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--accent)]/40 bg-[color:var(--accent-soft)] px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-[color:var(--accent)]">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent)]" />
-                      Ready to paste into Claude Code
+                {/* STAGE 2 — Conversation */}
+                <div className="stage-2 absolute inset-0 hidden flex-col">
+                  <div className="flex-1 overflow-hidden p-5 sm:p-6 space-y-4">
+                    {/* User message */}
+                    <div className="stage-2-user flex justify-end">
+                      <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-[#3a3a37] px-4 py-2.5 text-[13.5px] text-white/90">
+                        I want to build a school management system for Uganda...
+                      </div>
+                    </div>
+
+                    {/* Thinking */}
+                    <div className="stage-2-thinking flex items-center gap-2 pl-1">
+                      <ClaudeStar small />
+                      <div className="flex gap-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-white/40 animate-pulse" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-white/40 animate-pulse" style={{ animationDelay: "0.15s" }} />
+                        <span className="h-1.5 w-1.5 rounded-full bg-white/40 animate-pulse" style={{ animationDelay: "0.3s" }} />
+                      </div>
+                      <span className="font-mono text-[11px] uppercase tracking-wider text-white/40">
+                        Reading framework...
+                      </span>
+                    </div>
+
+                    {/* Claude question */}
+                    <div className="stage-2-claude-q flex gap-3">
+                      <ClaudeStar small />
+                      <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-[#1f1f1d] border border-white/5 px-4 py-2.5 text-[13.5px] leading-relaxed text-white/85">
+                        <div className="overflow-hidden">
+                          <span className="typed-q inline-block overflow-hidden whitespace-nowrap" style={{ width: 0 }}>
+                            Which user roles? Teachers, parents, students, admins?
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* User answer */}
+                    <div className="stage-2-user-2 flex justify-end">
+                      <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-[#3a3a37] px-4 py-2.5 text-[13.5px] text-white/90">
+                        <div className="overflow-hidden">
+                          <span className="typed inline-block overflow-hidden whitespace-nowrap" style={{ width: 0 }}>
+                            All four. Parents pay school fees too.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Generating files */}
+                    <div className="stage-2-generating space-y-2">
+                      <div className="flex items-center gap-2 pl-1">
+                        <ClaudeStar small />
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-400/80">
+                          ✓ Generated 4 files
+                        </span>
+                      </div>
+                      {generatedFiles.map(({ name, Icon, sub }) => (
+                        <div
+                          key={name}
+                          className="gen-file flex items-center gap-3 rounded-md border border-white/8 bg-[#1f1f1d] px-3 py-2 ml-7"
+                        >
+                          <span className="grid h-7 w-7 shrink-0 place-items-center rounded border border-white/10 bg-[#262624] text-white/55">
+                            <Icon className="h-3.5 w-3.5" />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-mono text-[12px] text-white/85 truncate">{name}</div>
+                            <div className="text-[11px] text-white/40 truncate">{sub}</div>
+                          </div>
+                          <span className="file-check grid h-5 w-5 shrink-0 place-items-center rounded-full bg-emerald-500/15 text-emerald-400">
+                            <Check className="h-3 w-3" />
+                          </span>
+                        </div>
+                      ))}
+
+                      <div className="success-pill mt-3 ml-7 flex">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-[#818CF8]/30 bg-[#818CF8]/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-[#A5B4FC]">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#818CF8]" />
+                          Ready to paste into your agent
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom input bar */}
+                  <div className="border-t border-white/5 bg-[#1f1f1d] px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <button type="button" tabIndex={-1} className="grid h-7 w-7 place-items-center rounded-full text-white/40">
+                        <Plus className="h-4 w-4" />
+                      </button>
+                      <div className="flex-1 text-[12px] text-white/35">Reply to Claude...</div>
+                      <button type="button" tabIndex={-1} className="grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white/70">
+                        <ArrowUp className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -258,15 +363,29 @@ export function LaptopMockup() {
 
           {/* Laptop base */}
           <div
-            className="relative mx-auto h-3 rounded-b-2xl bg-gradient-to-b from-[color:var(--border-strong)] to-[color:var(--bg-muted)]"
+            className="relative mx-auto h-3 rounded-b-2xl bg-gradient-to-b from-[#3a3a37] to-[#1a1a18]"
             style={{ width: "calc(100% + 24px)", marginLeft: "-12px" }}
           />
-          <div
-            className="mx-auto h-1 rounded-b-2xl bg-[color:var(--bg-muted)]"
-            style={{ width: "32%" }}
-          />
+          <div className="mx-auto h-1 rounded-b-2xl bg-[#1a1a18]" style={{ width: "32%" }} />
         </div>
       </div>
     </section>
+  );
+}
+
+/** Claude's star/asterisk symbol — orange peach accent */
+function ClaudeStar({ small = false }: { small?: boolean }) {
+  const size = small ? 16 : 28;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="#D97757"
+      aria-hidden
+      className="shrink-0"
+    >
+      <path d="M12 2 L13.5 8.5 L20 7 L14.5 11 L20 17 L13.5 15.5 L12 22 L10.5 15.5 L4 17 L9.5 11 L4 7 L10.5 8.5 Z" />
+    </svg>
   );
 }

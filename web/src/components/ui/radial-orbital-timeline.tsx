@@ -138,33 +138,93 @@ export default function RadialOrbitalTimeline({
     >
       {/* Subtle grid backdrop */}
       <div className="pointer-events-none absolute inset-0 grid-pattern opacity-60" aria-hidden />
+      {/* Center radial glow — pulls eye to the core */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 50%)",
+        }}
+      />
 
       <div
         ref={orbitRef}
         className="relative h-full w-full flex items-center justify-center"
         style={{ perspective: "1000px" }}
       >
-        {/* Central core */}
-        <div
-          className="absolute z-10 flex h-16 w-16 items-center justify-center rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--accent) 80%, white), var(--accent))",
-            boxShadow: "0 0 40px var(--accent-glow), inset 0 0 20px rgba(255,255,255,0.15)",
-          }}
-        >
+        {/* Central core — vibrant SVG monogram */}
+        <div className="absolute z-10 flex h-24 w-24 items-center justify-center" aria-hidden>
+          {/* Outer ping rings */}
           <span
-            className="absolute h-20 w-20 rounded-full border border-[color:var(--accent)]/40 animate-ping opacity-60"
-            aria-hidden
+            className="absolute h-28 w-28 rounded-full border border-[color:var(--accent)]/40 animate-ping opacity-60"
           />
           <span
-            className="absolute h-24 w-24 rounded-full border border-[color:var(--accent)]/20 animate-ping opacity-40"
+            className="absolute h-32 w-32 rounded-full border border-[color:var(--accent)]/20 animate-ping opacity-40"
             style={{ animationDelay: "0.5s" }}
-            aria-hidden
           />
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-white/90">
-            VK
-          </span>
+          {/* Bloom glow */}
+          <span
+            className="absolute h-32 w-32 rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle, color-mix(in srgb, var(--accent) 50%, transparent) 0%, transparent 70%)",
+              filter: "blur(8px)",
+            }}
+          />
+          {/* SVG vibrant core */}
+          <svg
+            viewBox="0 0 100 100"
+            className="relative h-20 w-20 drop-shadow-[0_8px_24px_rgba(129,140,248,0.6)]"
+          >
+            <defs>
+              <radialGradient id="orbital-core-bg" cx="35%" cy="30%" r="80%">
+                <stop offset="0%" stopColor="#C7D2FE" />
+                <stop offset="35%" stopColor="#818CF8" />
+                <stop offset="75%" stopColor="#5B5BD6" />
+                <stop offset="100%" stopColor="#312E81" />
+              </radialGradient>
+              <linearGradient id="orbital-core-shine" x1="0" y1="0" x2="0.5" y2="1">
+                <stop offset="0%" stopColor="white" stopOpacity="0.45" />
+                <stop offset="60%" stopColor="white" stopOpacity="0" />
+              </linearGradient>
+              <filter id="orbital-core-inner" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="1.5" />
+              </filter>
+            </defs>
+
+            {/* Sphere */}
+            <circle cx="50" cy="50" r="44" fill="url(#orbital-core-bg)" />
+            {/* Top highlight */}
+            <ellipse cx="40" cy="34" rx="22" ry="14" fill="url(#orbital-core-shine)" />
+            {/* Equator ring */}
+            <ellipse
+              cx="50"
+              cy="50"
+              rx="44"
+              ry="9"
+              fill="none"
+              stroke="white"
+              strokeOpacity="0.18"
+              strokeWidth="0.6"
+            />
+            {/* VK monogram */}
+            <g
+              fill="white"
+              fontFamily="var(--font-mono), ui-monospace, monospace"
+              fontWeight="700"
+              fontSize="22"
+              textAnchor="middle"
+              style={{ letterSpacing: "-0.02em" }}
+            >
+              <text x="50" y="58" filter="url(#orbital-core-inner)" opacity="0.5">
+                VK
+              </text>
+              <text x="50" y="58">VK</text>
+            </g>
+            {/* Bottom shadow / depth */}
+            <ellipse cx="50" cy="78" rx="30" ry="6" fill="black" opacity="0.18" />
+          </svg>
         </div>
 
         {/* Orbital ring */}

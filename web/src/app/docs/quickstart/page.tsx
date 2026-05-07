@@ -5,12 +5,14 @@ import { ArrowLeft } from "lucide-react";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
+import { CopyBlock } from "@/components/copy-block";
+import { readPrompt } from "@/lib/read-prompt";
 import { SITE } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Quickstart — set up VibeKit in 7 steps",
   description:
-    "Step-by-step quickstart for VibeKit: from copying the planning prompt into Claude.ai, to building with Claude Code, to running the pre-deploy review before launch.",
+    "Step-by-step quickstart for VibeKit: copy the planning prompt, generate 4 project files, build with any agent, and run the pre-deploy review before launch. All prompts copyable inline.",
   alternates: { canonical: "/docs/quickstart" },
   openGraph: {
     url: `${SITE.url}/docs/quickstart`,
@@ -23,53 +25,45 @@ const steps = [
   {
     n: 1,
     title: "Copy the planning prompt",
-    body: (
-      <>
-        Open <a href={`${SITE.github}/blob/main/CLAUDE_PROMPT.md`}>CLAUDE_PROMPT.md</a> in the GitHub repo and copy its full contents. This is the interview script that Claude (the chat) will use to scope your project.
-      </>
-    ),
+    body: "Use the copy button below to grab the full CLAUDE_PROMPT.md content. No need to leave this page.",
   },
   {
     n: 2,
     title: "Open Claude (claude.ai)",
-    body: <>Start a new conversation. Paste the prompt as your first message, then add your app idea on a new line. Be specific about who the app is for and what it does.</>,
+    body: "Go to claude.ai and start a new conversation. Paste the prompt as your first message, then add your app idea on a new line. Be specific about who the app is for and what it does.",
   },
   {
     n: 3,
     title: "Answer 6–10 questions",
-    body: <>Claude will interview you about features, user roles, data model, monetization, file uploads, email, and visual design. Answer honestly — vague answers produce vague output.</>,
+    body: "Claude will interview you about features, user roles, data model, monetization, file uploads, email, and visual design. Answer honestly — vague answers produce vague output.",
   },
   {
     n: 4,
     title: "Save the 4 generated files",
-    body: (
-      <>
-        Claude will produce <code>project-description.md</code>, <code>project-phases.md</code>, <code>design-style-guide.md</code>, and <code>prompt.md</code>. Save all four into your project root folder.
-      </>
-    ),
+    body: "Claude produces project-description.md, project-phases.md, design-style-guide.md, and prompt.md. Save all four in your project root folder.",
   },
   {
     n: 5,
     title: "Copy the framework files",
-    body: (
-      <>
-        From the GitHub repo, copy these into your project root: <code>master_prompt.md</code> (Claude Code's coding constitution), <code>jb-components.md</code> (component registry reference), and <code>pre-deploy-review.md</code> (security audit prompt).
-      </>
-    ),
+    body: "Copy three files from the GitHub repo into your project root: master_prompt.md (the coding constitution), jb-components.md (component registry reference), and pre-deploy-review.md (the security audit prompt — embedded below).",
   },
   {
     n: 6,
-    title: "Open Claude Code & paste prompt.md",
-    body: <>In your project directory, open Claude Code. Paste the contents of <code>prompt.md</code> as your first message. Claude Code will read the framework, plan Phase 1, and start building. It pauses between phases for your confirmation.</>,
+    title: "Open your coding agent & paste prompt.md",
+    body: "Works with Claude Code, Cursor, Kiro Code, Antigravity, Windsurf, Cline, Aider, or any agent that reads files. The agent will read everything and start Phase 1, stopping for your confirmation between phases.",
   },
   {
     n: 7,
     title: "Run pre-deploy review, then ship",
-    body: <>Before deploying, paste <code>pre-deploy-review.md</code> into Claude Code as your last task. It writes a Critical / High / Medium report to <code>pre-deploy-review-report.md</code>. Address every Critical issue, then deploy.</>,
+    body: "Before deploying, paste the pre-deploy-review prompt (embedded below) into your agent. It writes a Critical / High / Medium report. Address every Critical issue, then deploy.",
   },
 ];
 
 export default function Quickstart() {
+  // Read prompts at build time
+  const claudePrompt = readPrompt("CLAUDE_PROMPT.md");
+  const preDeployReview = readPrompt("pre-deploy-review.md");
+
   return (
     <>
       <Nav />
@@ -91,11 +85,12 @@ export default function Quickstart() {
               Quickstart
             </h1>
             <p className="mt-5 text-[18px] leading-relaxed text-[color:var(--text-secondary)]">
-              From a one-line idea to a deployed Next.js app, with an opinionated workflow that prevents the usual AI failure modes.
+              From a one-line idea to a deployed Next.js app, with an opinionated workflow that prevents the usual AI failure modes. <strong className="font-medium text-[color:var(--text-primary)]">No GitHub round-trip needed</strong> — every prompt is copyable right here.
             </p>
           </header>
 
-          <ol className="mt-10 space-y-8">
+          {/* Steps + embedded prompts */}
+          <ol className="mt-10 space-y-10">
             {steps.map((s) => (
               <li key={s.n} className="grid gap-5 sm:grid-cols-[auto_1fr]">
                 <div className="font-mono text-[40px] font-light leading-none text-[color:var(--accent)] tabular-nums">
@@ -105,11 +100,79 @@ export default function Quickstart() {
                   <h2 className="font-mono text-[18px] uppercase tracking-tight text-[color:var(--text-primary)]">
                     {s.title}
                   </h2>
-                  <div className="mt-3 text-[15.5px] leading-[1.75] text-[color:var(--text-secondary)]
-                    [&_a]:text-[color:var(--accent)] [&_a]:underline [&_a]:underline-offset-4
-                    [&_code]:font-mono [&_code]:text-[13px] [&_code]:rounded [&_code]:border [&_code]:border-[color:var(--border)] [&_code]:bg-[color:var(--bg-elevated)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[color:var(--text-primary)]">
+                  <p className="mt-3 text-[15.5px] leading-[1.75] text-[color:var(--text-secondary)]">
                     {s.body}
-                  </div>
+                  </p>
+
+                  {/* Inline prompt for step 1 */}
+                  {s.n === 1 ? (
+                    <div className="mt-5">
+                      <CopyBlock
+                        filename="CLAUDE_PROMPT.md"
+                        label="Paste into claude.ai"
+                        code={claudePrompt}
+                      />
+                      <p className="mt-3 text-[13px] text-[color:var(--text-tertiary)]">
+                        Click <span className="font-mono uppercase">Copy</span> above, then go to{" "}
+                        <a
+                          href="https://claude.ai/new"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[color:var(--accent)] underline underline-offset-4"
+                        >
+                          claude.ai/new
+                        </a>{" "}
+                        and paste it as your first message.
+                      </p>
+                    </div>
+                  ) : null}
+
+                  {/* Inline framework files for step 5 */}
+                  {s.n === 5 ? (
+                    <div className="mt-5 space-y-4">
+                      <div className="rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-5">
+                        <h3 className="font-mono text-[11px] uppercase tracking-wider text-[color:var(--text-tertiary)]">
+                          Files to download into your project root
+                        </h3>
+                        <ul className="mt-3 space-y-2">
+                          {[
+                            { file: "master_prompt.md", purpose: "Coding constitution Claude/your agent reads" },
+                            { file: "jb-components.md", purpose: "When to install which JB component" },
+                            { file: "pre-deploy-review.md", purpose: "Security audit prompt for step 7" },
+                          ].map((f) => (
+                            <li key={f.file} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                              <a
+                                href={`https://github.com/MUKE-coder/vibekit/blob/main/${f.file}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-mono text-[13px] text-[color:var(--accent)] underline underline-offset-4 hover:no-underline"
+                              >
+                                {f.file}
+                              </a>
+                              <span className="text-[13px] text-[color:var(--text-secondary)]">{f.purpose}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-4 text-[12.5px] text-[color:var(--text-tertiary)]">
+                          Tip: <code className="font-mono text-[12px] rounded border border-[color:var(--border)] bg-[color:var(--bg-subtle)] px-1.5 py-0.5">git clone https://github.com/MUKE-coder/vibekit.git</code>, then copy these three files into your project.
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {/* Inline pre-deploy prompt for step 7 */}
+                  {s.n === 7 ? (
+                    <div className="mt-5">
+                      <CopyBlock
+                        filename="pre-deploy-review.md"
+                        label="Paste into your coding agent"
+                        code={preDeployReview}
+                      />
+                      <p className="mt-3 text-[13px] text-[color:var(--text-tertiary)]">
+                        After the audit, your agent writes findings to <code className="font-mono text-[12px] rounded border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-1.5 py-0.5">pre-deploy-review-report.md</code>. Address every Critical issue before deploying.
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
               </li>
             ))}
@@ -123,11 +186,11 @@ export default function Quickstart() {
               Seven steps from idea to production. Bookmark this page — you'll repeat the flow for every new project.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button href={SITE.github} variant="accent" size="md">
-                Open the GitHub repo
+              <Button href="/components" variant="accent" size="md">
+                Browse JB components
               </Button>
-              <Button href="/components" variant="outline" size="md">
-                Browse components
+              <Button href="/faq" variant="outline" size="md">
+                Read the FAQ
               </Button>
             </div>
           </div>
@@ -144,13 +207,13 @@ export default function Quickstart() {
             "@context": "https://schema.org",
             "@type": "HowTo",
             name: "Set up VibeKit",
-            description: "Set up VibeKit and build a production-grade Next.js app with Claude Code in 7 steps.",
+            description: "Set up VibeKit and build a production-grade Next.js app with any AI coding agent in 7 steps.",
             totalTime: "PT15M",
             step: steps.map((s) => ({
               "@type": "HowToStep",
               position: s.n,
               name: s.title,
-              text: typeof s.body === "string" ? s.body : `Step ${s.n}: ${s.title}`,
+              text: s.body,
             })),
           }),
         }}

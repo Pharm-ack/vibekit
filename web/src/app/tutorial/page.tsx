@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import Link from "next/link";
 import {
   ArrowUpRight,
-  CheckSquare,
+  Boxes,
+  ChartLine,
   Clock,
   Code,
-  Database,
-  GitBranch,
   Layers,
+  PackageCheck,
+  Receipt,
   Rocket,
   ShieldCheck,
   Sparkles,
-  Wrench,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
@@ -22,9 +21,9 @@ import { CopyBlock } from "@/components/copy-block";
 import { SITE } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "VibeKit Crash Course — build & deploy a SaaS in 3 hours",
+  title: "VibeKit Crash Course — build a Hardware POS in one afternoon",
   description:
-    "Step-by-step crash course: build TaskFlow, a real personal task manager, using VibeKit and Claude Code (or any agent). From idea to deployed in 3 hours. Every prompt copyable inline.",
+    "Step-by-step crash course: build HardwarePOS, a real point-of-sale system for a hardware shop, using VibeKit and any AI coding agent. From idea to deployed in ~3 hours. Every prompt copyable inline.",
   alternates: { canonical: "/tutorial" },
   openGraph: {
     url: `${SITE.url}/tutorial`,
@@ -33,75 +32,98 @@ export const metadata: Metadata = {
   },
 };
 
-const taskFlowIdea = `I want to build TaskFlow — a personal task management app for solo professionals.
+const hardwarePosIdea = `I want to build HardwarePOS — a point-of-sale system for a small hardware shop in
+Uganda. The shop owner uses it to ring up sales of items like nails, paint,
+plumbing fittings, electrical supplies, and hand tools. Single user (the shop
+owner / cashier) — no team features, no customer-facing storefront, no online
+ordering. Strictly in-shop POS.
 
-Users sign up with Google or email, then create and organize tasks across categories
-(Work, Personal, Side Project, Learning). Each task has a title, optional notes, a due
-date, a priority (Low / Medium / High), and a status (Open / In Progress / Done).
+Core flows:
 
-Users see a dashboard with: tasks due today, overdue tasks, a quick-add input, and
-stats on tasks completed this week. They can filter and search the full task list,
-edit inline, mark as done, and export their open tasks to PDF.
+1. POS Sale (the main screen): search products by name or SKU, add to cart,
+   adjust quantities, see live total. Choose payment method (Cash / Mobile Money /
+   Card). Capture optional customer name and phone. Complete sale, then download
+   a receipt PDF.
 
-No team features, no collaboration. Single-user. Clean and minimal — Linear/Vercel
-aesthetic, light mode primary, dark mode optional. Brand color: indigo.`;
+2. Inventory: list products with name, SKU, category, price (UGX), and stock
+   quantity. Add new products, edit price/stock, delete. Low-stock alerts when
+   stock falls below a configurable threshold per product.
+
+3. Sales history: list of past sales with date, total, payment method, items
+   count, customer (if captured). Filter by date range and payment method. View
+   a single sale's full line items. Export the day's sales to a PDF report.
+
+4. Dashboard: today's sales total + transaction count, top 5 products this week,
+   low-stock alert count, weekly revenue chart (last 7 days).
+
+Seed the database with these categories on first run: Tools, Hardware, Paint,
+Plumbing, Electrical, Other.
+
+No image uploads — text-only products (name + SKU + category is enough).
+No e-commerce / cart abandonment / online ordering / customer accounts.
+Currency: UGX (Ugandan Shillings) with comma-separated formatting and no decimals
+(e.g., 25,000 not 25,000.00).
+
+Single user, single device. Light + dark mode. Aesthetic: clean dashboard like
+Linear or Vercel — bold large numbers so the cashier can read totals at a glance.
+Brand color: indigo (#4F46E5).`;
 
 const modules = [
   {
-    Icon: CheckSquare,
+    Icon: PackageCheck,
     eyebrow: "MODULE 01",
     title: "Set up the accounts you'll need",
     time: "5 min",
-    intro: "Before writing a single line of code, get the cloud accounts ready. All free tiers cover the entire course.",
+    intro: "All free tiers cover the entire course. Sign up first so you don't break flow later.",
   },
   {
     Icon: Sparkles,
     eyebrow: "MODULE 02",
     title: "Plan with Claude (claude.ai)",
     time: "15 min",
-    intro: "Paste the VibeKit planning prompt into Claude, give it the TaskFlow brief, and let it interview you. You'll walk away with 4 files that define the entire build.",
+    intro: "Paste the VibeKit planning prompt + the HardwarePOS brief into Claude. Walk away with 4 files that define the entire build.",
   },
   {
     Icon: Layers,
     eyebrow: "MODULE 03",
     title: "Initialize the project",
     time: "10 min",
-    intro: "Scaffold a Next.js 16 project, drop in the 4 generated files plus the 3 framework files, and open Claude Code.",
+    intro: "Scaffold a Next.js 16 project, drop in the 4 generated files plus the 3 framework files, open your coding agent.",
   },
   {
     Icon: ShieldCheck,
     eyebrow: "MODULE 04",
     title: "Phase 1 — Foundation",
     time: "30 min",
-    intro: "Claude Code reads everything, then builds the foundation: Prisma + Neon, Better Auth, layout shell, design tokens. By the end you can sign in.",
+    intro: "Auth, layout shell, design tokens, Prisma + Neon. By the end you can sign in to the empty dashboard.",
   },
   {
-    Icon: Database,
+    Icon: Boxes,
     eyebrow: "MODULE 05",
-    title: "Phase 2 — Tasks CRUD",
-    time: "45 min",
-    intro: "The core feature — tasks model, API routes with server-side pagination, list page with search and filters, create/edit forms with Zod, dashboard stat cards.",
+    title: "Phase 2 — Products & Inventory",
+    time: "30 min",
+    intro: "Categories + Products schema, CRUD API routes, inventory list page with low-stock badges, add/edit forms.",
   },
   {
-    Icon: Wrench,
+    Icon: Receipt,
     eyebrow: "MODULE 06",
-    title: "Phase 3 — Polish (PDF export + filters)",
-    time: "20 min",
-    intro: "Add the production touches: PDF export of open tasks, category filters, the quick-add input on the dashboard.",
+    title: "Phase 3 — POS Sale flow + Receipt PDF",
+    time: "45 min",
+    intro: "The core feature. Product search, cart, checkout with payment method, sale persistence, downloadable receipt PDF using @react-pdf/renderer.",
+  },
+  {
+    Icon: ChartLine,
+    eyebrow: "MODULE 07",
+    title: "Phase 4 — Dashboard + Sales History",
+    time: "25 min",
+    intro: "Today's sales stat cards, weekly revenue chart, top-5 products, low-stock counter, full sales history with date-range filters.",
   },
   {
     Icon: Code,
-    eyebrow: "MODULE 07",
-    title: "Pre-deploy review",
-    time: "30 min",
-    intro: "Run the senior-level audit before deploying. Fix every Critical issue.",
-  },
-  {
-    Icon: Rocket,
     eyebrow: "MODULE 08",
-    title: "Deploy to Vercel",
-    time: "20 min",
-    intro: "Push to GitHub, link to Vercel, set env vars, point a custom domain via Cloudflare.",
+    title: "Pre-deploy review + Deploy",
+    time: "40 min",
+    intro: "Run the senior-level audit, fix every Critical, push to GitHub, deploy to Vercel, optional custom domain.",
   },
 ];
 
@@ -134,12 +156,12 @@ export default function TutorialPage() {
               Crash course · 8 modules · ~3 hours
             </div>
 
-            <h1 className="font-display mt-6 text-[clamp(2.5rem,7vw,5rem)] leading-[1.02] tracking-tight text-[color:var(--text-primary)]">
-              Build & deploy a SaaS in <em className="not-italic gradient-text">one afternoon</em>.
+            <h1 className="font-display mt-6 text-[clamp(2.25rem,6.5vw,4.5rem)] leading-[1.04] tracking-tight text-[color:var(--text-primary)]">
+              Build a real <em className="not-italic gradient-text">Hardware POS</em> in one afternoon.
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-[17px] leading-relaxed text-[color:var(--text-secondary)]">
-              Follow this crash course and ship <strong className="font-medium text-[color:var(--text-primary)]">TaskFlow</strong> — a real personal task manager with auth, a dashboard, filters, search, PDF export, and a custom domain. Powered by VibeKit + your favorite AI coding agent.
+              Follow this crash course and ship <strong className="font-medium text-[color:var(--text-primary)]">HardwarePOS</strong> — a point-of-sale system a hardware shop in Kampala could use today. Inventory, sales, payment methods, downloadable receipts, deployed to a custom domain. Powered by VibeKit + your favorite AI coding agent.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
@@ -159,8 +181,8 @@ export default function TutorialPage() {
         {/* What you'll build */}
         <Section
           eyebrow="WHAT YOU'LL BUILD"
-          title="TaskFlow — a real personal task manager."
-          description="Not a TODO toy. Real auth, real database, real export, real deploy. The skills carry over to any SaaS you build next."
+          title="HardwarePOS — a real shop POS."
+          description="Not a tutorial toy. Real auth, real database, real transactions, real receipts. A hardware shop owner could install this Monday morning and start using it."
           containerClassName="max-w-5xl"
         >
           <div className="grid gap-6 sm:grid-cols-2">
@@ -171,12 +193,15 @@ export default function TutorialPage() {
               <ul className="mt-4 space-y-2.5 text-[14.5px] text-[color:var(--text-primary)]">
                 {[
                   "Email + Google OAuth sign-in (Better Auth)",
-                  "Tasks with title, notes, due date, priority, status",
-                  "Categories: Work / Personal / Side Project / Learning",
-                  "Dashboard: due today, overdue, weekly completed, quick-add",
-                  "Full task list with search, filters, sortable columns",
-                  "Create / edit forms (React Hook Form + Zod)",
-                  "Export open tasks to PDF (@react-pdf/renderer)",
+                  "Inventory: products with SKU, price (UGX), stock, category",
+                  "Six seeded categories: Tools, Hardware, Paint, Plumbing, Electrical, Other",
+                  "Low-stock alerts (configurable per product)",
+                  "POS sale screen: product search, cart, live total",
+                  "Three payment methods: Cash, Mobile Money, Card",
+                  "Optional customer name + phone capture",
+                  "Receipt PDF download (@react-pdf/renderer)",
+                  "Sales history with date-range filtering",
+                  "Dashboard: today's revenue, top products, weekly chart",
                   "Light + dark mode",
                   "Deployed to Vercel + custom domain",
                 ].map((item) => (
@@ -194,13 +219,15 @@ export default function TutorialPage() {
               </h3>
               <ul className="mt-4 space-y-2.5 text-[14.5px] text-[color:var(--text-primary)]">
                 {[
-                  "Planning a project with Claude before any code",
+                  "Planning a real product with Claude before any code",
                   "Reading a phase-by-phase build plan",
-                  "Using Prisma v7 patterns (not v6) on Neon Postgres",
+                  "Modeling transactional data in Prisma v7 (Sale + SaleItem pattern)",
                   "Wiring auth-guarded API routes with Zod validation",
-                  "Installing JB components instead of writing from scratch",
-                  "Running React Query + React Hook Form correctly",
-                  "Generating PDFs with @react-pdf/renderer",
+                  "Atomic stock decrements inside Prisma transactions",
+                  "Building a fast product search with React Query",
+                  "Generating styled PDFs with @react-pdf/renderer",
+                  "Aggregating data with groupBy for dashboards",
+                  "Currency formatting (UGX, no decimals, comma-separated)",
                   "Running a senior-level pre-deploy audit",
                   "Deploying with Vercel + Cloudflare DNS + SSL",
                 ].map((item) => (
@@ -217,7 +244,7 @@ export default function TutorialPage() {
             {[
               { label: "Total time", value: "~3 hrs" },
               { label: "Modules", value: "8" },
-              { label: "Lines of code you write", value: "~0" },
+              { label: "Lines you write", value: "~0" },
               { label: "Cost (free tiers)", value: "$0" },
             ].map((s) => (
               <div
@@ -239,7 +266,7 @@ export default function TutorialPage() {
         <Section
           eyebrow="THE 8 MODULES"
           title="The full path."
-          description="Click any module to jump in. Modules build on each other — follow them in order on your first run."
+          description="Click any module to jump in. They build on each other — follow them in order on your first run."
           containerClassName="max-w-4xl"
         >
           <ol className="grid gap-3 sm:grid-cols-2">
@@ -307,52 +334,51 @@ export default function TutorialPage() {
         {/* MODULE 02 */}
         <ModuleSection slug="module-02" eyebrow="MODULE 02 · 15 min" title="Plan with Claude (claude.ai)">
           <p>
-            VibeKit's planning step turns a one-line idea into 4 production-ready files. You paste a prompt, answer some questions, and Claude does the rest.
+            VibeKit's planning step turns a one-line idea into 4 production-ready files. You paste a prompt, answer questions, and Claude does the rest.
           </p>
 
           <h3>Step 1 — Open the planning prompt</h3>
           <p>
-            Go to <a href="/docs/quickstart">/docs/quickstart</a> and copy <code>CLAUDE_PROMPT.md</code> from the first code block (or use the GitHub copy: <a href={`${SITE.github}/blob/main/CLAUDE_PROMPT.md`} target="_blank" rel="noopener noreferrer">CLAUDE_PROMPT.md</a>).
+            Go to <a href="/docs/quickstart">/docs/quickstart</a> and copy <code>CLAUDE_PROMPT.md</code> from the first code block (or grab it directly from <a href={`${SITE.github}/blob/main/CLAUDE_PROMPT.md`} target="_blank" rel="noopener noreferrer">the repo</a>).
           </p>
 
           <h3>Step 2 — Open Claude</h3>
           <p>
-            Go to <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer">claude.ai/new</a>. Paste the entire <code>CLAUDE_PROMPT.md</code> as your first message. Then on a new line, paste the TaskFlow brief:
+            Go to <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer">claude.ai/new</a>. Paste the entire <code>CLAUDE_PROMPT.md</code> as your first message. Then on a new line, paste the HardwarePOS brief:
           </p>
 
           <CopyBlock
             filename="Append after CLAUDE_PROMPT.md content"
-            label="TaskFlow brief"
-            code={taskFlowIdea}
+            label="HardwarePOS brief"
+            code={hardwarePosIdea}
           />
 
           <h3>Step 3 — Answer Claude's questions</h3>
-          <p>
-            Claude will ask 6–10 questions: data model, dark mode, file uploads, etc. Suggested answers for TaskFlow:
-          </p>
+          <p>Claude will ask 6–10 questions. Suggested answers for HardwarePOS:</p>
           <ul>
-            <li><strong>Data model:</strong> single Task entity with `title, notes, dueDate, priority (Low/Med/High), status (Open/InProgress/Done), categoryId, userId`. Single Category entity with `name, color, userId`.</li>
-            <li><strong>User roles:</strong> single role — every user manages their own tasks. No admin.</li>
+            <li><strong>Data model:</strong> Category, Product, Sale, SaleItem (line items per sale). User owns everything.</li>
+            <li><strong>User roles:</strong> single role — the shop owner. No multi-user.</li>
             <li><strong>Auth:</strong> Better Auth with Email + Google OAuth.</li>
-            <li><strong>Email:</strong> Resend (welcome email + password reset only).</li>
-            <li><strong>Payments:</strong> None.</li>
+            <li><strong>Email:</strong> Resend (welcome email + password reset only — no transactional email for sales).</li>
+            <li><strong>Payments:</strong> None on the gateway side. Payment method is just a label captured at checkout (Cash / Mobile Money / Card) — no Stripe integration.</li>
             <li><strong>File uploads:</strong> None.</li>
+            <li><strong>PDF:</strong> Yes — for sale receipts and the daily sales report.</li>
+            <li><strong>Excel:</strong> Optional — nice to have for the sales history export.</li>
             <li><strong>Dark mode:</strong> Yes.</li>
             <li><strong>Brand color:</strong> indigo (#4F46E5).</li>
             <li><strong>Typography:</strong> Geist + JetBrains Mono.</li>
-            <li><strong>Aesthetic:</strong> "clean, focused, fast" — inspired by Linear and Vercel dashboard.</li>
+            <li><strong>Aesthetic:</strong> "fast, focused, large numbers" — Linear / Vercel dashboard energy. The cashier reads totals at a glance.</li>
           </ul>
 
           <h3>Step 4 — Save the 4 files</h3>
-          <p>Claude will output 4 files in code blocks. Create a folder for your project and save each one:</p>
+          <p>Claude will output 4 files in code blocks. Create a project folder and save each one:</p>
 
           <CopyBlock
             filename="terminal"
             label="Create the project folder"
-            code={`mkdir taskflow && cd taskflow
-mkdir -p docs
+            code={`mkdir hardware-pos && cd hardware-pos
 
-# Save Claude's output into these 4 files (copy-paste each code block):
+# Save Claude's output into these 4 files (copy each code block):
 # - project-description.md
 # - project-phases.md
 # - design-style-guide.md
@@ -360,20 +386,20 @@ mkdir -p docs
           />
 
           <Tip>
-            If Claude generates anything with placeholders like <code>[App Name]</code> or <code>[Feature]</code>, ask it to "fill in every placeholder with TaskFlow specifics — no brackets remaining."
+            If Claude leaves any placeholders like <code>[App Name]</code> or <code>[Feature]</code>, ask: <em>"Fill every placeholder with HardwarePOS specifics — no brackets remaining."</em>
           </Tip>
         </ModuleSection>
 
         {/* MODULE 03 */}
         <ModuleSection slug="module-03" eyebrow="MODULE 03 · 10 min" title="Initialize the project">
           <p>
-            Now we scaffold the Next.js 16 project, copy the framework's coding constitution into it, and open Claude Code.
+            Scaffold the Next.js 16 project, copy the framework's coding constitution into it, open your coding agent.
           </p>
 
           <h3>Step 1 — Scaffold Next.js</h3>
           <CopyBlock
             filename="terminal"
-            label="From inside the taskflow folder"
+            label="From inside the hardware-pos folder"
             code={`pnpm create next-app@latest . --typescript --tailwind --app --eslint --import-alias "@/*" --turbopack --no-src-dir`}
           />
           <p>Accept the prompts. When it finishes, you have a base Next.js 16 project.</p>
@@ -382,7 +408,7 @@ mkdir -p docs
           <p>Clone the VibeKit repo to grab the framework files:</p>
           <CopyBlock
             filename="terminal"
-            label="One-time clone (you can delete after copying)"
+            label="One-time clone (delete after copying)"
             code={`git clone https://github.com/MUKE-coder/vibekit.git /tmp/vibekit
 
 cp /tmp/vibekit/master_prompt.md ./master_prompt.md
@@ -395,46 +421,46 @@ cp /tmp/vibekit/pre-deploy-review.md ./pre-deploy-review.md`}
           <CopyBlock
             filename="ls -la"
             label="Expected files"
-            code={`taskflow/
+            code={`hardware-pos/
 ├── master_prompt.md            # framework — coding rules
 ├── jb-components.md            # framework — component registry
 ├── pre-deploy-review.md        # framework — security audit prompt
 ├── project-description.md      # generated by Claude
 ├── project-phases.md           # generated by Claude
 ├── design-style-guide.md       # generated by Claude
-├── prompt.md                   # generated by Claude — you'll paste this
+├── prompt.md                   # generated by Claude — paste this next
 └── package.json + Next.js scaffold`}
           />
 
           <h3>Step 4 — Open in your coding agent</h3>
           <p>
-            Open the <code>taskflow</code> folder in Claude Code (<code>claude</code> in the project terminal), Cursor, Cline, or whichever agent you chose.
+            Open the <code>hardware-pos</code> folder in Claude Code (<code>claude</code> in the project terminal), Cursor, Cline, or whichever agent you chose.
           </p>
         </ModuleSection>
 
         {/* MODULE 04 */}
         <ModuleSection slug="module-04" eyebrow="MODULE 04 · 30 min" title="Phase 1 — Foundation">
           <p>
-            This is the first big build moment. Your agent will read all 7 files, then execute Phase 1 from <code>project-phases.md</code>: Prisma + Neon, Better Auth, layout shell, design tokens, custom 404/error pages.
+            First big build moment. Your agent reads all 7 files, then executes Phase 1: Prisma + Neon, Better Auth, layout shell, design tokens, custom 404/error pages.
           </p>
 
           <h3>Step 1 — Get a Neon database URL</h3>
           <ol>
             <li>Go to <a href="https://console.neon.tech" target="_blank" rel="noopener noreferrer">console.neon.tech</a> and create a new project.</li>
-            <li>From the dashboard, copy the connection string (starts with <code>postgres://</code>).</li>
-            <li>Make sure it's the direct (non-pooled) connection for migrations.</li>
+            <li>Copy the connection string (starts with <code>postgres://</code>).</li>
+            <li>Use the direct (non-pooled) connection — Prisma migrations require it.</li>
           </ol>
 
           <h3>Step 2 — Paste the build prompt</h3>
           <p>In your coding agent, paste the entire contents of <code>prompt.md</code> as your first message. The agent will:</p>
           <ol>
             <li>Read <code>master_prompt.md</code>, <code>design-style-guide.md</code>, <code>jb-components.md</code>, <code>project-description.md</code>, <code>project-phases.md</code></li>
-            <li>Plan Phase 1 tasks and start executing</li>
+            <li>Execute Phase 1 tasks</li>
             <li>Stop after Phase 1 for your confirmation</li>
           </ol>
 
           <h3>Step 3 — Provide secrets when asked</h3>
-          <p>The agent will create <code>.env.local</code> and ask for values. Provide:</p>
+          <p>The agent creates <code>.env.local</code> and asks for values. Provide:</p>
           <CopyBlock
             filename=".env.local"
             label="Phase 1 minimum env vars"
@@ -442,7 +468,7 @@ cp /tmp/vibekit/pre-deploy-review.md ./pre-deploy-review.md`}
 BETTER_AUTH_SECRET="<run: openssl rand -base64 32>"
 BETTER_AUTH_URL="http://localhost:3000"
 
-# Optional but recommended for dev
+# Optional but recommended
 RESEND_API_KEY=""
 RESEND_FROM_EMAIL="onboarding@resend.dev"
 
@@ -451,213 +477,361 @@ GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""`}
           />
 
-          <h3>Step 4 — Run the migration</h3>
+          <h3>Step 4 — Push the schema + start dev</h3>
           <CopyBlock
             filename="terminal"
-            label="Generate Prisma client + push schema to Neon"
+            label="Phase 1 verification"
             code={`pnpm db:push
-pnpm db:generate`}
+pnpm db:generate
+pnpm dev`}
           />
-
-          <h3>Step 5 — Start the dev server + verify</h3>
-          <CopyBlock filename="terminal" label="Start dev" code={`pnpm dev`} />
-          <p>Open <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer">http://localhost:3000</a>. You should see:</p>
+          <p>Open <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer">http://localhost:3000</a> and verify:</p>
           <ul>
-            <li>Landing → /auth/sign-in</li>
+            <li>Landing page redirects unauthenticated users to /auth/sign-in</li>
             <li>Sign up with email or Google works</li>
             <li>You land on /dashboard (currently empty)</li>
             <li>Sidebar layout with theme toggle (light/dark)</li>
           </ul>
 
           <Tip>
-            Stuck? Tell the agent: <em>"Verify all of Phase 1's tasks are complete. Read project-phases.md and check off what's done."</em> If any are unfinished, it will fix them.
+            Stuck? Tell the agent: <em>"Verify all of Phase 1's tasks are complete. Read project-phases.md and check off what's done."</em> Anything unfinished, it'll fix.
           </Tip>
         </ModuleSection>
 
         {/* MODULE 05 */}
-        <ModuleSection slug="module-05" eyebrow="MODULE 05 · 45 min" title="Phase 2 — Tasks CRUD">
+        <ModuleSection slug="module-05" eyebrow="MODULE 05 · 30 min" title="Phase 2 — Products & Inventory">
           <p>
-            The core of the app. The agent will build the Tasks model, API routes, list page, forms, and dashboard cards.
+            Build the inventory side first — the cashier needs products to exist before they can sell. Categories + Products with full CRUD, plus low-stock badges.
           </p>
 
           <h3>Step 1 — Confirm Phase 1 done, start Phase 2</h3>
-          <p>Tell the agent:</p>
           <CopyBlock
             label="Prompt"
-            code={`Phase 1 is verified working. Proceed to Phase 2 — Core Features. Build the Task and Category Prisma models, the API routes (with auth guards + Zod), the /dashboard task list with the JB Data Table, the create/edit forms with React Hook Form + Zod, and the dashboard stat cards. Stop after Phase 2 is complete and ask me to verify.`}
+            code={`Phase 1 is verified working. Proceed to Phase 2 — Products & Inventory.
+
+Build:
+- Category and Product Prisma models (schema below)
+- A seed script that inserts the 6 categories on first run: Tools, Hardware, Paint, Plumbing, Electrical, Other
+- API routes /api/categories and /api/products with auth guards + Zod validation
+- /inventory page using JB Data Table to list products with columns: SKU, Name, Category, Price (UGX), Stock, Status (low-stock badge)
+- /inventory/new and /inventory/[id]/edit pages with React Hook Form + Zod
+- A formatUGX(amount: number) utility in lib/format.ts that returns "UGX 25,000" style strings (no decimals, comma separators)
+
+Stop after Phase 2 is complete and ask me to verify.`}
           />
 
           <h3>Step 2 — Verify the schema</h3>
           <p>The agent should produce a Prisma schema like this. If it differs, ask for these exact fields:</p>
           <CopyBlock
             filename="prisma/schema.prisma"
-            label="Tasks + Categories"
+            label="Categories + Products"
             code={`model Category {
-  id        String   @id @default(cuid())
-  name      String
-  color     String   @default("#4F46E5")
+  id        String    @id @default(cuid())
+  name      String    @unique
+  color     String    @default("#4F46E5")
+  products  Product[]
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tasks     Task[]
-  createdAt DateTime @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
 }
 
-model Task {
-  id          String     @id @default(cuid())
-  title       String
-  notes       String?
-  dueDate     DateTime?
-  priority    Priority   @default(MEDIUM)
-  status      TaskStatus @default(OPEN)
-  categoryId  String?
-  category    Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  userId      String
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-}
+model Product {
+  id                  String     @id @default(cuid())
+  sku                 String
+  name                String
+  priceUgx            Int        // store as integer, no decimals
+  stockQuantity       Int        @default(0)
+  lowStockThreshold   Int        @default(5)
+  categoryId          String
+  category            Category   @relation(fields: [categoryId], references: [id])
+  saleItems           SaleItem[]
+  userId              String
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 
-enum Priority { LOW MEDIUM HIGH }
-enum TaskStatus { OPEN IN_PROGRESS DONE }`}
+  @@unique([userId, sku])  // SKUs unique per user
+  @@index([userId])
+  @@index([categoryId])
+}`}
           />
 
-          <h3>Step 3 — Test the CRUD flow</h3>
+          <h3>Step 3 — Test inventory CRUD</h3>
           <ol>
-            <li>Create 2–3 categories (Work, Personal, Learning)</li>
-            <li>Create 5+ tasks across categories with different priorities and due dates</li>
-            <li>Mark some as Done, edit one, delete one</li>
-            <li>Refresh the dashboard — stat cards should update</li>
-            <li>Search by task title — should filter live (React Query)</li>
+            <li>Verify the 6 categories appear in the sidebar / category dropdown</li>
+            <li>Add 8–10 products across categories (e.g. <code>NAIL-3IN</code> 3-inch nails 800 UGX stock 200; <code>PAINT-WHT-4L</code> White paint 4L 45,000 UGX stock 12)</li>
+            <li>Edit a product's stock down to 2 — confirm the low-stock badge appears</li>
+            <li>Delete a product — confirm it's removed</li>
+            <li>Search by SKU and by name — both should work in the data table</li>
           </ol>
 
           <Tip>
-            See <code>useEffect</code> for data fetching anywhere? Tell the agent: <em>"Replace useEffect data fetching with useQuery from @tanstack/react-query in [file]. The master_prompt forbids useEffect for data."</em>
+            UGX prices stored as integers (not decimals) avoids rounding bugs. The <code>formatUGX()</code> utility handles display. Tell your agent if it tries to use Decimal/Float for currency — that's a foot-gun.
           </Tip>
         </ModuleSection>
 
         {/* MODULE 06 */}
-        <ModuleSection slug="module-06" eyebrow="MODULE 06 · 20 min" title="Phase 3 — Polish (PDF export + filters)">
+        <ModuleSection slug="module-06" eyebrow="MODULE 06 · 45 min" title="Phase 3 — POS Sale flow + Receipt PDF">
           <p>
-            Add the production touches. PDF export shows off <code>@react-pdf/renderer</code>, and filters give the dashboard real utility.
+            The core of the app. Cashier searches a product, adds to cart, sets quantity, picks payment, completes sale. Stock decrements atomically. PDF receipt downloads immediately.
           </p>
 
-          <h3>Step 1 — PDF export</h3>
+          <h3>Step 1 — Add the Sale + SaleItem schema</h3>
           <CopyBlock
             label="Prompt"
-            code={`Add a "Export Open Tasks to PDF" button on the /dashboard page (top-right of the page header). Use @react-pdf/renderer to build the PDF — page header has the user's name and date, then a table of open tasks with columns: Title, Category, Priority, Due Date. Use the existing design tokens (Inter font, indigo accent for headings). Trigger download client-side. Do not modify any other functionality.`}
-          />
+            code={`Phase 2 is verified. Proceed to Phase 3 — POS Sale flow.
 
-          <h3>Step 2 — Category + status filters on the task list</h3>
-          <CopyBlock
-            label="Prompt"
-            code={`On the task list page, add two filter dropdowns above the data table: Category (All / each category) and Status (All / Open / In Progress / Done). The filters should live in the URL as query params (?category=&status=) so they survive page refresh. Use the existing JB Searchable Select component. Wire to the existing /api/tasks route by extending the search params on the server.`}
-          />
+Add to the Prisma schema:
 
-          <h3>Step 3 — Quick-add input on the dashboard</h3>
-          <CopyBlock
-            label="Prompt"
-            code={`Add a "Quick add task" input at the top of the /dashboard page above the stat cards. Press Enter to create a task with the typed title (defaults: priority MEDIUM, status OPEN, no category). Optimistic update — the task appears immediately, then reconciles with the server response via React Query.`}
+model Sale {
+  id              String        @id @default(cuid())
+  totalUgx        Int
+  paymentMethod   PaymentMethod
+  customerName    String?
+  customerPhone   String?
+  items           SaleItem[]
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  @@index([userId, createdAt])
+}
+
+model SaleItem {
+  id          String   @id @default(cuid())
+  saleId      String
+  sale        Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  productName String   // snapshot of product name at sale time
+  productSku  String   // snapshot of SKU at sale time
+  unitPriceUgx Int     // snapshot of price at sale time
+  quantity     Int
+  lineTotalUgx Int
+  @@index([saleId])
+  @@index([productId])
+}
+
+enum PaymentMethod { CASH MOBILE_MONEY CARD }
+
+Then run pnpm db:push and pnpm db:generate.`}
           />
 
           <Tip>
-            Test on mobile! Open Chrome devtools → toggle device toolbar → 375px width. Your design-style-guide.md should already make it responsive, but the dashboard cards sometimes need a tweak.
+            Why snapshot productName/productSku/unitPriceUgx on each SaleItem? Because product details change over time, but a historical sale receipt should reflect what was sold at that moment. This is a real-world pattern that AI agents often skip — make sure it's there.
           </Tip>
+
+          <h3>Step 2 — Build the POS screen</h3>
+          <CopyBlock
+            label="Prompt"
+            code={`Build /pos as the main POS screen with this layout:
+
+LEFT (60%) — Product search + grid:
+- Search input at top (search by SKU or product name)
+- Product grid below: each card shows SKU, name, price (UGX), stock. Click adds 1 to cart (or increments quantity if already in cart). Out-of-stock products are visually disabled.
+- Use React Query for product data with staleTime 30000.
+
+RIGHT (40%) — Cart:
+- "New Sale" header
+- List of cart items: product name, qty controls (+/-), unit price, line total, remove button
+- Optional customer name + phone fields
+- Payment method select: Cash / Mobile Money / Card
+- Live total in big numbers (32px font, accent color)
+- "Complete Sale" button (disabled when cart is empty)
+
+API:
+POST /api/sales accepts { items: [{ productId, quantity }], paymentMethod, customerName?, customerPhone? } and:
+1. Validates with Zod
+2. Wraps everything in db.$transaction:
+   a. Reads each product (FOR UPDATE not needed — Prisma handles this with the txn)
+   b. Verifies stock >= quantity for each item; throws 400 if not
+   c. Creates the Sale with snapshot SaleItems (copy productName, sku, unitPriceUgx)
+   d. Decrements product stockQuantity by quantity for each item
+3. Returns the new sale id
+
+After successful sale, redirect to /sales/[id] which shows the sale detail + a "Download Receipt" button.
+
+Use the existing JB Searchable Select for the payment method dropdown.`}
+          />
+
+          <h3>Step 3 — Receipt PDF with @react-pdf/renderer</h3>
+          <CopyBlock
+            label="Prompt"
+            code={`Build /api/sales/[id]/receipt that returns a PDF response using @react-pdf/renderer.
+
+The receipt should look like a real till receipt:
+- Centered header: shop name placeholder ("HARDWARE POS"), "RECEIPT" subtitle, date/time
+- Sale ID (last 8 chars), payment method, optional customer name/phone
+- Line items table: SKU | Item | Qty | Unit Price | Line Total
+- Total row in bold
+- Footer: "Thank you for your purchase"
+- Use Helvetica or the closest equivalent in @react-pdf — small fonts (10–11pt)
+- A4 portrait page size
+- Currency formatted via formatUGX()
+
+Wire the "Download Receipt" button on the sale detail page to fetch this endpoint and download the file as receipt-<saleId>.pdf.`}
+          />
+
+          <h3>Step 4 — Test a real sale end-to-end</h3>
+          <ol>
+            <li>Open /pos, search "nail", add to cart</li>
+            <li>Adjust quantity to 5, search "paint", add to cart</li>
+            <li>Verify the live total matches manually (5 × nail price + 1 × paint price)</li>
+            <li>Type a customer name and phone</li>
+            <li>Pick "Mobile Money" as payment method</li>
+            <li>Click Complete Sale → you land on /sales/[id]</li>
+            <li>Download the receipt PDF and open it</li>
+            <li>Go to /inventory — verify stock decremented for both products</li>
+          </ol>
         </ModuleSection>
 
         {/* MODULE 07 */}
-        <ModuleSection slug="module-07" eyebrow="MODULE 07 · 30 min" title="Pre-deploy review">
+        <ModuleSection slug="module-07" eyebrow="MODULE 07 · 25 min" title="Phase 4 — Dashboard + Sales History">
           <p>
-            This is the highest-value step in the whole framework. Skipping it is how SaaS projects ship with unauthenticated routes.
+            With sales flowing, the dashboard becomes useful. Today's revenue, top products, low-stock counter, weekly chart. Plus the full sales history.
           </p>
 
-          <h3>Step 1 — Run the audit</h3>
-          <p>
-            Open <a href="/docs/quickstart#step-7">Step 7 of the quickstart</a> (or grab <code>pre-deploy-review.md</code> from your project root). Paste the entire prompt into your coding agent.
-          </p>
-
-          <h3>Step 2 — Review the report</h3>
-          <p>The agent writes findings to <code>pre-deploy-review-report.md</code>. Expect to see issues like:</p>
-          <ul>
-            <li><strong>Critical</strong> — missing rate limiting on auth endpoints, unauthenticated routes (rare with VibeKit but possible)</li>
-            <li><strong>High</strong> — N+1 queries on the dashboard stat cards, missing indexes on `dueDate`</li>
-            <li><strong>Medium</strong> — verbose console.log in production paths, missing Suspense boundaries</li>
-          </ul>
-
-          <h3>Step 3 — Address every Critical</h3>
-          <p>For each Critical, paste back to the agent:</p>
+          <h3>Step 1 — Dashboard analytics</h3>
           <CopyBlock
             label="Prompt"
-            code={`Fix Critical issue #1 from pre-deploy-review-report.md. Apply the suggested fix exactly, run a quick test, and confirm the issue is resolved. Do not introduce new changes outside the scope of this fix.`}
+            code={`Build /dashboard with these sections:
+
+STAT CARDS ROW (4 cards across):
+- Today's Revenue (UGX) — sum of Sale.totalUgx where DATE(createdAt) = today
+- Today's Transactions — count of sales today
+- Low-Stock Alerts — count of products where stockQuantity <= lowStockThreshold
+- This Week's Revenue — sum of Sale.totalUgx where createdAt >= start of current ISO week
+
+Each card: label (uppercase mono 11px), big number (28px semibold), small comparison vs yesterday/last week (12px secondary).
+
+WEEKLY REVENUE CHART:
+- Bar chart of daily revenue for the last 7 days
+- Use a simple SVG bar chart in a custom component (no external chart library needed for 7 bars)
+- Labels: day name (Mon, Tue, ...). Y-axis: UGX values formatted with formatUGX.
+- Bar color: var(--accent), with bg-muted fill for the active day's bar
+
+TOP 5 PRODUCTS THIS WEEK:
+- Aggregate SaleItem rows where Sale.createdAt >= start of week
+- groupBy productId, sum quantity, sum lineTotalUgx
+- Display as a table: rank, name, units sold, revenue
+- Order by units sold descending
+
+LOW-STOCK LIST:
+- List of products where stockQuantity <= lowStockThreshold
+- Show name, SKU, current stock, threshold
+- Link to /inventory/[id]/edit
+
+All queries should be in API routes, scoped to session.user.id, served via React Query.`}
           />
 
-          <h3>Step 4 — Re-run until zero Criticals</h3>
-          <p>After fixing, paste the audit prompt again. Iterate until the Critical count is 0. High and Medium can wait until after launch.</p>
+          <h3>Step 2 — Sales history page</h3>
+          <CopyBlock
+            label="Prompt"
+            code={`Build /sales — full sales history list:
+
+- JB Data Table with columns: Date (formatted "Jan 15, 2024 14:30"), Sale ID (last 8 chars), Items count, Payment Method (badge), Total (UGX, right-aligned monospace), Customer (if any), Action (View)
+- Server-side pagination via /api/sales (page, limit, default 20)
+- Filters above the table:
+  - Date range picker (default: last 30 days)
+  - Payment method dropdown (All / Cash / Mobile Money / Card)
+- Filter state lives in URL query params so refresh preserves it
+- "Export today's sales as PDF" button at the top — generates a daily report PDF with a header summary + sales table
+
+Clicking a row goes to /sales/[id] (already exists from Phase 3) showing full line items and the receipt download button.`}
+          />
+
+          <h3>Step 3 — Test the analytics</h3>
+          <ol>
+            <li>Make 3–5 sales of varying amounts and payment methods</li>
+            <li>Refresh /dashboard — verify the 4 stat cards reflect those sales</li>
+            <li>Check the weekly revenue chart — today's bar should be highlighted</li>
+            <li>Verify the top-5 products list orders correctly</li>
+            <li>Drop a product's stock to below threshold — verify it appears in low-stock list</li>
+            <li>On /sales, filter to "Mobile Money only" — verify the URL updates and the table filters</li>
+            <li>Export today's sales as PDF — open the file, verify totals match the dashboard</li>
+          </ol>
         </ModuleSection>
 
         {/* MODULE 08 */}
-        <ModuleSection slug="module-08" eyebrow="MODULE 08 · 20 min" title="Deploy to Vercel">
-          <p>The home stretch. Push to GitHub, link to Vercel, set env vars, point a domain.</p>
+        <ModuleSection slug="module-08" eyebrow="MODULE 08 · 40 min" title="Pre-deploy review + Deploy">
+          <p>The two highest-leverage steps: catch security holes before launch, then ship.</p>
 
-          <h3>Step 1 — Push to GitHub</h3>
+          <h3>Step 1 — Run the pre-deploy audit</h3>
+          <p>
+            Open <a href="/docs/quickstart#step-7">Step 7 of the quickstart</a> (or open <code>pre-deploy-review.md</code> in your project root). Paste the entire prompt into your coding agent.
+          </p>
+          <p>The agent writes findings to <code>pre-deploy-review-report.md</code>. Expected for HardwarePOS:</p>
+          <ul>
+            <li><strong>Critical</strong> — missing rate limiting on auth, possibly missing transaction wrapping on the sale endpoint (this would let stock go negative under concurrent sales)</li>
+            <li><strong>High</strong> — missing index on Sale.createdAt for the dashboard date queries, N+1 on the sales history when fetching items count</li>
+            <li><strong>Medium</strong> — missing Zod refinements (e.g. quantity must be &gt; 0), verbose console.log on success paths</li>
+          </ul>
+
+          <h3>Step 2 — Fix every Critical</h3>
+          <p>For each Critical, paste back to the agent:</p>
+          <CopyBlock
+            label="Prompt"
+            code={`Fix Critical issue #1 from pre-deploy-review-report.md. Apply the suggested fix exactly, run a quick test, confirm the issue is resolved. Do not introduce changes outside the scope of this fix.`}
+          />
+          <p>Re-run the audit until Critical count = 0. High and Medium can wait until after launch.</p>
+
+          <h3>Step 3 — Push to GitHub</h3>
           <CopyBlock
             filename="terminal"
             label="Initial commit + push"
             code={`git init
 git add .
-git commit -m "Initial commit — TaskFlow built with VibeKit"
-gh repo create taskflow --private --source=. --push
-# OR manually create a repo on github.com and:
-# git remote add origin https://github.com/YOU/taskflow.git
+git commit -m "Initial commit — HardwarePOS built with VibeKit"
+gh repo create hardware-pos --private --source=. --push
+# OR manually create on github.com and:
+# git remote add origin https://github.com/YOU/hardware-pos.git
 # git push -u origin main`}
           />
 
-          <h3>Step 2 — Import to Vercel</h3>
+          <h3>Step 4 — Import to Vercel + set env vars</h3>
           <ol>
             <li>Go to <a href="https://vercel.com/new" target="_blank" rel="noopener noreferrer">vercel.com/new</a></li>
-            <li>Import the <code>taskflow</code> repo</li>
-            <li>Framework preset: <strong>Next.js</strong> (auto-detected)</li>
+            <li>Import the <code>hardware-pos</code> repo. Framework auto-detects as Next.js.</li>
             <li>Build command: <code>prisma generate &amp;&amp; prisma migrate deploy &amp;&amp; next build</code></li>
-            <li>Don't deploy yet — set env vars first</li>
+            <li>Don't deploy yet — set env vars first.</li>
           </ol>
-
-          <h3>Step 3 — Set production env vars</h3>
           <CopyBlock
-            filename="Vercel → Project → Settings → Environment Variables"
+            filename="Vercel → Settings → Environment Variables"
             label="Production env"
             code={`DATABASE_URL=<your Neon prod connection string>
 BETTER_AUTH_SECRET=<a NEW 32+ char string, NOT the dev one>
-BETTER_AUTH_URL=https://taskflow.vercel.app
+BETTER_AUTH_URL=https://hardware-pos.vercel.app
 RESEND_API_KEY=<from resend.com>
-RESEND_FROM_EMAIL=noreply@taskflow.com
+RESEND_FROM_EMAIL=noreply@yourshop.com
 GOOGLE_CLIENT_ID=<from Google Cloud Console>
 GOOGLE_CLIENT_SECRET=<from Google Cloud Console>
-NEXT_PUBLIC_APP_URL=https://taskflow.vercel.app`}
+NEXT_PUBLIC_APP_URL=https://hardware-pos.vercel.app`}
           />
 
-          <h3>Step 4 — Add OAuth redirect URI</h3>
+          <h3>Step 5 — Add OAuth redirect URI</h3>
           <p>In Google Cloud Console → APIs & Services → Credentials → your OAuth client → Authorized redirect URIs, add:</p>
           <CopyBlock
             label="Production redirect"
-            code={`https://taskflow.vercel.app/api/auth/callback/google`}
+            code={`https://hardware-pos.vercel.app/api/auth/callback/google`}
           />
 
-          <h3>Step 5 — Deploy</h3>
-          <p>Hit <strong>Deploy</strong>. Wait ~2 minutes. Visit the URL and run through the full flow:</p>
+          <h3>Step 6 — Deploy + smoke test</h3>
+          <p>Hit <strong>Deploy</strong>. Wait ~2 min. Visit the URL and run through the full flow:</p>
           <ul>
-            <li>Sign up with email + verify the welcome email lands</li>
-            <li>Sign in with Google</li>
-            <li>Create tasks, mark done, export PDF</li>
-            <li>Toggle dark mode</li>
-            <li>Test on mobile</li>
+            <li>Sign up + verify welcome email</li>
+            <li>Add 5 products in /inventory</li>
+            <li>Make a real sale via /pos with Mobile Money payment</li>
+            <li>Download the receipt PDF</li>
+            <li>Verify the dashboard updated</li>
+            <li>Toggle dark mode on a phone</li>
           </ul>
 
-          <h3>Step 6 — Custom domain (optional)</h3>
+          <h3>Step 7 — Custom domain (optional)</h3>
           <ol>
             <li>Buy a domain on Cloudflare Registrar (or your provider)</li>
-            <li>In Vercel: Settings → Domains → add your domain</li>
-            <li>In Cloudflare DNS: add the CNAME / A records Vercel shows you (set to <strong>DNS only</strong>, not proxied)</li>
+            <li>Vercel → Settings → Domains → add your domain</li>
+            <li>Cloudflare DNS → add the records Vercel shows (set to <strong>DNS only</strong>, grey cloud, not orange)</li>
             <li>Update <code>BETTER_AUTH_URL</code> and <code>NEXT_PUBLIC_APP_URL</code> to the custom domain</li>
-            <li>Update Google OAuth redirect URI to the custom domain</li>
+            <li>Add the new redirect URI in Google Cloud Console</li>
             <li>Redeploy</li>
           </ol>
 
@@ -666,7 +840,7 @@ NEXT_PUBLIC_APP_URL=https://taskflow.vercel.app`}
               You shipped it.
             </h3>
             <p className="mt-3 text-[15px] text-[color:var(--text-primary)]">
-              That's a real SaaS, deployed to a custom domain, with auth, payments-ready, audited for security. Not a tutorial toy.
+              That's a real POS — auth, transactions, atomic stock decrements, downloadable receipts, audited for security, deployed to a custom domain. A hardware shop owner could actually use this.
             </p>
             <p className="mt-3 text-[14px] text-[color:var(--text-secondary)]">
               Share what you built in the <a href={SITE.community} target="_blank" rel="noopener noreferrer" className="text-[color:var(--accent)] underline">community</a> — and tag it with <code>#shipped-with-vibekit</code>.
@@ -678,17 +852,17 @@ NEXT_PUBLIC_APP_URL=https://taskflow.vercel.app`}
         <Section
           eyebrow="WHAT'S NEXT"
           title="Take it further."
-          description="The skills you just learned scale to anything. Some natural next steps:"
+          description="The patterns you just learned scale to anything. Some natural next steps for HardwarePOS or your next build:"
           containerClassName="max-w-3xl"
         >
           <ul className="grid gap-3 sm:grid-cols-2">
             {[
-              { title: "Add Stripe billing", body: "Install JB Stripe UI + Zustand Cart. Gate features behind subscription status. ~1 hour." },
-              { title: "Mobile money checkout", body: "Install JB DGateway Shop for African market payments. ~45 min." },
-              { title: "AI features", body: "Add task suggestions or auto-categorization with the Vercel AI SDK. ~1 hour." },
-              { title: "File uploads", body: "Add task attachments with JB File Storage UI (R2 or S3). ~30 min." },
-              { title: "Build something else", body: "Restart from Module 02 with a new app idea. The flow is repeatable." },
-              { title: "Contribute a component", body: "Built something reusable? Add it to the JB Component Registry." },
+              { title: "Add real Mobile Money", body: "Install JB DGateway Shop and wire actual MoMo settlement to the sale flow. ~45 min." },
+              { title: "Multi-cashier support", body: "Add a 'cashier' role + sale.cashierId so you can see who rang up which sales. ~30 min." },
+              { title: "Barcode scanner input", body: "Hook a USB scanner into the SKU search — it's just keyboard input. ~15 min." },
+              { title: "Stock-in / restock flow", body: "Track inventory deliveries with a separate StockMovement model. ~45 min." },
+              { title: "Daily Z-report (end of day)", body: "Closing report with sales by payment method + cash drawer reconciliation. ~30 min." },
+              { title: "Build something else", body: "Restart from Module 02 with a new app idea. The flow is fully repeatable." },
             ].map((n) => (
               <li
                 key={n.title}
@@ -709,7 +883,7 @@ NEXT_PUBLIC_APP_URL=https://taskflow.vercel.app`}
               Browse all components
             </Button>
             <Button href="/contribute" variant="outline" size="md">
-              <GitBranch className="h-4 w-4" />
+              <Rocket className="h-4 w-4" />
               Contribute a component
             </Button>
             <Button href={SITE.community} variant="outline" size="md">
@@ -720,7 +894,7 @@ NEXT_PUBLIC_APP_URL=https://taskflow.vercel.app`}
       </main>
       <Footer />
 
-      {/* HowTo + Course schema for AEO */}
+      {/* HowTo schema for AEO */}
       <Script
         id="ld-tutorial"
         type="application/ld+json"
@@ -728,9 +902,9 @@ NEXT_PUBLIC_APP_URL=https://taskflow.vercel.app`}
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "HowTo",
-            name: "Build a SaaS with VibeKit — TaskFlow crash course",
+            name: "Build HardwarePOS — a real point-of-sale system — with VibeKit",
             description:
-              "Build and deploy TaskFlow, a personal task manager with auth, dashboard, filters, PDF export, and custom domain — using VibeKit + Claude Code.",
+              "Build and deploy HardwarePOS, a point-of-sale system for a small hardware shop, with auth, inventory, atomic sales transactions, receipt PDFs, and a dashboard — using VibeKit + any AI coding agent.",
             totalTime: "PT3H",
             tool: [
               { "@type": "HowToTool", name: "Claude (claude.ai)" },
@@ -818,7 +992,10 @@ function Checklist({
   return (
     <ul className="not-prose mt-4 grid gap-2 sm:grid-cols-2 list-none pl-0">
       {items.map((item) => (
-        <li key={item.name} className="rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-4">
+        <li
+          key={item.name}
+          className="rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-4"
+        >
           <a
             href={item.url}
             target="_blank"
@@ -829,7 +1006,9 @@ function Checklist({
             <ArrowUpRight className="h-3.5 w-3.5" />
           </a>
           {item.note ? (
-            <div className="mt-1 text-[12.5px] text-[color:var(--text-tertiary)]">{item.note}</div>
+            <div className="mt-1 text-[12.5px] text-[color:var(--text-tertiary)]">
+              {item.note}
+            </div>
           ) : null}
         </li>
       ))}

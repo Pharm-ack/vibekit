@@ -8,6 +8,7 @@ import { FourFiles } from "@/components/four-files";
 import { FrameworkFiles } from "@/components/framework-files";
 import { Hero } from "@/components/hero";
 import { HowItWorks } from "@/components/how-it-works";
+import { HowItWorksFlow } from "@/components/how-it-works-flow";
 import { JBRegistry } from "@/components/jb-registry";
 import { LaptopMockup } from "@/components/laptop-mockup";
 import { Nav } from "@/components/nav";
@@ -23,6 +24,7 @@ export default function HomePage() {
       <main>
         <Hero />
         <AgentsStrip />
+        <HowItWorksFlow />
         <LaptopMockup />
         <Problems />
         <HowItWorks />

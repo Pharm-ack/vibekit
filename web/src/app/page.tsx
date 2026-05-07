@@ -1,3 +1,4 @@
+import { AgentsStrip } from "@/components/agents-strip";
 import { CTA } from "@/components/cta";
 import { Footer } from "@/components/footer";
 import { FourFiles } from "@/components/four-files";
@@ -16,6 +17,7 @@ export default function HomePage() {
       <Nav />
       <main>
         <Hero />
+        <AgentsStrip />
         <Problems />
         <HowItWorks />
         <FourFiles />

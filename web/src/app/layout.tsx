@@ -1,21 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SITE } from "@/lib/utils";
 import "./globals.css";
 
-const inter = Inter({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-geist",
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-instrument-serif",
+  variable: "--font-geist-mono",
   display: "swap",
 });
 
@@ -82,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
+      className={`${geist.variable} ${geistMono.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         {/* JSON-LD structured data */}

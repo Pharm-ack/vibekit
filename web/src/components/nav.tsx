@@ -5,14 +5,15 @@ import { useEffect, useState } from "react";
 import { Github } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
+import { LogoBadge } from "./graphics/logo-mark";
 import { SITE } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { href: "#problems", label: "Why" },
-  { href: "#how", label: "How it works" },
-  { href: "#stack", label: "Stack" },
-  { href: "#features", label: "Features" },
+  { href: "/components", label: "Components" },
+  { href: "/docs", label: "Docs" },
+  { href: "/compare", label: "Compare" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 export function Nav() {
@@ -42,10 +43,8 @@ export function Nav() {
           )}
         >
           <Link href="/" className="flex items-center gap-2 pl-2 group">
-            <span className="grid h-7 w-7 place-items-center rounded-md bg-[color:var(--text-primary)] text-[color:var(--text-inverse)] font-mono text-[11px] font-bold">
-              VK
-            </span>
-            <span className="font-display text-[18px] tracking-tight text-[color:var(--text-primary)]">
+            <LogoBadge />
+            <span className="font-mono text-[14px] font-medium uppercase tracking-wider text-[color:var(--text-primary)]">
               VibeKit
             </span>
           </Link>

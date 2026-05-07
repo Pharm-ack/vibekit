@@ -1,40 +1,94 @@
+"use client";
+
+import {
+  Boxes,
+  ClipboardCopy,
+  FileCheck,
+  MessageSquare,
+  PenLine,
+  Rocket,
+  ShieldCheck,
+} from "lucide-react";
+import RadialOrbitalTimeline, { type TimelineItem } from "@/components/ui/radial-orbital-timeline";
 import { Section } from "./section";
 
-const steps = [
+const timelineData: TimelineItem[] = [
   {
-    n: "01",
-    title: "Copy the planning prompt",
-    body: "Grab CLAUDE_PROMPT.md from the VibeKit repo. It's a self-contained interview script.",
+    id: 1,
+    title: "Copy prompt",
+    date: "Step 01",
+    content: "Copy CLAUDE_PROMPT.md from the VibeKit GitHub repo. It's a self-contained interview script.",
+    category: "Plan",
+    icon: ClipboardCopy,
+    relatedIds: [2],
+    status: "completed",
+    energy: 100,
   },
   {
-    n: "02",
-    title: "Open Claude (claude.ai)",
-    body: "Start a new conversation. Paste the prompt, then add your app idea on a new line.",
+    id: 2,
+    title: "Interview",
+    date: "Step 02",
+    content: "Open Claude (claude.ai), paste the prompt, append your app idea. Answer 6–10 targeted questions about features, data, integrations, and design.",
+    category: "Plan",
+    icon: MessageSquare,
+    relatedIds: [1, 3],
+    status: "completed",
+    energy: 95,
   },
   {
-    n: "03",
-    title: "Answer Claude's questions",
-    body: "6–10 targeted questions covering features, data model, integrations, and visual design.",
+    id: 3,
+    title: "4 files",
+    date: "Step 03",
+    content: "Claude generates project-description.md, project-phases.md, design-style-guide.md, and prompt.md. These are agent-agnostic — drop them into any coding agent.",
+    category: "Plan",
+    icon: FileCheck,
+    relatedIds: [2, 4],
+    status: "in-progress",
+    energy: 80,
   },
   {
-    n: "04",
-    title: "Get your 4 project files",
-    body: "Claude generates project-description.md, project-phases.md, design-style-guide.md, and prompt.md.",
+    id: 4,
+    title: "Framework files",
+    date: "Step 04",
+    content: "Copy master_prompt.md, jb-components.md, and pre-deploy-review.md from the repo into your project root. These are the coding constitution and tooling.",
+    category: "Setup",
+    icon: Boxes,
+    relatedIds: [3, 5],
+    status: "in-progress",
+    energy: 70,
   },
   {
-    n: "05",
-    title: "Copy the framework files",
-    body: "Drop master_prompt.md, jb-components.md, and pre-deploy-review.md into your project root.",
+    id: 5,
+    title: "Build with agent",
+    date: "Step 05",
+    content: "Open ANY coding agent that reads files — Claude Code, Cursor, Kiro Code, Antigravity, Windsurf, Cline, Aider. Paste prompt.md. The agent reads everything and starts Phase 1, stopping for confirmation between phases.",
+    category: "Build",
+    icon: PenLine,
+    relatedIds: [4, 6],
+    status: "pending",
+    energy: 50,
   },
   {
-    n: "06",
-    title: "Open Claude Code & paste prompt.md",
-    body: "Claude Code reads everything, plans Phase 1, and starts building. It stops between phases for your confirmation.",
+    id: 6,
+    title: "Pre-deploy review",
+    date: "Step 06",
+    content: "Before deploying, paste pre-deploy-review.md. The agent runs a senior-level audit covering performance, security, background tasks, and resource usage. Address every Critical issue.",
+    category: "Audit",
+    icon: ShieldCheck,
+    relatedIds: [5, 7],
+    status: "pending",
+    energy: 25,
   },
   {
-    n: "07",
-    title: "Run pre-deploy review, then ship",
-    body: "Before going live, paste pre-deploy-review.md. Address every Critical issue. Deploy with confidence.",
+    id: 7,
+    title: "Ship",
+    date: "Step 07",
+    content: "Deploy to Vercel, configure Cloudflare DNS + custom domain, verify Resend sending domain. Run the production checklist and go live.",
+    category: "Deploy",
+    icon: Rocket,
+    relatedIds: [6],
+    status: "pending",
+    energy: 10,
   },
 ];
 
@@ -42,32 +96,15 @@ export function HowItWorks() {
   return (
     <Section
       id="how"
-      eyebrow="How it works"
-      title="Plan. Build. Ship — in seven steps."
-      description="From a one-line idea to a deployed app, with an opinionated workflow that prevents the usual AI failure modes."
+      eyebrow="THE WORKFLOW"
+      title={<>Plan once. Build with <em className="not-italic gradient-text">any agent</em>.</>}
+      description="VibeKit generates 4 universal files that work with every coding agent that reads files — Claude Code, Cursor, Kiro Code, Antigravity, Windsurf, Cline, Aider, or anything else with a CLAUDE.md / .rules / project context."
+      containerClassName="max-w-6xl"
     >
-      <ol className="grid gap-3 md:grid-cols-2">
-        {steps.map((s) => (
-          <li
-            key={s.n}
-            className="reveal group relative overflow-hidden rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-6 transition-all hover:border-[color:var(--border-strong)]"
-          >
-            <div className="flex items-start gap-5">
-              <span className="font-mono text-[28px] font-light text-[color:var(--accent)] tabular-nums leading-none">
-                {s.n}
-              </span>
-              <div>
-                <h3 className="font-display text-[22px] leading-tight text-[color:var(--text-primary)]">
-                  {s.title}
-                </h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-[color:var(--text-secondary)]">
-                  {s.body}
-                </p>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ol>
+      <RadialOrbitalTimeline timelineData={timelineData} />
+      <p className="reveal mt-6 text-center font-mono text-[12px] uppercase tracking-wider text-[color:var(--text-tertiary)]">
+        Click a node to expand · Click empty space to resume rotation
+      </p>
     </Section>
   );
 }

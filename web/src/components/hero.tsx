@@ -2,10 +2,10 @@
 
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ArrowRight, Github } from "lucide-react";
+import { ArrowUpRight, Github } from "lucide-react";
 import { useRef } from "react";
-import { HeroCanvas } from "./hero-canvas";
 import { Button } from "./ui/button";
+import { OrbitalCore } from "./graphics/icons";
 import { SITE } from "@/lib/utils";
 
 const stackChips = [
@@ -24,71 +24,59 @@ export function Hero() {
   useGSAP(
     () => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.from(".hero-eyebrow", { y: 16, opacity: 0, duration: 0.6 })
-        .from(".hero-headline > span", {
-          y: 32,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.08,
-        }, "-=0.3")
-        .from(".hero-sub", { y: 18, opacity: 0, duration: 0.6 }, "-=0.5")
-        .from(".hero-cta > *", {
-          y: 12,
-          opacity: 0,
-          duration: 0.5,
-          stagger: 0.1,
-        }, "-=0.4")
-        .from(".hero-chip", {
-          y: 8,
-          opacity: 0,
-          duration: 0.4,
-          stagger: 0.04,
-        }, "-=0.3");
+      tl.from(".hero-eyebrow", { y: 12, opacity: 0, duration: 0.5 })
+        .from(".hero-orbital", { scale: 0.85, opacity: 0, duration: 0.9, ease: "expo.out" }, "-=0.2")
+        .from(".hero-headline span", { y: 28, opacity: 0, duration: 0.7, stagger: 0.05 }, "-=0.6")
+        .from(".hero-sub", { y: 14, opacity: 0, duration: 0.5 }, "-=0.4")
+        .from(".hero-cta > *", { y: 10, opacity: 0, duration: 0.4, stagger: 0.08 }, "-=0.3")
+        .from(".hero-chip", { y: 6, opacity: 0, duration: 0.3, stagger: 0.03 }, "-=0.2");
     },
     { scope: root }
   );
 
   return (
-    <section ref={root} className="relative isolate overflow-hidden pt-32 sm:pt-40 pb-20 sm:pb-28">
-      {/* Three.js scene */}
-      <HeroCanvas className="pointer-events-none absolute inset-0 -z-10 opacity-90" />
+    <section ref={root} className="relative isolate overflow-hidden pt-36 sm:pt-44 pb-24">
+      {/* Fading grid background */}
+      <div className="pointer-events-none absolute inset-0 -z-10 grid-pattern opacity-100" aria-hidden />
 
-      {/* Grid overlay */}
-      <div className="pointer-events-none absolute inset-0 -z-10 grid-pattern opacity-50" aria-hidden />
-
-      {/* Soft radial vignette */}
+      {/* Soft radial accent glow */}
       <div
         className="pointer-events-none absolute inset-0 -z-10"
         aria-hidden
         style={{
           background:
-            "radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 70%)",
+            "radial-gradient(ellipse 70% 55% at 50% 5%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 65%)",
         }}
       />
 
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
-        <div className="hero-eyebrow inline-flex items-center gap-2 rounded-[var(--radius-full)] border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[color:var(--text-secondary)]">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center">
+        {/* Eyebrow */}
+        <div className="hero-eyebrow inline-flex items-center gap-2 rounded-full border border-[color:var(--border)] bg-[color:var(--bg-elevated)]/60 backdrop-blur px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-[color:var(--text-secondary)]">
           <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--accent)] opacity-60" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--accent)]" />
           </span>
-          The framework for vibe coders
+          The framework for vibe coders · v1.0
         </div>
 
-        <h1 className="hero-headline font-display mt-6 text-[clamp(2.5rem,7vw,5.5rem)] leading-[1.02] tracking-tight text-[color:var(--text-primary)]">
-          <span className="block">Ship production apps</span>
-          <span className="block">with <em className="not-italic gradient-text">Claude Code</em></span>
+        {/* Orbital mark */}
+        <div className="hero-orbital mt-10 flex justify-center">
+          <OrbitalCore size={140} />
+        </div>
+
+        {/* Big block headline */}
+        <h1 className="hero-headline headline-mono mt-8 text-[clamp(3rem,11vw,9rem)] text-[color:var(--text-primary)]">
+          <span className="block">VIBEKIT</span>
         </h1>
 
-        <p className="hero-sub mx-auto mt-7 max-w-2xl text-[17px] sm:text-lg leading-relaxed text-[color:var(--text-secondary)]">
-          A structured framework for vibe coders building production-grade Next.js apps with Claude Code or any agent —
-          without burning tokens, shipping broken auth, or getting stuck.
+        <p className="hero-sub mx-auto mt-6 max-w-2xl text-[15px] sm:text-base leading-relaxed text-[color:var(--text-secondary)]">
+          The framework for shipping production-grade Next.js apps with <strong className="text-[color:var(--text-primary)] font-medium">any coding agent</strong> — Claude Code, Cursor, Kiro, Antigravity, Windsurf, Cline, Aider. Generate 4 files. Build phase by phase. Ship without burning tokens.
         </p>
 
         <div className="hero-cta mt-9 flex flex-wrap items-center justify-center gap-3">
           <Button href="#get-started" variant="accent" size="lg">
             Get started
-            <ArrowRight className="h-4 w-4" />
+            <ArrowUpRight className="h-4 w-4" />
           </Button>
           <Button href={SITE.github} variant="outline" size="lg">
             <Github className="h-4 w-4" />
@@ -96,11 +84,23 @@ export function Hero() {
           </Button>
         </div>
 
-        <div className="mt-14 flex flex-wrap items-center justify-center gap-2">
+        {/* Install command */}
+        <div className="mx-auto mt-10 max-w-md">
+          <div className="hero-cta flex items-center gap-3 rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-4 py-3 text-left font-mono text-[13px]">
+            <span className="text-[color:var(--text-tertiary)]">$</span>
+            <code className="flex-1 text-[color:var(--text-primary)]">
+              git clone github.com/MUKE-coder/vibekit
+            </code>
+            <span className="text-[10px] uppercase tracking-wider text-[color:var(--text-tertiary)]">copy</span>
+          </div>
+        </div>
+
+        {/* Stack chips */}
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
           {stackChips.map((chip) => (
             <span
               key={chip}
-              className="hero-chip rounded-[var(--radius-full)] border border-[color:var(--border)] bg-[color:var(--bg-elevated)]/60 px-3 py-1 text-[12px] font-mono text-[color:var(--text-tertiary)]"
+              className="hero-chip rounded-full border border-[color:var(--border)] bg-[color:var(--bg-elevated)]/60 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-[color:var(--text-tertiary)]"
             >
               {chip}
             </span>

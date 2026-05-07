@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.0.2",
     "class-variance-authority": "^0.7.1",
+    "@radix-ui/react-slot": "^1.1.0",
     "three": "^0.171.0",
     "@react-three/fiber": "^9.0.0",
     "@react-three/drei": "^10.0.0",

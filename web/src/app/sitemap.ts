@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE.url}/compare/claude-code-vs-cursor-vs-cline`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
     { url: `${SITE.url}/compare/vibekit-vs-create-next-app`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
     { url: `${SITE.url}/contribute`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${SITE.url}/tutorial`, lastModified: now, changeFrequency: "monthly", priority: 0.95 },
   ];
 
   const componentRoutes: MetadataRoute.Sitemap = components.map((c) => ({

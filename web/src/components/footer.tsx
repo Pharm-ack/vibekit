@@ -5,9 +5,10 @@ const cols = [
   {
     label: "Framework",
     links: [
+      { name: "Tutorial — TaskFlow course", href: "/tutorial" },
+      { name: "Quickstart", href: "/docs/quickstart" },
       { name: "GitHub", href: SITE.github },
       { name: "CLAUDE_PROMPT.md", href: `${SITE.github}/blob/main/CLAUDE_PROMPT.md` },
-      { name: "master_prompt.md", href: `${SITE.github}/blob/main/master_prompt.md` },
       { name: "Pre-deploy review", href: `${SITE.github}/blob/main/pre-deploy-review.md` },
     ],
   },

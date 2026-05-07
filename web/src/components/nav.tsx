@@ -10,9 +10,9 @@ import { SITE } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
+  { href: "/tutorial", label: "Tutorial" },
   { href: "/components", label: "Components" },
   { href: "/docs", label: "Docs" },
-  { href: "/compare", label: "Compare" },
   { href: "/contribute", label: "Contribute" },
   { href: "/faq", label: "FAQ" },
 ];

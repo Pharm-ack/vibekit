@@ -6,6 +6,7 @@ import { ArrowUpRight, Github } from "lucide-react";
 import { useRef } from "react";
 import { Button } from "./ui/button";
 import { OrbitalCore } from "./graphics/icons";
+import { HeroEffects } from "./hero-effects";
 import { SITE } from "@/lib/utils";
 
 const stackChips = [
@@ -48,6 +49,9 @@ export function Hero() {
             "radial-gradient(ellipse 70% 55% at 50% 5%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 65%)",
         }}
       />
+
+      {/* Animated circuit lines + particle field */}
+      <HeroEffects />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 text-center">
         {/* Eyebrow */}

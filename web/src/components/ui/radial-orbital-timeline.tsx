@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { ArrowRight, Link as LinkIcon, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+
+// SSR-safe layout effect
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export interface TimelineItem {
   id: number;
@@ -32,9 +35,25 @@ export default function RadialOrbitalTimeline({
   const [autoRotate, setAutoRotate] = useState<boolean>(true);
   const [pulseEffect, setPulseEffect] = useState<Record<number, boolean>>({});
   const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
+  const [radius, setRadius] = useState<number>(180);
   const containerRef = useRef<HTMLDivElement>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  // Responsively size the orbit to match the container
+  useIsoLayoutEffect(() => {
+    if (!containerRef.current) return;
+    const update = () => {
+      const w = containerRef.current?.clientWidth ?? 0;
+      // radius = ~30% of width, clamped between 110 and 220
+      const r = Math.max(110, Math.min(220, w * 0.3));
+      setRadius(r);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === containerRef.current || e.target === orbitRef.current) {
@@ -94,7 +113,6 @@ export default function RadialOrbitalTimeline({
 
   const calculateNodePosition = (index: number, total: number) => {
     const angle = ((index / total) * 360 + rotationAngle) % 360;
-    const radius = 180;
     const radian = (angle * Math.PI) / 180;
     const x = radius * Math.cos(radian);
     const y = radius * Math.sin(radian);
@@ -132,7 +150,7 @@ export default function RadialOrbitalTimeline({
       onClick={handleContainerClick}
       className={cn(
         "relative w-full flex items-center justify-center overflow-hidden rounded-md border border-[color:var(--border)] bg-[color:var(--bg)]",
-        "min-h-[640px]",
+        "min-h-[520px] sm:min-h-[600px] lg:min-h-[680px]",
         className
       )}
     >
@@ -228,7 +246,12 @@ export default function RadialOrbitalTimeline({
         </div>
 
         {/* Orbital ring */}
-        <div className="absolute h-[360px] w-[360px] rounded-full border border-[color:var(--border-strong)]/40" />
+        {/* Visual ring — sized off the dynamic radius */}
+        <div
+          className="absolute rounded-full border border-[color:var(--border-strong)]/40"
+          style={{ width: radius * 2, height: radius * 2 }}
+          aria-hidden
+        />
 
         {/* Nodes */}
         {timelineData.map((item, index) => {
@@ -301,7 +324,7 @@ export default function RadialOrbitalTimeline({
 
               {/* Detail card */}
               {isExpanded && (
-                <Card className="absolute left-1/2 top-24 w-72 -translate-x-1/2 backdrop-blur-md">
+                <Card className="absolute left-1/2 top-24 w-[min(280px,90vw)] sm:w-72 -translate-x-1/2 backdrop-blur-md">
                   <span
                     className="absolute -top-3 left-1/2 -translate-x-1/2 h-3 w-px bg-[color:var(--accent)]/50"
                     aria-hidden

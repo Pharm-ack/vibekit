@@ -90,7 +90,7 @@ export function Creator() {
         <div className="grid gap-14 md:grid-cols-[auto_1fr] md:items-center md:gap-20">
           {/* Photo + orbital frame */}
           <div className="relative mx-auto md:mx-0">
-            <div className="relative h-72 w-72 sm:h-80 sm:w-80">
+            <div className="relative h-56 w-56 sm:h-72 sm:w-72 md:h-80 md:w-80">
               {/* Orbital ring around photo */}
               <svg
                 className="creator-orbit absolute inset-0 h-full w-full animate-spin-slow"
@@ -149,7 +149,7 @@ export function Creator() {
                   src="https://avatars.githubusercontent.com/u/64189841?v=4"
                   alt="JB (Muke Johnbaptist)"
                   fill
-                  sizes="(min-width: 640px) 320px, 288px"
+                  sizes="(min-width: 768px) 320px, (min-width: 640px) 288px, 224px"
                   className="object-cover"
                   priority
                 />

@@ -66,49 +66,49 @@ export function FileStack({ className, size = 56 }: IconProps) {
   );
 }
 
-/** Orbiting rings around a core — used as the hero / "framework" mark. */
+/** Orbiting rings around a core — used as the hero / "framework" mark.
+ *  Sizing rule: if `className` provides explicit width/height (e.g.
+ *  `h-[110px] w-[110px] sm:h-[140px] sm:w-[140px]`), those win and the
+ *  rings + core scale via 100% width/height. Otherwise `size` is used.
+ */
 export function OrbitalCore({ className, size = 96, animate = true }: IconProps & { animate?: boolean }) {
+  // If a sizing class is supplied, let CSS drive the size; otherwise fall back to the size prop.
+  const useClassSize = !!className && /\b(h|w)-/.test(className);
+  const wrapperStyle = useClassSize ? undefined : { width: size, height: size };
+
   return (
     <div
       className={cn("relative inline-grid place-items-center", className)}
-      style={{ width: size, height: size }}
+      style={wrapperStyle}
       aria-hidden
     >
       {/* Outer ring */}
       <svg
-        width={size}
-        height={size}
         viewBox="0 0 96 96"
-        className={cn("absolute inset-0", animate && "animate-spin-slow")}
+        className={cn("absolute inset-0 h-full w-full", animate && "animate-spin-slow")}
       >
         <ellipse cx="48" cy="48" rx="44" ry="18" stroke="currentColor" strokeWidth="0.75" fill="none" opacity="0.35" />
       </svg>
       {/* Mid ring (tilted) */}
       <svg
-        width={size}
-        height={size}
         viewBox="0 0 96 96"
-        className={cn("absolute inset-0", animate && "animate-spin-slow")}
+        className={cn("absolute inset-0 h-full w-full", animate && "animate-spin-slow")}
         style={{ animationDuration: "22s", animationDirection: "reverse", transform: "rotate(45deg)" }}
       >
         <ellipse cx="48" cy="48" rx="40" ry="14" stroke="currentColor" strokeWidth="0.75" fill="none" opacity="0.45" />
       </svg>
       {/* Inner ring */}
       <svg
-        width={size}
-        height={size}
         viewBox="0 0 96 96"
-        className={cn("absolute inset-0", animate && "animate-spin-slow")}
+        className={cn("absolute inset-0 h-full w-full", animate && "animate-spin-slow")}
         style={{ animationDuration: "12s", transform: "rotate(-30deg)" }}
       >
         <ellipse cx="48" cy="48" rx="32" ry="10" stroke="currentColor" strokeWidth="0.75" fill="none" opacity="0.6" />
       </svg>
-      {/* Core icosahedron — viewBox comes from baseProps (0 0 64 64) */}
+      {/* Core icosahedron — viewBox comes from baseProps (0 0 64 64). h/w=50% scales with parent */}
       <svg
-        width={size * 0.5}
-        height={size * 0.5}
         {...baseProps}
-        className={cn("relative text-[color:var(--accent)]", animate && "animate-pulse-glow")}
+        className={cn("relative h-1/2 w-1/2 text-[color:var(--accent)]", animate && "animate-pulse-glow")}
       >
         <path d="M32 8 L52 22 L52 44 L32 56 L12 44 L12 22 Z" strokeWidth="1.5" />
         <path d="M32 8 L32 56" strokeWidth="0.75" opacity="0.6" />

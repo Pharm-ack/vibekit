@@ -63,13 +63,13 @@ export function Hero() {
           The framework for vibe coders · v1.0
         </div>
 
-        {/* Orbital mark */}
-        <div className="hero-orbital mt-10 flex justify-center">
-          <OrbitalCore size={140} />
+        {/* Orbital mark — scales down on mobile */}
+        <div className="hero-orbital mt-8 sm:mt-10 flex justify-center">
+          <OrbitalCore className="h-[110px] w-[110px] sm:h-[140px] sm:w-[140px]" size={140} />
         </div>
 
         {/* Big block headline */}
-        <h1 className="hero-headline headline-mono mt-8 text-[clamp(3rem,11vw,9rem)] text-[color:var(--text-primary)]">
+        <h1 className="hero-headline headline-mono mt-6 sm:mt-8 text-[clamp(2.75rem,13vw,9rem)] text-[color:var(--text-primary)]">
           <span className="block">VIBEKIT</span>
         </h1>
 
@@ -89,13 +89,15 @@ export function Hero() {
         </div>
 
         {/* Install command */}
-        <div className="mx-auto mt-10 max-w-md">
-          <div className="hero-cta flex items-center gap-3 rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-4 py-3 text-left font-mono text-[13px]">
-            <span className="text-[color:var(--text-tertiary)]">$</span>
-            <code className="flex-1 text-[color:var(--text-primary)]">
+        <div className="mx-auto mt-10 max-w-md px-2 sm:px-0">
+          <div className="hero-cta flex items-center gap-2 sm:gap-3 rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-3 sm:px-4 py-2.5 sm:py-3 text-left font-mono text-[12px] sm:text-[13px] min-w-0">
+            <span className="text-[color:var(--text-tertiary)] shrink-0">$</span>
+            <code className="flex-1 truncate text-[color:var(--text-primary)]">
               git clone github.com/MUKE-coder/vibekit
             </code>
-            <span className="text-[10px] uppercase tracking-wider text-[color:var(--text-tertiary)]">copy</span>
+            <span className="hidden sm:inline text-[10px] uppercase tracking-wider text-[color:var(--text-tertiary)] shrink-0">
+              copy
+            </span>
           </div>
         </div>
 

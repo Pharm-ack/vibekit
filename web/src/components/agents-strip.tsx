@@ -87,33 +87,33 @@ export function AgentsStrip() {
           </p>
         </div>
 
-        {/* Agent grid */}
-        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-[color:var(--border)] bg-[color:var(--border)] sm:grid-cols-3 lg:grid-cols-4">
+        {/* Agent grid — single column on phones, 2 cols on small, then 3, 4 */}
+        <div className="mt-12 sm:mt-14 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px overflow-hidden rounded-md border border-[color:var(--border)] bg-[color:var(--border)]">
           {agents.map((a) => (
             <div
               key={a.name}
-              className="agent-cell group relative flex items-center gap-4 bg-[color:var(--bg-elevated)] p-5 transition-colors hover:bg-[color:var(--bg-subtle)]"
+              className="agent-cell group relative flex items-center gap-3 sm:gap-4 bg-[color:var(--bg-elevated)] p-4 sm:p-5 transition-colors hover:bg-[color:var(--bg-subtle)]"
             >
               {/* Mark badge */}
               <span
-                className="grid h-12 w-12 shrink-0 place-items-center rounded-md border border-[color:var(--border)] bg-[color:var(--bg-subtle)] font-mono text-[20px] text-[color:var(--text-secondary)] transition-colors group-hover:border-[color:var(--accent)] group-hover:text-[color:var(--accent)]"
+                className="grid h-10 w-10 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-md border border-[color:var(--border)] bg-[color:var(--bg-subtle)] font-mono text-[16px] sm:text-[20px] text-[color:var(--text-secondary)] transition-colors group-hover:border-[color:var(--accent)] group-hover:text-[color:var(--accent)]"
                 aria-hidden
               >
                 {a.mark}
               </span>
 
               <div className="min-w-0 flex-1">
-                <div className="font-mono text-[13px] font-medium uppercase tracking-tight text-[color:var(--text-primary)]">
+                <div className="font-mono text-[12px] sm:text-[13px] font-medium uppercase tracking-tight text-[color:var(--text-primary)] truncate">
                   {a.name}
                 </div>
-                <div className="mt-0.5 text-[11.5px] text-[color:var(--text-tertiary)]">
+                <div className="mt-0.5 text-[11px] sm:text-[11.5px] text-[color:var(--text-tertiary)] truncate">
                   {a.tagline}
                 </div>
               </div>
 
               {/* Status pip */}
               <span
-                className="h-1.5 w-1.5 rounded-full bg-emerald-500/80 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+                className="h-1.5 w-1.5 rounded-full bg-emerald-500/80 shadow-[0_0_8px_rgba(34,197,94,0.6)] shrink-0"
                 title="Compatible"
                 aria-hidden
               />

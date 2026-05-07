@@ -21,6 +21,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { useRef } from "react";
+import { cn } from "@/lib/utils";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -163,10 +164,10 @@ export function LaptopMockup() {
               <div className="w-12" />
             </div>
 
-            {/* Claude UI body */}
-            <div className="relative grid grid-cols-[64px_1fr] h-[560px] bg-[#262624]">
-              {/* Sidebar */}
-              <aside className="flex flex-col items-center justify-between border-r border-white/5 bg-[#1f1f1d] py-4">
+            {/* Claude UI body — chat takes full width on phones, sidebar appears at sm */}
+            <div className="relative grid grid-cols-1 sm:grid-cols-[56px_1fr] md:grid-cols-[64px_1fr] h-[480px] sm:h-[520px] md:h-[560px] bg-[#262624]">
+              {/* Sidebar — hidden on phones to give chat more room */}
+              <aside className="hidden sm:flex flex-col items-center justify-between border-r border-white/5 bg-[#1f1f1d] py-4">
                 <div className="flex flex-col items-center gap-3">
                   {sidebarIcons.map((Icon, i) => (
                     <button
@@ -194,11 +195,11 @@ export function LaptopMockup() {
               {/* Main content area */}
               <div className="relative">
                 {/* ─── GREETING + INPUT (always visible from the start) ─── */}
-                <div className="sim-greeting absolute inset-0 flex flex-col items-center justify-center px-8">
-                  <div className="flex items-center gap-3">
+                <div className="sim-greeting absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-8">
+                  <div className="flex items-center gap-2 sm:gap-3 text-center">
                     <ClaudeStar />
                     <h3
-                      className="text-[28px] sm:text-[32px] text-[#E8DCC4]"
+                      className="text-[22px] sm:text-[28px] md:text-[32px] text-[#E8DCC4]"
                       style={{ fontFamily: "Georgia, serif", fontWeight: 400 }}
                     >
                       Coffee and Claude time?
@@ -206,11 +207,11 @@ export function LaptopMockup() {
                   </div>
 
                   {/* Input box — visible immediately, only the text inside types */}
-                  <div className="mt-8 w-full max-w-2xl rounded-2xl border border-white/8 bg-[#1f1f1d] shadow-2xl">
-                    <div className="px-5 pt-4 pb-3 min-h-[48px]">
+                  <div className="mt-6 sm:mt-8 w-full max-w-2xl rounded-xl sm:rounded-2xl border border-white/8 bg-[#1f1f1d] shadow-2xl">
+                    <div className="px-4 sm:px-5 pt-3 sm:pt-4 pb-2 sm:pb-3 min-h-[44px]">
                       <div className="overflow-hidden">
                         <span
-                          className="sim-input-text inline-block overflow-hidden whitespace-nowrap font-sans text-[15px] text-white/85"
+                          className="sim-input-text inline-block overflow-hidden whitespace-nowrap font-sans text-[13px] sm:text-[15px] text-white/85"
                           style={{ width: 0 }}
                         >
                           I want to build a school management system for Uganda...
@@ -235,12 +236,15 @@ export function LaptopMockup() {
                     </div>
                   </div>
 
-                  {/* Action chips */}
+                  {/* Action chips — fewer chips visible on tiny screens to avoid overflow */}
                   <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-                    {["Write", "Learn", "Code", "Life stuff", "Claude's choice"].map((label) => (
+                    {["Write", "Learn", "Code", "Life stuff", "Claude's choice"].map((label, i) => (
                       <span
                         key={label}
-                        className="rounded-full border border-white/8 bg-[#1f1f1d] px-3.5 py-1.5 text-[12px] text-white/55"
+                        className={cn(
+                          "rounded-full border border-white/8 bg-[#1f1f1d] px-3 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-[12px] text-white/55",
+                          i >= 3 && "hidden sm:inline-block"
+                        )}
                       >
                         {label}
                       </span>

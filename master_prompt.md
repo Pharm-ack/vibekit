@@ -352,42 +352,89 @@ DATABASE_URL="postgres://user:password@host:5432/dbname"
 
 NEVER: use "prisma-client-js", import from "@prisma/client", put url in datasource block, add engine property, use prisma+postgres:// URLs.
 
-API routes MUST support server-side pagination:
+API routes MUST support server-side pagination AND enforce auth/authorization. NEVER ship an unauthenticated route handler. The canonical pattern:
+
+<file path="src/lib/auth-guard.ts">
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+
+export async function requireSession() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return { session: null, error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
+  return { session, error: null };
+}
+
+export async function requireRole(role: string | string[]) {
+  const { session, error } = await requireSession();
+  if (error) return { session: null, error };
+  const allowed = Array.isArray(role) ? role : [role];
+  if (!session.user.role || !allowed.includes(session.user.role)) {
+    return { session: null, error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
+  }
+  return { session, error: null };
+}
+</file>
 
 <file path="src/app/api/contacts/route.ts">
 import { db } from "@/lib/db";
+import { requireSession } from "@/lib/auth-guard";
 import { NextResponse } from "next/server";
+import { z } from "zod";
+
+const ContactSchema = z.object({
+  name: z.string().min(1).max(120),
+  email: z.string().email(),
+});
 
 export async function GET(req: Request) {
-try {
-const { searchParams } = new URL(req.url);
-const page = parseInt(searchParams.get("page") ?? "1");
-const limit = parseInt(searchParams.get("limit") ?? "10");
-const search = searchParams.get("search") ?? "";
-const skip = (page - 1) \* limit;
-const where = search ? { OR: [{ name: { contains: search, mode: "insensitive" as const } }] } : {};
-const [data, total] = await Promise.all([
-db.contact.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" } }),
-db.contact.count({ where }),
-]);
-return NextResponse.json({ data, total, page, limit });
-} catch (error) {
-console.error("Error:", error);
-return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
-}
+  const { session, error } = await requireSession();
+  if (error) return error;
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") ?? "1");
+    const limit = parseInt(searchParams.get("limit") ?? "10");
+    const search = searchParams.get("search") ?? "";
+    const skip = (page - 1) * limit;
+    const where = {
+      userId: session.user.id,
+      ...(search ? { OR: [{ name: { contains: search, mode: "insensitive" as const } }] } : {}),
+    };
+    const [data, total] = await Promise.all([
+      db.contact.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" } }),
+      db.contact.count({ where }),
+    ]);
+    return NextResponse.json({ data, total, page, limit });
+  } catch (e) {
+    console.error("GET /api/contacts:", e);
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
-try {
-const body = await req.json();
-const contact = await db.contact.create({ data: body });
-return NextResponse.json(contact, { status: 201 });
-} catch (error) {
-console.error("Error:", error);
-return NextResponse.json({ error: "Failed to create" }, { status: 500 });
-}
+  const { session, error } = await requireSession();
+  if (error) return error;
+
+  try {
+    const body = await req.json();
+    const parsed = ContactSchema.safeParse(body);
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    const contact = await db.contact.create({ data: { ...parsed.data, userId: session.user.id } });
+    return NextResponse.json(contact, { status: 201 });
+  } catch (e) {
+    console.error("POST /api/contacts:", e);
+    return NextResponse.json({ error: "Failed to create" }, { status: 500 });
+  }
 }
 </file>
+
+RULES:
+- EVERY route handler starts with requireSession() or requireRole(), no exceptions
+- ALL POST/PATCH/PUT bodies validated with Zod before touching the database
+- Scope queries to the authenticated user (userId: session.user.id) unless the route is admin-only
+- For admin routes use requireRole("admin")
+- NEVER log session tokens, full request bodies with secrets, or stack traces in production responses
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DESIGN SYSTEM — THE STANDARD YOU MUST HIT
@@ -429,10 +476,82 @@ INTEGRATIONS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 AUTH: Better Auth + Prisma + PostgreSQL. Auth pages: centered card 400px, shadow-xl, 16px radius, Google OAuth + email/password.
-FILES: UploadThing ("uploadthing", "@uploadthing/react")
+FILES: UploadThing ("uploadthing", "@uploadthing/react") OR Cloudflare R2 (JB File Storage UI)
 EMAIL: Resend + React Email ("resend", "@react-email/components")
 AI: Vercel AI SDK ("ai", "@ai-sdk/openai")
 COMPONENTS: https://jb.desishub.com/blog/jb-component-registry-complete-reference
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STRIPE WEBHOOK — RAW BODY (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Stripe webhooks REQUIRE the raw request body string for signature verification. NEVER call req.json() in a webhook handler — it consumes the body and signature verification will fail silently. Use this exact pattern:
+
+<file path="src/app/api/webhooks/stripe/route.ts">
+import Stripe from "stripe";
+import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+export async function POST(req: Request) {
+  const rawBody = await req.text();              // raw string, NOT req.json()
+  const sig = (await headers()).get("stripe-signature");
+  if (!sig) return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+  } catch (err) {
+    console.error("Stripe signature verification failed:", err);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  }
+
+  // Handle the event idempotently — store event.id and skip if already processed
+  switch (event.type) {
+    case "checkout.session.completed":
+      // ...
+      break;
+    case "invoice.paid":
+      // ...
+      break;
+  }
+
+  return NextResponse.json({ received: true });
+}
+</file>
+
+ALSO: webhook handlers MUST be idempotent (Stripe retries on 5xx). Persist processed event IDs and return 200 immediately if you see a duplicate.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEPENDENCY BLOCKLIST — DO NOT INSTALL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Never install these. Use the listed alternative:
+
+- moment / moment-timezone     → use date-fns (already in stack)
+- axios                         → use native fetch
+- next-auth                     → use better-auth (already in stack)
+- classnames                    → use clsx (already in stack)
+- jspdf                         → use @react-pdf/renderer (already in stack)
+- xlsx-js-style                 → use xlsx (already in stack)
+- lodash (full)                 → use native ES methods or lodash-es per-function imports if absolutely required
+- react-toastify                → use sonner (already in stack)
+- styled-components / emotion   → use Tailwind v4 + CSS variables
+- redux / redux-toolkit         → use Zustand for client state, React Query for server state
+- material-ui / chakra-ui       → use shadcn/ui (already in stack)
+
+If a user request seems to need a blocked package, propose the alternative and explain why before installing anything.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STATE MANAGEMENT DECISION RULE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- React state (useState/useReducer)  → local UI state (open/closed, hover, single-screen form)
+- React Query (useQuery/useMutation) → ALL server state (anything from the database)
+- Zustand                             → cross-component client-only state (cart, modal stacks, theme preferences)
+
+Never use one tool's job for another's. No useState for server data. No Zustand for "is this dropdown open." No React Query for cart.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ITERATION (after initial build)

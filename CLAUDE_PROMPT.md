@@ -193,6 +193,8 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 - [ ] Test auth flows on mobile and desktop
 - [ ] Test payment flow in Stripe test mode (if applicable)
 - [ ] Verify responsive design on mobile
+- [ ] **Run pre-deploy code review:** paste the prompt from `pre-deploy-review.md` (in the VibeKit repo root) into Claude Code. Address every Critical issue. Save the report to `pre-deploy-review-report.md`.
+- [ ] Address all Critical findings from the review
 - [ ] Set all environment variables in Vercel
 - [ ] Deploy to Vercel
 - [ ] Configure Cloudflare DNS + custom domain

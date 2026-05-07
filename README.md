@@ -138,6 +138,7 @@ vibekit/
 ├── master_prompt.md             ← Coding standards for Claude Code (copy to your project)
 ├── design-style-guide.md        ← Design style guide template (Claude customizes per project)
 ├── jb-components.md             ← JB component registry reference (copy to your project)
+├── pre-deploy-review.md         ← Paste into Claude Code before deploying — security/perf audit
 │
 ├── prompt-engineering.md        ← Token economy, prompt formula, rescue system
 ├── deployment.md                ← Vercel, Netlify, VPS, Cloudflare, SSL
@@ -145,25 +146,33 @@ vibekit/
 ├── database-guide.md            ← Neon, Prisma, schema patterns, migrations
 ├── design-system-guide.md       ← Design principles, color palettes, component styles
 ├── troubleshooting.md           ← Symptoms → fixes, AI rescue protocols
-├── monetization-guide.md        ← Stripe, webhooks, feature gating, billing
-│
-└── templates/
-    ├── design-system.md
-    ├── prd-saas.md
-    ├── prd-ecommerce.md
-    └── prd-school.md
+└── monetization-guide.md        ← Stripe, webhooks, feature gating, billing
 ```
 
 ### Files to copy into your project
 
 When starting a new project, copy these from the VibeKit repo into your project root:
 
-| File               | Purpose                                                  |
-| ------------------ | -------------------------------------------------------- |
-| `master_prompt.md` | Claude Code reads this first — tech stack + coding rules |
-| `jb-components.md` | Reference for when to install which JB component         |
+| File                   | Purpose                                                  |
+| ---------------------- | -------------------------------------------------------- |
+| `master_prompt.md`     | Claude Code reads this first — tech stack + coding rules |
+| `jb-components.md`     | Reference for when to install which JB component         |
+| `pre-deploy-review.md` | Paste into Claude Code before deploying for an audit     |
 
 Claude (in the planning step) will generate `project-description.md`, `project-phases.md`, `design-style-guide.md`, and `prompt.md` for you.
+
+---
+
+## Pre-Deploy Code Review
+
+Before shipping to production, run [`pre-deploy-review.md`](./pre-deploy-review.md) in Claude Code. It performs a senior-level audit covering:
+
+- **Performance** — N+1 queries, missing pagination, expensive operations
+- **Security** — unauthenticated routes, SQL injection, missing rate limiting, exposed secrets
+- **Background tasks** — webhook idempotency, job retries, distributed locks
+- **Resource consumption** — memory leaks, unclosed streams, missing timeouts
+
+Claude Code writes the findings to `pre-deploy-review-report.md`. Address every Critical issue before deploying. This is a phase task in every VibeKit project.
 
 ---
 

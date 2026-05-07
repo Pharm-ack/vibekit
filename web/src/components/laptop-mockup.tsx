@@ -49,6 +49,7 @@ export function LaptopMockup() {
 
   useGSAP(
     () => {
+      // ─── Animate ONLY the chat content. The laptop itself stays still. ───
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: root.current,
@@ -57,36 +58,33 @@ export function LaptopMockup() {
         },
       });
 
-      // Laptop entrance
-      tl.from(".laptop-frame", {
-        y: 40,
-        opacity: 0,
-        rotateX: 12,
-        duration: 1,
-        ease: "power3.out",
+      // 1) User types prompt in the input
+      tl.to(".sim-input-text", {
+        width: "100%",
+        duration: 1.6,
+        ease: "steps(58)",
       })
-        // Stage 1: greeting visible, then typewriter into input
-        .to(".stage-1-input", { opacity: 1, duration: 0.3 })
-        .to(".stage-1-input .typed", { width: "100%", duration: 1.8, ease: "steps(58)" })
         // Pause to read
-        .to({}, { duration: 0.4 })
-        // Transition: fade greeting out, conversation appears
-        .to(".stage-1", { opacity: 0, y: -16, duration: 0.4 })
-        .set(".stage-1", { display: "none" })
-        .set(".stage-2", { display: "flex" })
-        .from(".stage-2-user", { opacity: 0, y: 12, duration: 0.4 })
-        // Claude thinking
-        .from(".stage-2-thinking", { opacity: 0, y: 8, duration: 0.3 })
-        .to(".stage-2-thinking", { opacity: 0, duration: 0.3, delay: 0.9 })
-        .set(".stage-2-thinking", { display: "none" })
-        // Claude question
-        .from(".stage-2-claude-q", { opacity: 0, y: 8, duration: 0.4 })
-        .to(".stage-2-claude-q .typed-q", { width: "100%", duration: 1.4, ease: "steps(46)" })
-        // User answer typewriter
-        .from(".stage-2-user-2", { opacity: 0, y: 8, duration: 0.4 })
-        .to(".stage-2-user-2 .typed", { width: "100%", duration: 0.9, ease: "steps(28)" })
-        // Generating files
-        .from(".stage-2-generating", { opacity: 0, y: 8, duration: 0.4 })
+        .to({}, { duration: 0.5 })
+        // 2) "Submit" — input clears, conversation appears
+        .to(".sim-input-text", { width: 0, duration: 0.15 })
+        .to(".sim-greeting", { opacity: 0, y: -16, duration: 0.4 })
+        .set(".sim-greeting", { display: "none" })
+        .set(".sim-conversation", { display: "flex" })
+        // 3) User message bubble pops in
+        .from(".sim-msg-user", { opacity: 0, y: 12, duration: 0.4 })
+        // 4) Claude shows thinking dots
+        .from(".sim-thinking", { opacity: 0, y: 8, duration: 0.3 })
+        .to(".sim-thinking", { opacity: 0, duration: 0.3, delay: 0.9 })
+        .set(".sim-thinking", { display: "none" })
+        // 5) Claude asks a follow-up question (typewriter)
+        .from(".sim-msg-claude-q", { opacity: 0, y: 8, duration: 0.4 })
+        .to(".sim-claude-text", { width: "100%", duration: 1.4, ease: "steps(46)" })
+        // 6) User typewrites a quick answer
+        .from(".sim-msg-user-2", { opacity: 0, y: 8, duration: 0.4 })
+        .to(".sim-user-text-2", { width: "100%", duration: 1.0, ease: "steps(28)" })
+        // 7) Files generate one by one
+        .from(".sim-generating", { opacity: 0, y: 8, duration: 0.35 })
         .from(".gen-file", {
           opacity: 0,
           x: -16,
@@ -94,24 +92,14 @@ export function LaptopMockup() {
           duration: 0.45,
           ease: "power2.out",
         })
-        .from(".file-check", {
-          scale: 0,
-          stagger: 0.22,
-          duration: 0.3,
-          ease: "back.out(2)",
-        }, "-=0.8")
-        .from(".success-pill", { y: 8, opacity: 0, duration: 0.4 });
+        .from(
+          ".file-check",
+          { scale: 0, stagger: 0.22, duration: 0.3, ease: "back.out(2)" },
+          "-=0.8"
+        )
+        .from(".sim-success-pill", { y: 8, opacity: 0, duration: 0.4 });
 
-      // Continuous: subtle laptop hover float
-      gsap.to(".laptop-frame", {
-        y: -6,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      // Cursor blink
+      // Cursor blink (constant, independent of timeline)
       gsap.to(".typing-cursor", {
         opacity: 0,
         duration: 0.6,
@@ -138,12 +126,12 @@ export function LaptopMockup() {
             Idea in. <em className="not-italic gradient-text">Four files out.</em>
           </h2>
           <p className="mt-5 text-[16px] leading-relaxed text-[color:var(--text-secondary)]">
-            Paste your idea into Claude. It interviews you, then generates exactly what your coding agent needs.
+            Watch a real Claude conversation: type the idea, Claude interviews you, then generates exactly what your coding agent needs.
           </p>
         </div>
 
-        {/* Laptop */}
-        <div className="laptop-frame relative mx-auto mt-16 max-w-5xl" style={{ perspective: "2000px" }}>
+        {/* Laptop — completely static, no float */}
+        <div className="relative mx-auto mt-16 max-w-5xl">
           {/* Glow under laptop */}
           <div
             aria-hidden
@@ -176,7 +164,7 @@ export function LaptopMockup() {
             </div>
 
             {/* Claude UI body */}
-            <div className="relative grid grid-cols-[64px_1fr] h-[520px] bg-[#262624]">
+            <div className="relative grid grid-cols-[64px_1fr] h-[560px] bg-[#262624]">
               {/* Sidebar */}
               <aside className="flex flex-col items-center justify-between border-r border-white/5 bg-[#1f1f1d] py-4">
                 <div className="flex flex-col items-center gap-3">
@@ -184,16 +172,16 @@ export function LaptopMockup() {
                     <button
                       key={i}
                       type="button"
-                      className="grid h-8 w-8 place-items-center rounded-md text-white/45 transition-colors hover:bg-white/5 hover:text-white/80"
                       tabIndex={-1}
+                      className="grid h-8 w-8 place-items-center rounded-md text-white/45 transition-colors hover:bg-white/5 hover:text-white/80"
                     >
                       <Icon className="h-[18px] w-[18px]" />
                     </button>
                   ))}
                   <button
                     type="button"
-                    className="grid h-8 w-8 place-items-center rounded-md text-white/45 hover:bg-white/5"
                     tabIndex={-1}
+                    className="grid h-8 w-8 place-items-center rounded-md text-white/45 hover:bg-white/5"
                   >
                     <ChevronDown className="h-4 w-4" />
                   </button>
@@ -203,11 +191,10 @@ export function LaptopMockup() {
                 </div>
               </aside>
 
-              {/* Main content */}
-              <div className="relative flex flex-col">
-                {/* STAGE 1 — Empty Claude greeting */}
-                <div className="stage-1 absolute inset-0 flex flex-col items-center justify-center px-8">
-                  {/* Greeting */}
+              {/* Main content area */}
+              <div className="relative">
+                {/* ─── GREETING + INPUT (always visible from the start) ─── */}
+                <div className="sim-greeting absolute inset-0 flex flex-col items-center justify-center px-8">
                   <div className="flex items-center gap-3">
                     <ClaudeStar />
                     <h3
@@ -218,12 +205,12 @@ export function LaptopMockup() {
                     </h3>
                   </div>
 
-                  {/* Input box */}
-                  <div className="stage-1-input mt-8 w-full max-w-2xl rounded-2xl border border-white/8 bg-[#1f1f1d] shadow-2xl" style={{ opacity: 0 }}>
-                    <div className="px-5 pt-4 pb-3">
+                  {/* Input box — visible immediately, only the text inside types */}
+                  <div className="mt-8 w-full max-w-2xl rounded-2xl border border-white/8 bg-[#1f1f1d] shadow-2xl">
+                    <div className="px-5 pt-4 pb-3 min-h-[48px]">
                       <div className="overflow-hidden">
                         <span
-                          className="typed inline-block overflow-hidden whitespace-nowrap font-sans text-[15px] text-white/85"
+                          className="sim-input-text inline-block overflow-hidden whitespace-nowrap font-sans text-[15px] text-white/85"
                           style={{ width: 0 }}
                         >
                           I want to build a school management system for Uganda...
@@ -232,7 +219,11 @@ export function LaptopMockup() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between border-t border-white/5 px-3 py-2">
-                      <button type="button" tabIndex={-1} className="grid h-7 w-7 place-items-center rounded-full text-white/50 hover:bg-white/5">
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="grid h-7 w-7 place-items-center rounded-full text-white/50 hover:bg-white/5"
+                      >
                         <Plus className="h-4 w-4" />
                       </button>
                       <div className="flex items-center gap-3 text-[12px] text-white/55">
@@ -246,40 +237,40 @@ export function LaptopMockup() {
 
                   {/* Action chips */}
                   <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-                    {[
-                      { label: "Write" },
-                      { label: "Learn" },
-                      { label: "Code" },
-                      { label: "Life stuff" },
-                      { label: "Claude's choice" },
-                    ].map((chip) => (
+                    {["Write", "Learn", "Code", "Life stuff", "Claude's choice"].map((label) => (
                       <span
-                        key={chip.label}
+                        key={label}
                         className="rounded-full border border-white/8 bg-[#1f1f1d] px-3.5 py-1.5 text-[12px] text-white/55"
                       >
-                        {chip.label}
+                        {label}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                {/* STAGE 2 — Conversation */}
-                <div className="stage-2 absolute inset-0 hidden flex-col">
+                {/* ─── CONVERSATION (hidden until "submit") ─── */}
+                <div className="sim-conversation absolute inset-0 hidden flex-col">
                   <div className="flex-1 overflow-hidden p-5 sm:p-6 space-y-4">
                     {/* User message */}
-                    <div className="stage-2-user flex justify-end">
+                    <div className="sim-msg-user flex justify-end">
                       <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-[#3a3a37] px-4 py-2.5 text-[13.5px] text-white/90">
                         I want to build a school management system for Uganda...
                       </div>
                     </div>
 
                     {/* Thinking */}
-                    <div className="stage-2-thinking flex items-center gap-2 pl-1">
+                    <div className="sim-thinking flex items-center gap-2 pl-1">
                       <ClaudeStar small />
                       <div className="flex gap-1">
                         <span className="h-1.5 w-1.5 rounded-full bg-white/40 animate-pulse" />
-                        <span className="h-1.5 w-1.5 rounded-full bg-white/40 animate-pulse" style={{ animationDelay: "0.15s" }} />
-                        <span className="h-1.5 w-1.5 rounded-full bg-white/40 animate-pulse" style={{ animationDelay: "0.3s" }} />
+                        <span
+                          className="h-1.5 w-1.5 rounded-full bg-white/40 animate-pulse"
+                          style={{ animationDelay: "0.15s" }}
+                        />
+                        <span
+                          className="h-1.5 w-1.5 rounded-full bg-white/40 animate-pulse"
+                          style={{ animationDelay: "0.3s" }}
+                        />
                       </div>
                       <span className="font-mono text-[11px] uppercase tracking-wider text-white/40">
                         Reading framework...
@@ -287,11 +278,14 @@ export function LaptopMockup() {
                     </div>
 
                     {/* Claude question */}
-                    <div className="stage-2-claude-q flex gap-3">
+                    <div className="sim-msg-claude-q flex gap-3">
                       <ClaudeStar small />
                       <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-[#1f1f1d] border border-white/5 px-4 py-2.5 text-[13.5px] leading-relaxed text-white/85">
                         <div className="overflow-hidden">
-                          <span className="typed-q inline-block overflow-hidden whitespace-nowrap" style={{ width: 0 }}>
+                          <span
+                            className="sim-claude-text inline-block overflow-hidden whitespace-nowrap"
+                            style={{ width: 0 }}
+                          >
                             Which user roles? Teachers, parents, students, admins?
                           </span>
                         </div>
@@ -299,10 +293,13 @@ export function LaptopMockup() {
                     </div>
 
                     {/* User answer */}
-                    <div className="stage-2-user-2 flex justify-end">
+                    <div className="sim-msg-user-2 flex justify-end">
                       <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-[#3a3a37] px-4 py-2.5 text-[13.5px] text-white/90">
                         <div className="overflow-hidden">
-                          <span className="typed inline-block overflow-hidden whitespace-nowrap" style={{ width: 0 }}>
+                          <span
+                            className="sim-user-text-2 inline-block overflow-hidden whitespace-nowrap"
+                            style={{ width: 0 }}
+                          >
                             All four. Parents pay school fees too.
                           </span>
                         </div>
@@ -310,7 +307,7 @@ export function LaptopMockup() {
                     </div>
 
                     {/* Generating files */}
-                    <div className="stage-2-generating space-y-2">
+                    <div className="sim-generating space-y-2">
                       <div className="flex items-center gap-2 pl-1">
                         <ClaudeStar small />
                         <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-400/80">
@@ -326,7 +323,9 @@ export function LaptopMockup() {
                             <Icon className="h-3.5 w-3.5" />
                           </span>
                           <div className="flex-1 min-w-0">
-                            <div className="font-mono text-[12px] text-white/85 truncate">{name}</div>
+                            <div className="font-mono text-[12px] text-white/85 truncate">
+                              {name}
+                            </div>
                             <div className="text-[11px] text-white/40 truncate">{sub}</div>
                           </div>
                           <span className="file-check grid h-5 w-5 shrink-0 place-items-center rounded-full bg-emerald-500/15 text-emerald-400">
@@ -335,7 +334,7 @@ export function LaptopMockup() {
                         </div>
                       ))}
 
-                      <div className="success-pill mt-3 ml-7 flex">
+                      <div className="sim-success-pill mt-3 ml-7 flex">
                         <div className="inline-flex items-center gap-2 rounded-full border border-[#818CF8]/30 bg-[#818CF8]/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-[#A5B4FC]">
                           <span className="h-1.5 w-1.5 rounded-full bg-[#818CF8]" />
                           Ready to paste into your agent
@@ -347,11 +346,19 @@ export function LaptopMockup() {
                   {/* Bottom input bar */}
                   <div className="border-t border-white/5 bg-[#1f1f1d] px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <button type="button" tabIndex={-1} className="grid h-7 w-7 place-items-center rounded-full text-white/40">
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="grid h-7 w-7 place-items-center rounded-full text-white/40"
+                      >
                         <Plus className="h-4 w-4" />
                       </button>
                       <div className="flex-1 text-[12px] text-white/35">Reply to Claude...</div>
-                      <button type="button" tabIndex={-1} className="grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white/70">
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white/70"
+                      >
                         <ArrowUp className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -366,14 +373,17 @@ export function LaptopMockup() {
             className="relative mx-auto h-3 rounded-b-2xl bg-gradient-to-b from-[#3a3a37] to-[#1a1a18]"
             style={{ width: "calc(100% + 24px)", marginLeft: "-12px" }}
           />
-          <div className="mx-auto h-1 rounded-b-2xl bg-[#1a1a18]" style={{ width: "32%" }} />
+          <div
+            className="mx-auto h-1 rounded-b-2xl bg-[#1a1a18]"
+            style={{ width: "32%" }}
+          />
         </div>
       </div>
     </section>
   );
 }
 
-/** Claude's star/asterisk symbol — orange peach accent */
+/** Claude's star/asterisk symbol — peach orange */
 function ClaudeStar({ small = false }: { small?: boolean }) {
   const size = small ? 16 : 28;
   return (

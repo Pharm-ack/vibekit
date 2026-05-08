@@ -5,12 +5,14 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight, MessageCircle, Users } from "lucide-react";
 import { useRef } from "react";
-import { Button } from "./ui/button";
 import { SITE } from "@/lib/utils";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
+
+const WHATSAPP_GREEN = "#25D366";
+const WHATSAPP_GREEN_HOVER = "#1FB958";
 
 /** Inline WhatsApp glyph (lucide doesn't ship a brand-accurate one) */
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -26,6 +28,8 @@ export function CommunityBanner() {
 
   useGSAP(
     () => {
+      // Animate only the decorative pieces. CTAs render statically so they're
+      // ALWAYS visible, even if scroll position bypasses the trigger.
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: root.current,
@@ -39,8 +43,12 @@ export function CommunityBanner() {
         .from(".community-eyebrow", { y: 12, opacity: 0, duration: 0.4 }, "-=0.4")
         .from(".community-headline", { y: 14, opacity: 0, duration: 0.5 }, "-=0.3")
         .from(".community-body", { y: 12, opacity: 0, duration: 0.4 }, "-=0.3")
-        .from(".community-stat", { y: 8, opacity: 0, stagger: 0.06, duration: 0.35 }, "-=0.2")
-        .from(".community-cta > *", { y: 8, opacity: 0, stagger: 0.08, duration: 0.4 }, "-=0.2");
+        .from(".community-benefit", {
+          y: 8,
+          opacity: 0,
+          stagger: 0.06,
+          duration: 0.35,
+        }, "-=0.2");
     },
     { scope: root }
   );
@@ -48,14 +56,13 @@ export function CommunityBanner() {
   return (
     <section ref={root} id="community" className="relative py-20 sm:py-24 overflow-hidden">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="community-card relative overflow-hidden rounded-[var(--radius-2xl)] border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-8 sm:p-12">
+        <div className="community-card relative overflow-hidden rounded-[var(--radius-2xl)] border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-6 sm:p-12">
           {/* Ambient glow */}
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0"
             style={{
-              background:
-                "radial-gradient(ellipse 60% 70% at 20% 30%, color-mix(in srgb, #25D366 18%, transparent), transparent 70%)",
+              background: `radial-gradient(ellipse 60% 70% at 20% 30%, color-mix(in srgb, ${WHATSAPP_GREEN} 18%, transparent), transparent 70%)`,
             }}
           />
           {/* Faded grid */}
@@ -64,7 +71,10 @@ export function CommunityBanner() {
           <div className="relative grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <div className="community-eyebrow inline-flex items-center gap-2 rounded-full border border-[color:var(--border)] bg-[color:var(--bg)] px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-[color:var(--text-secondary)]">
-                <span className="grid h-4 w-4 place-items-center rounded-full bg-[#25D366] text-white">
+                <span
+                  className="grid h-4 w-4 place-items-center rounded-full text-white"
+                  style={{ backgroundColor: WHATSAPP_GREEN }}
+                >
                   <WhatsAppIcon className="h-2.5 w-2.5" />
                 </span>
                 Community · WhatsApp
@@ -88,32 +98,47 @@ export function CommunityBanner() {
                 ].map((item) => (
                   <li
                     key={item}
-                    className="community-stat flex items-center gap-2 text-[13.5px] text-[color:var(--text-primary)]"
+                    className="community-benefit flex items-center gap-2 text-[13.5px] text-[color:var(--text-primary)]"
                   >
-                    <span className="h-1 w-1 rounded-full bg-[#25D366]" />
+                    <span
+                      className="h-1 w-1 rounded-full"
+                      style={{ backgroundColor: WHATSAPP_GREEN }}
+                    />
                     {item}
                   </li>
                 ))}
               </ul>
 
-              <div className="community-cta mt-8 flex flex-wrap gap-3">
-                <Button
+              {/* CTAs — rendered statically (no entrance animation) so they
+                  ALWAYS show, regardless of scroll-trigger timing. */}
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <a
                   href={SITE.community}
-                  className="bg-[#25D366] text-white hover:bg-[#1FB958]"
-                  size="md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full px-5 py-3 font-medium text-white shadow-[0_8px_24px_rgba(37,211,102,0.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(37,211,102,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  style={{ backgroundColor: WHATSAPP_GREEN }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = WHATSAPP_GREEN_HOVER;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = WHATSAPP_GREEN;
+                  }}
                 >
                   <WhatsAppIcon className="h-4 w-4" />
                   Join the WhatsApp community
                   <ArrowUpRight className="h-4 w-4" />
-                </Button>
-                <Button
+                </a>
+
+                <a
                   href={`${SITE.github}/discussions`}
-                  variant="outline"
-                  size="md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border-strong)] bg-transparent px-5 py-3 font-medium text-[color:var(--text-primary)] transition-colors hover:bg-[color:var(--bg-subtle)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <MessageCircle className="h-4 w-4" />
                   GitHub Discussions
-                </Button>
+                </a>
               </div>
             </div>
 
@@ -121,15 +146,23 @@ export function CommunityBanner() {
             <div className="hidden md:block">
               <div className="relative grid h-32 w-32 place-items-center">
                 <div
-                  className="absolute h-32 w-32 rounded-full bg-[#25D366]/15 animate-ping"
-                  style={{ animationDuration: "2.5s" }}
+                  className="absolute h-32 w-32 rounded-full animate-ping"
+                  style={{
+                    backgroundColor: `color-mix(in srgb, ${WHATSAPP_GREEN} 15%, transparent)`,
+                    animationDuration: "2.5s",
+                  }}
                 />
                 <div
-                  className="absolute h-24 w-24 rounded-full bg-[#25D366]/25 animate-ping"
-                  style={{ animationDuration: "2.5s", animationDelay: "0.4s" }}
+                  className="absolute h-24 w-24 rounded-full animate-ping"
+                  style={{
+                    backgroundColor: `color-mix(in srgb, ${WHATSAPP_GREEN} 25%, transparent)`,
+                    animationDuration: "2.5s",
+                    animationDelay: "0.4s",
+                  }}
                 />
                 <div
-                  className="relative grid h-20 w-20 place-items-center rounded-full bg-[#25D366] shadow-[0_8px_30px_rgba(37,211,102,0.45)]"
+                  className="relative grid h-20 w-20 place-items-center rounded-full shadow-[0_8px_30px_rgba(37,211,102,0.45)]"
+                  style={{ backgroundColor: WHATSAPP_GREEN }}
                 >
                   <WhatsAppIcon className="h-10 w-10 text-white" />
                 </div>

@@ -269,6 +269,29 @@ Begin with **Phase 1 — Foundation** from project-phases.md. Read the phase tas
 ### Step 1 — Acknowledge
 Confirm you understand the framework. List the tech stack and the 4 files you will generate.
 
+### Step 1.5 — Check if a public template fits the project (CRITICAL)
+
+Before doing anything else, check whether the user's idea matches one of the **VibeKit public templates** at https://vibekit.desishub.com/templates. The current templates and the projects they fit:
+
+| Template | Fits when the user wants to build... |
+|---|---|
+| **Personal Developer Portfolio** (`personal-portfolio`) | A personal portfolio, developer site, "about me" page, freelancer profile, designer showcase, or anything single-page-resume-style |
+| **Developer Blog** (`developer-blog`) | A technical blog, tutorials site, devlog, MDX-based publication |
+
+If the user's idea CLEARLY matches a template (e.g. "I want a portfolio", "build me a personal site", "I want to start a tech blog"):
+
+1. **Stop.** Do not proceed with the 4-file generation flow.
+
+2. Tell the user:
+
+   > *"Your project matches the **`<template-name>`** template at vibekit.desishub.com/templates/`<template-slug>`. Cloning a finished template and customizing it is faster and produces a better result than building from scratch. Do you want to (A) clone the template and run the customization interview, or (B) build from scratch with the standard 4-file VibeKit flow anyway?"*
+
+3. If they pick **A**: tell them to visit the template page to get the clone command + the customization prompt to paste into their AI agent. Do NOT generate the 4 files. End the conversation.
+
+4. If they pick **B** OR if their idea is borderline (e.g. "portfolio with built-in CRM"): proceed to Step 2 with the standard flow.
+
+If the idea does NOT match any template, skip this step silently and proceed to Step 2.
+
 ### Step 2 — Decide if an interview is needed (CRITICAL)
 
 Read my app idea carefully. Then determine:

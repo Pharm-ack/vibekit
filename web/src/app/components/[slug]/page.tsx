@@ -87,12 +87,21 @@ export default async function ComponentDetailPage({
               {c.tagline}
             </p>
 
+            {c.sourceLabel ? (
+              <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-[color:var(--text-secondary)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--accent)]" />
+                Source: {c.sourceLabel}
+              </div>
+            ) : null}
+
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button href={c.blogUrl} variant="accent" size="md">
-                Read full guide
-                <ExternalLink className="h-4 w-4" />
-              </Button>
-              <Button href="/components" variant="outline" size="md">
+              {c.blogUrl ? (
+                <Button href={c.blogUrl} variant="accent" size="md">
+                  Read full guide
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              ) : null}
+              <Button href="/components" variant={c.blogUrl ? "outline" : "accent"} size="md">
                 Browse all components
               </Button>
             </div>
@@ -200,18 +209,20 @@ export default async function ComponentDetailPage({
           ) : null}
 
           {/* Files added */}
-          <Block title="Files & routes added">
-            <ul className="space-y-2">
-              {c.filesAdded.map((f) => (
-                <li
-                  key={f}
-                  className="rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-4 py-2.5 font-mono text-[13px] text-[color:var(--text-primary)]"
-                >
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </Block>
+          {c.filesAdded && c.filesAdded.length > 0 ? (
+            <Block title="Files & routes added">
+              <ul className="space-y-2">
+                {c.filesAdded.map((f) => (
+                  <li
+                    key={f}
+                    className="rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] px-4 py-2.5 font-mono text-[13px] text-[color:var(--text-primary)]"
+                  >
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </Block>
+          ) : null}
 
           {/* Related */}
           {related.length > 0 ? (

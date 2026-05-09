@@ -6,7 +6,17 @@ export type ComponentCategory =
   | "files"
   | "content"
   | "api"
-  | "forms";
+  | "forms"
+  | "hero";
+
+export type ComponentSource =
+  | "JB"
+  | "21st.dev"
+  | "shadcnblocks"
+  | "shadcn-space"
+  | "ncdai"
+  | "magicui"
+  | "external";
 
 export type JBComponent = {
   slug: string;
@@ -15,13 +25,15 @@ export type JBComponent = {
   category: ComponentCategory;
   categoryLabel: string;
   install: string;
-  blogUrl: string;
+  blogUrl?: string;
+  source?: ComponentSource;
+  sourceLabel?: string;
   prerequisites?: string[];
   envVars?: { name: string; description: string }[];
   features: string[];
   whenToUse: string;
   whenNotToUse: string;
-  filesAdded: string[];
+  filesAdded?: string[];
 };
 
 export const components: JBComponent[] = [
@@ -289,6 +301,119 @@ export const components: JBComponent[] = [
     whenNotToUse: "Simple 2–3 item selects (use shadcn Select), or multi-select scenarios.",
     filesAdded: ["searchable-select.tsx (location depends on install target)"],
   },
+  /* ──────────────────────────────────────────────
+   * Hero sections — community-curated landing heroes
+   * ────────────────────────────────────────────── */
+  {
+    slug: "hero-spiral-background",
+    name: "Spiral Background Hero",
+    tagline: "A hero section with a golden spiral background — eye-catching for landing pages.",
+    category: "hero",
+    categoryLabel: "Hero section",
+    install: "npx shadcn@latest add @ncdai/hero-01",
+    source: "ncdai",
+    sourceLabel: "ncdai · 21st.dev",
+    features: [
+      "Golden ratio spiral SVG backdrop",
+      "Centered headline + sub + CTA stack",
+      "Light + dark mode aware",
+      "Drop-in replacement for any hero block",
+    ],
+    whenToUse: "Marketing landing pages where you want a distinctive, premium-feeling hero with mathematical/geometric energy.",
+    whenNotToUse: "Dashboard apps or anywhere a busy backdrop would distract from the actual UI.",
+  },
+  {
+    slug: "hero-115-ring-backdrop",
+    name: "Hero 115 — Centered Ring Backdrop",
+    tagline: "Centered hero with concentric ring decoration, leading icon, headline, supporting text, CTA, byline, and capped hero image.",
+    category: "hero",
+    categoryLabel: "Hero section",
+    install: "pnpm dlx shadcn add @shadcnblocks/hero115",
+    source: "shadcnblocks",
+    sourceLabel: "shadcnblocks",
+    features: [
+      "Concentric ring decoration behind the copy",
+      "Leading icon slot for product mark / logo",
+      "Headline + supporting paragraph + primary CTA",
+      "Optional byline (small text)",
+      "Capped hero image area below the copy",
+    ],
+    whenToUse: "Product launches, app landing pages, anywhere you need a clean centered hero with a single focused CTA.",
+    whenNotToUse: "Two-column hero layouts (with hero image on the right) — this one is centered.",
+  },
+  {
+    slug: "hero-marketing-with-navbar",
+    name: "Marketing Hero with Navbar",
+    tagline: "Modern marketing hero section bundled with a fully styled navbar above it.",
+    category: "hero",
+    categoryLabel: "Hero section",
+    install: "npx shadcn@latest add https://21st.dev/r/meschacirung/hero-section-2",
+    source: "21st.dev",
+    sourceLabel: "meschacirung · 21st.dev",
+    features: [
+      "Includes a matching navbar component",
+      "Modern marketing aesthetic — large headline + supporting copy",
+      "Primary + secondary CTA pair",
+      "Mobile responsive out of the box",
+    ],
+    whenToUse: "Marketing sites that need both nav and hero in one consistent design — typically the public-facing landing page.",
+    whenNotToUse: "If your project already has a custom navbar — you'd want the standalone hero variant instead.",
+  },
+  {
+    slug: "hero-saas",
+    name: "SaaS Hero",
+    tagline: "Modern SaaS hero section — built for startups launching a product.",
+    category: "hero",
+    categoryLabel: "Hero section",
+    install: "npx shadcn@latest add https://21st.dev/r/meschacirung/hero-section-1",
+    source: "21st.dev",
+    sourceLabel: "meschacirung · 21st.dev",
+    features: [
+      "Bold headline optimized for product positioning",
+      "Sub-text, primary CTA, and optional secondary action",
+      "Designed for SaaS conversion patterns",
+      "Light + dark mode aware",
+    ],
+    whenToUse: "SaaS product landing pages where the hero needs to communicate value fast and drive sign-ups.",
+    whenNotToUse: "Agency / portfolio sites — those have different conversion patterns.",
+  },
+  {
+    slug: "hero-power-section",
+    name: "Beautiful Power Hero",
+    tagline: "Bold, dramatic hero section for product launches and rebrands.",
+    category: "hero",
+    categoryLabel: "Hero section",
+    install: "npx shadcn@latest add https://21st.dev/r/mikolajdobrucki/hero-section",
+    source: "21st.dev",
+    sourceLabel: "mikolajdobrucki · 21st.dev",
+    features: [
+      "Striking visual treatment — big type, generous whitespace",
+      "Designed to feel premium and editorial",
+      "Single-column centered layout",
+    ],
+    whenToUse: "When you want the hero to do most of the storytelling — product launches, brand pages, manifestos.",
+    whenNotToUse: "Information-dense pages where readers need to scan multiple sections quickly.",
+  },
+  {
+    slug: "hero-agency",
+    name: "Agency Hero",
+    tagline: "Clean agency hero designed for SaaS and startup websites — bold headline, gradient background, trust badges, client logos.",
+    category: "hero",
+    categoryLabel: "Hero section",
+    install: "pnpm dlx shadcn@latest add @shadcn-space/hero-01",
+    source: "shadcn-space",
+    sourceLabel: "shadcn-space",
+    features: [
+      "Bold conversion-focused headline",
+      "Subtle gradient background",
+      "Trust badges row",
+      "Client logo strip",
+      "High-converting primary CTA + secondary action",
+    ],
+    whenToUse: "Lead-generation pages: agency homepages, B2B SaaS, services landing pages, anywhere you need social proof + CTA above the fold.",
+    whenNotToUse: "Internal app dashboards or content-first pages (blogs, docs).",
+  },
+
   {
     slug: "zustand-cart",
     name: "Zustand Cart",
@@ -318,6 +443,7 @@ export const components: JBComponent[] = [
 
 export const categories: { value: ComponentCategory | "all"; label: string }[] = [
   { value: "all", label: "All" },
+  { value: "hero", label: "Hero" },
   { value: "auth", label: "Auth" },
   { value: "marketing", label: "Marketing" },
   { value: "data", label: "Data" },

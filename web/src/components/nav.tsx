@@ -12,9 +12,10 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { href: "/tutorial", label: "Tutorial" },
   { href: "/components", label: "Components" },
+  { href: "/templates", label: "Templates" },
+  { href: "/resources", label: "Resources" },
   { href: "/docs", label: "Docs" },
   { href: "/contribute", label: "Contribute" },
-  { href: "/faq", label: "FAQ" },
 ];
 
 export function Nav() {

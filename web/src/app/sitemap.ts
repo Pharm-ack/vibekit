@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { components } from "@/lib/components-data";
+import { templates } from "@/lib/templates-data";
 import { SITE } from "@/lib/utils";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -17,6 +18,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE.url}/compare/vibekit-vs-create-next-app`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
     { url: `${SITE.url}/contribute`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
     { url: `${SITE.url}/tutorial`, lastModified: now, changeFrequency: "monthly", priority: 0.95 },
+    { url: `${SITE.url}/resources`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE.url}/templates`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
   ];
 
   const componentRoutes: MetadataRoute.Sitemap = components.map((c) => ({
@@ -26,5 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...componentRoutes];
+  const templateRoutes: MetadataRoute.Sitemap = templates.map((t) => ({
+    url: `${SITE.url}/templates/${t.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+  }));
+
+  return [...staticRoutes, ...componentRoutes, ...templateRoutes];
 }

@@ -26,4 +26,19 @@ for (const file of filesToSync) {
   }
 }
 
-console.log(`Synced ${copied}/${filesToSync.length} prompt file(s) into web/`);
+// Sync setup-prompts/ folder (mac/windows/linux env-check prompts)
+const setupSrcDir = path.join(repoRoot, "setup-prompts");
+const setupDestDir = path.join(webRoot, "setup-prompts");
+if (fs.existsSync(setupSrcDir)) {
+  fs.mkdirSync(setupDestDir, { recursive: true });
+  const setupFiles = fs.readdirSync(setupSrcDir).filter((f) => f.endsWith(".md"));
+  for (const file of setupFiles) {
+    fs.copyFileSync(path.join(setupSrcDir, file), path.join(setupDestDir, file));
+    copied++;
+    console.log(`  ✓ synced setup-prompts/${file}`);
+  }
+} else {
+  console.warn(`  ! setup-prompts/ folder missing at ${setupSrcDir}`);
+}
+
+console.log(`Synced ${copied} prompt file(s) into web/`);

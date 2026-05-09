@@ -85,6 +85,10 @@ The written version with copyable prompts is also on the site: [vibekit.desishub
 
 ## How To Use This Framework
 
+### Step 0 — Check your environment (2 min, optional but recommended)
+
+Before anything else, make sure your machine has Node 20+, pnpm 9+, git, and gh CLI installed. The fastest check: copy the OS-specific prompt from [`setup-prompts/`](./setup-prompts) (macOS / Windows / Linux) and paste it into your AI coding agent. It runs a single safe shell command and tells you exactly what's installed and what to fix — without touching your system. Or visit [vibekit.desishub.com/setup](https://vibekit.desishub.com/setup) for the full guide with one-click copy.
+
 ### Step 1 — Copy the planning prompt
 
 Copy the contents of [`CLAUDE_PROMPT.md`](./CLAUDE_PROMPT.md) from this repository.

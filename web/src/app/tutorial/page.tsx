@@ -313,6 +313,25 @@ export default function TutorialPage() {
           </ol>
         </Section>
 
+        {/* MODULE 00 — pre-flight environment check */}
+        <ModuleSection slug="module-00" eyebrow="MODULE 00 · 2 min · OPTIONAL BUT RECOMMENDED" title="Check your environment first">
+          <p>
+            Before signing up for accounts, make sure your machine has the four tools VibeKit needs: <strong>Node 20+</strong>, <strong>pnpm 9+</strong>, <strong>git</strong>, and <strong>gh CLI</strong>. The fastest way to check is to paste the OS-specific prompt at <a href="/setup">vibekit.desishub.com/setup</a> into your AI coding agent — it scans your machine, reports what's installed, and gives you one-line install commands for anything missing. Without installing anything itself.
+          </p>
+          <p>
+            If you already have all four installed, skip to Module 01.
+          </p>
+
+          <div className="not-prose mt-6 flex flex-wrap gap-3">
+            <a
+              href="/setup"
+              className="inline-flex items-center gap-2 rounded-full bg-[color:var(--accent)] px-5 py-2.5 font-medium text-[color:var(--accent-fg)] transition-all hover:-translate-y-0.5"
+            >
+              Open the setup check →
+            </a>
+          </div>
+        </ModuleSection>
+
         {/* MODULE 01 */}
         <ModuleSection slug="module-01" eyebrow="MODULE 01 · 5 min" title="Set up the accounts you'll need">
           <p>

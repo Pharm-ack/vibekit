@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE.url}/tutorial`, lastModified: now, changeFrequency: "monthly", priority: 0.95 },
     { url: `${SITE.url}/resources`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE.url}/templates`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE.url}/setup`, lastModified: now, changeFrequency: "monthly", priority: 0.95 },
   ];
 
   const componentRoutes: MetadataRoute.Sitemap = components.map((c) => ({

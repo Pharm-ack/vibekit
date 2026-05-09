@@ -4,6 +4,8 @@ import path from "node:path";
 /**
  * Reads a markdown file from the VibeKit repo root at build time.
  * Tries multiple candidate paths so it works whether build cwd is web/ or the repo root.
+ *
+ * Pass nested paths like "setup-prompts/macos.md" to read OS-specific prompts.
  */
 export function readPrompt(filename: string): string {
   const candidates = [

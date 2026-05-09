@@ -44,8 +44,8 @@ const steps = [
   },
   {
     n: 5,
-    title: "Copy the framework files",
-    body: "Copy three files from the GitHub repo into your project root: master_prompt.md (the coding constitution), jb-components.md (component registry reference), and pre-deploy-review.md (the security audit prompt — embedded below).",
+    title: "Copy the framework files + install the /vibekit skill",
+    body: "Copy three files from the GitHub repo into your project root: master_prompt.md (the coding constitution), jb-components.md (component registry reference), and pre-deploy-review.md (the security audit prompt — embedded below). Then install the /vibekit Claude Code skill — one curl command — so the rules auto-load in every session.",
   },
   {
     n: 6,
@@ -155,6 +155,36 @@ export default function Quickstart() {
                         </ul>
                         <p className="mt-4 text-[12.5px] text-[color:var(--text-tertiary)]">
                           Tip: <code className="font-mono text-[12px] rounded border border-[color:var(--border)] bg-[color:var(--bg-subtle)] px-1.5 py-0.5">git clone https://github.com/MUKE-coder/vibekit.git</code>, then copy these three files into your project.
+                        </p>
+                      </div>
+
+                      {/* Skill install */}
+                      <div className="rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-5">
+                        <h3 className="font-mono text-[11px] uppercase tracking-wider text-[color:var(--accent)]">
+                          + Install the /vibekit Claude Code skill
+                        </h3>
+                        <p className="mt-3 text-[14px] leading-relaxed text-[color:var(--text-primary)]">
+                          One curl command. Auto-loads the framework rules into Claude Code (or any agent that supports skills) so you don't have to paste long prompts every session.
+                        </p>
+                        <div className="mt-3">
+                          <CopyBlock
+                            filename="terminal"
+                            label="Project-local install (recommended)"
+                            code={`mkdir -p .claude/skills/vibekit
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md -o .claude/skills/vibekit/SKILL.md`}
+                          />
+                        </div>
+                        <p className="mt-3 text-[12.5px] text-[color:var(--text-tertiary)]">
+                          For the full install guide (global vs project-local, plus how to use it with Cursor / Cline / Windsurf), see{" "}
+                          <a
+                            href={`${SITE.github}/tree/main/skill`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[color:var(--accent)] underline underline-offset-4"
+                          >
+                            github.com/MUKE-coder/vibekit/tree/main/skill
+                          </a>
+                          .
                         </p>
                       </div>
                     </div>

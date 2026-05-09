@@ -177,6 +177,27 @@ When starting a new project, copy these from the VibeKit repo into your project 
 
 Claude (in the planning step) will generate `project-description.md`, `project-phases.md`, `design-style-guide.md`, and `prompt.md` for you.
 
+### Install the /vibekit Claude Code skill (one curl)
+
+After copying the framework files, install the [`/vibekit` Claude Code skill](./skill) so the rules auto-load whenever you open Claude Code in this project — no need to paste long prompts every session.
+
+```bash
+# Project-local install (recommended — travels with the repo)
+mkdir -p .claude/skills/vibekit
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md \
+  -o .claude/skills/vibekit/SKILL.md
+```
+
+Or install globally so it loads in every Claude Code session:
+
+```bash
+mkdir -p ~/.claude/skills/vibekit
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md \
+  -o ~/.claude/skills/vibekit/SKILL.md
+```
+
+Using Cursor, Cline, or Windsurf instead? See [`skill/README.md`](./skill/README.md) for the equivalent setup.
+
 ---
 
 ## Pre-Deploy Code Review

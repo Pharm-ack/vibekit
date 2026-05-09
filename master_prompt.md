@@ -30,6 +30,11 @@ ABSOLUTE RULES
 10. ALWAYS create BOTH .env.example AND .env.local with every env var the project needs (see ENV FILE RULES below). Do this in Phase 1.
 11. WHEN installing a JB component that creates overlapping files (e.g. home page, layout, dashboard), EDIT the existing files to merge the component into the project — do NOT wholesale replace working files or scaffold duplicates.
 12. DARK MODE: check project-description.md → "Dark mode: Yes/No". If No, skip ThemeProvider, skip next-themes, hardcode the light palette, and do not generate a dark mode toggle.
+13. ALL FORMS use React Hook Form + Zod. NO exceptions. NO bare <input> + useState pattern. See FORM RULES section below.
+14. ALL CURRENCY / AMOUNT inputs auto-format with comma separators while typing (3000 → 3,000). Store the raw integer in form state, display the formatted string. See FORM RULES → Currency input pattern.
+15. ALL SELECT inputs with more than 5 options use a searchable Combobox (shadcn Command-based or JB Searchable Select). NEVER plain <select> or shadcn Select for long lists. See FORM RULES → Searchable select.
+16. ALL DATE inputs use the shadcn DatePicker (Popover + Calendar). NEVER native <input type="date">, NEVER plain text input. See FORM RULES → Date picker.
+17. ALL LIST/TABLE pages use SERVER-SIDE pagination, search, and filters via API route query params. NEVER fetch the full list and paginate client-side. See FORM RULES → Server-side pagination contract.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ENV FILE RULES
@@ -437,6 +442,346 @@ RULES:
 - NEVER log session tokens, full request bodies with secrets, or stack traces in production responses
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FORM RULES (NON-NEGOTIABLE — agents forget these constantly)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+These five rules apply to EVERY form, EVERY input, EVERY list page in the entire project. No exceptions. No "for this small form I'll just use useState." NO.
+
+──────────────────────────────────────────────────────
+RULE 1 — React Hook Form + Zod for EVERY form
+──────────────────────────────────────────────────────
+
+Required imports for any form file:
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+The schema lives next to the form (or in a /schemas folder for shared schemas). The SAME schema validates on the client (form) AND server (API route). Never duplicate validation.
+
+PATTERN:
+
+const ContactSchema = z.object({
+  name: z.string().min(1, "Name is required").max(120),
+  email: z.string().email("Invalid email"),
+  amountUgx: z.number().int().min(0, "Must be positive"),
+  dueDate: z.date({ required_error: "Due date is required" }),
+  categoryId: z.string().min(1, "Pick a category"),
+});
+
+type ContactInput = z.infer<typeof ContactSchema>;
+
+const form = useForm<ContactInput>({
+  resolver: zodResolver(ContactSchema),
+  defaultValues: { name: "", email: "", amountUgx: 0, dueDate: undefined, categoryId: "" },
+});
+
+Then EVERY field uses <FormField>:
+
+<FormField
+  control={form.control}
+  name="name"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Name</FormLabel>
+      <FormControl>
+        <Input {...field} />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+NEVER:
+- <input type="text" value={x} onChange={(e) => setX(e.target.value)} /> for form data
+- Custom validation in onSubmit — Zod does it
+- Calling fetch directly inside onSubmit — wrap in useMutation (React Query)
+
+──────────────────────────────────────────────────────
+RULE 2 — Currency / amount inputs auto-format commas
+──────────────────────────────────────────────────────
+
+When the user types `3000`, the input must display `3,000`. When they type `3000000`, it shows `3,000,000`. Form state stores the raw integer (e.g. `3000000`), display string is derived. Works for UGX, USD cents, KES, anything.
+
+CANONICAL COMPONENT (build once, reuse everywhere):
+
+<file path="src/components/ui/currency-input.tsx">
+"use client";
+import * as React from "react";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+type CurrencyInputProps = {
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
+  prefix?: string;
+  placeholder?: string;
+  className?: string;
+  disabled?: boolean;
+};
+
+export const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
+  ({ value, onChange, prefix = "UGX", placeholder, className, disabled }, ref) => {
+    const display = typeof value === "number" && !Number.isNaN(value)
+      ? value.toLocaleString("en-US")
+      : "";
+
+    return (
+      <div className={cn("relative flex items-center", className)}>
+        <span className="pointer-events-none absolute left-3 text-sm font-mono text-muted-foreground">
+          {prefix}
+        </span>
+        <Input
+          ref={ref}
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          value={display}
+          placeholder={placeholder ?? "0"}
+          disabled={disabled}
+          onChange={(e) => {
+            const raw = e.target.value.replace(/[^0-9]/g, "");
+            if (raw === "") return onChange(undefined);
+            const n = parseInt(raw, 10);
+            onChange(Number.isFinite(n) ? n : undefined);
+          }}
+          className="pl-14 font-mono tabular-nums text-right"
+        />
+      </div>
+    );
+  }
+);
+CurrencyInput.displayName = "CurrencyInput";
+</file>
+
+USE INSIDE A FORM:
+
+<FormField
+  control={form.control}
+  name="amountUgx"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Amount</FormLabel>
+      <FormControl>
+        <CurrencyInput
+          value={field.value}
+          onChange={field.onChange}
+          prefix="UGX"
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+NEVER:
+- <Input type="number" /> for currency — no comma formatting, scroll-changes-value bug, decimal precision pain
+- Storing the formatted string in form state — store the integer, format on display
+- Hardcoding the prefix to "$" — read it from the project's currency setting
+
+──────────────────────────────────────────────────────
+RULE 3 — Searchable select for ANY list with > 5 options
+──────────────────────────────────────────────────────
+
+If the dropdown has more than 5 options, use a searchable Combobox. Plain <select> is for short fixed lists (Yes/No, Light/Dark/System) only.
+
+PREFERRED: install JB Searchable Select if not yet installed —
+pnpm dlx shadcn@latest add https://jb.desishub.com/r/searchable-select.json
+
+If JB Searchable Select isn't appropriate for the data shape, build a Combobox using shadcn primitives (Command + Popover + Button). Pattern:
+
+<Popover>
+  <PopoverTrigger asChild>
+    <Button variant="outline" role="combobox" className="w-full justify-between">
+      {value ? options.find((o) => o.value === value)?.label : "Select..."}
+      <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+    </Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-full p-0" align="start">
+    <Command>
+      <CommandInput placeholder="Search..." />
+      <CommandList>
+        <CommandEmpty>No results.</CommandEmpty>
+        <CommandGroup>
+          {options.map((o) => (
+            <CommandItem
+              key={o.value}
+              value={o.label}
+              onSelect={() => onChange(o.value)}
+            >
+              <Check className={cn("mr-2 h-4 w-4", value === o.value ? "opacity-100" : "opacity-0")} />
+              {o.label}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  </PopoverContent>
+</Popover>
+
+NEVER:
+- Plain <select><option> for >5 options — no search, can't scroll efficiently
+- shadcn <Select> for >5 options — same issue (no search)
+- Custom dropdown built from scratch — use Command primitives
+
+──────────────────────────────────────────────────────
+RULE 4 — Date picker uses shadcn Calendar inside Popover
+──────────────────────────────────────────────────────
+
+EVERY date input uses the shadcn DatePicker pattern (Button + Popover + Calendar). Never <input type="date"> — different on every browser, ugly, no range support, no date-fns formatting.
+
+PATTERN:
+
+<FormField
+  control={form.control}
+  name="dueDate"
+  render={({ field }) => (
+    <FormItem className="flex flex-col">
+      <FormLabel>Due date</FormLabel>
+      <Popover>
+        <PopoverTrigger asChild>
+          <FormControl>
+            <Button
+              variant="outline"
+              className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+            >
+              {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+            </Button>
+          </FormControl>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={field.value}
+            onSelect={field.onChange}
+            disabled={(date) => date < new Date("1900-01-01")}
+            initialFocus
+          />
+        </PopoverContent>
+      </Popover>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+For date RANGES use mode="range" and store { from, to } in form state.
+
+NEVER:
+- <input type="date" /> — inconsistent UX across browsers
+- Bare DayPicker without the Popover wrapper — looks unprofessional
+- Hand-rolled date pickers — Calendar is already in shadcn
+
+Use date-fns for ALL date formatting/parsing. Never raw .toLocaleDateString() in production UI.
+
+──────────────────────────────────────────────────────
+RULE 5 — Server-side pagination, search, and filters
+──────────────────────────────────────────────────────
+
+EVERY list/table page uses server-side pagination. The client never holds the full dataset. Tables with 50,000 rows must paginate at the database level.
+
+API ROUTE CONTRACT (always this shape):
+
+GET /api/contacts?page=1&limit=20&search=john&category=work&sortBy=createdAt&sortDir=desc
+
+Response:
+{
+  data: T[],         // page of items
+  total: number,     // total count matching filters (NOT total in db)
+  page: number,
+  limit: number,
+  totalPages: number
+}
+
+API HANDLER PATTERN:
+
+export async function GET(req: Request) {
+  const { session, error } = await requireSession();
+  if (error) return error;
+
+  const { searchParams } = new URL(req.url);
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
+  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") ?? "20")));
+  const search = searchParams.get("search")?.trim() ?? "";
+  const sortBy = searchParams.get("sortBy") ?? "createdAt";
+  const sortDir = searchParams.get("sortDir") === "asc" ? "asc" : "desc";
+
+  const where = {
+    userId: session.user.id,
+    ...(search && {
+      OR: [
+        { name: { contains: search, mode: "insensitive" as const } },
+        { email: { contains: search, mode: "insensitive" as const } },
+      ],
+    }),
+  };
+
+  const [data, total] = await Promise.all([
+    db.contact.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { [sortBy]: sortDir },
+    }),
+    db.contact.count({ where }),
+  ]);
+
+  return NextResponse.json({
+    data,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  });
+}
+
+CLIENT PATTERN — React Query with the URL as the source of truth:
+
+const searchParams = useSearchParams();
+const page = Number(searchParams.get("page") ?? 1);
+const search = searchParams.get("search") ?? "";
+
+const { data, isLoading } = useQuery({
+  queryKey: ["contacts", { page, search }],
+  queryFn: async () => {
+    const url = new URL("/api/contacts", window.location.origin);
+    url.searchParams.set("page", String(page));
+    url.searchParams.set("limit", "20");
+    if (search) url.searchParams.set("search", search);
+    const r = await fetch(url);
+    if (!r.ok) throw new Error("Failed");
+    return r.json() as Promise<{ data: Contact[]; total: number; totalPages: number }>;
+  },
+  staleTime: 30_000,
+});
+
+NEVER:
+- Fetching all rows then .filter() / .slice() in the client
+- Storing the full list in Zustand or context
+- Doing client-side .sort() on the page after fetching one page
+- Pagination controls without an actual API request between pages
+
+EVERY list page also gets a search input wired to a URL query param (debounced 300ms). Filter changes also update the URL — refresh preserves them.
+
+──────────────────────────────────────────────────────
+SUMMARY — paste this self-check before "I'm done with this form"
+──────────────────────────────────────────────────────
+
+Before considering ANY form or list page complete, verify:
+
+[ ] Form uses React Hook Form + zodResolver (no useState for form data)
+[ ] Every field is <FormField> with <FormLabel> and <FormMessage>
+[ ] Every currency/amount field uses <CurrencyInput> with comma formatting
+[ ] Every select with >5 options uses Combobox (search, no plain <select>)
+[ ] Every date field uses shadcn Calendar inside Popover (no <input type="date">)
+[ ] Submit calls a useMutation (React Query) — no raw fetch in onSubmit
+[ ] List pages: server-side pagination, search wired to URL params, debounced
+[ ] API route returns { data, total, page, limit, totalPages } shape
+
+If any [ ] is unchecked, the form/page is NOT done. Fix it before moving on.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DESIGN SYSTEM — THE STANDARD YOU MUST HIT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -454,7 +799,7 @@ PAGE HEADER: Breadcrumb (12px tertiary) + title (24px/500) + actions (right). Mi
 STAT CARDS: 3-4 per row, white bg, border, 12px radius, shadow-sm, p-6. 40px icon square with accent-50 bg. Label 12px ALL-CAPS. Value 30px/600. ALL cards identical style.
 DATA TABLES: Toolbar (search+filters+export). White bg, border, 12px radius. Header row bg-subtle 12px ALL-CAPS. Rows 52px, hover bg-muted. Server-side pagination. Column toggle. Export Excel (xlsx) + PDF (@react-pdf/renderer). Dates formatted "Jan 15, 2024". Numbers right-aligned monospace.
 BADGES: Pill shape, 12px/500, no border. Variants: default/success/warning/danger/info. 6px colored dot for status.
-FORMS: React Hook Form + Zod always. Label 14px/500 above input. Input height 38px, border, 6px radius. Password toggle (Eye icon). Currency auto-format commas. shadcn DatePicker (never HTML date). Searchable Combobox (never plain select). Modal forms max 4-5 fields, 480px max-width. Full edit page two-column layout.
+FORMS: React Hook Form + Zod always (see FORM RULES section above for full patterns). Label 14px/500 above input. Input height 38px, border, 6px radius. Password toggle (Eye icon). Currency auto-format commas via <CurrencyInput>. shadcn DatePicker via Popover + Calendar (never HTML date). Searchable Combobox / JB Searchable Select (never plain select for >5 options). Modal forms max 4-5 fields, 480px max-width. Full edit page two-column layout.
 EMPTY STATES: Centered 64px icon + 16px heading + 14px body (320px max) + CTA button.
 LOADING: Skeleton shimmer only, never spinners. Match exact layout proportions.
 TOASTS: Sonner, bottom-right. Success 3s auto-dismiss. Error no auto-dismiss. AlertDialog for destructive confirmations.

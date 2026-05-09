@@ -165,7 +165,7 @@ export const components: JBComponent[] = [
     tagline: "Drag-drop file uploads with S3 + R2 support, presigned URLs, and management.",
     category: "files",
     categoryLabel: "File storage",
-    install: "pnpm dlx shadcn@latest add https://file-storage-registry.vercel.app/r/file-storage.json",
+    install: "pnpm dlx shadcn@latest add https://file-storage.desishub.com/r/file-storage.json",
     blogUrl: "https://jb.desishub.com/components/file-storage-ui",
     prerequisites: [
       "Next.js with shadcn/ui",

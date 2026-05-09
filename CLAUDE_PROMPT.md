@@ -160,7 +160,7 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 **Goal:** Users can upload and manage files.
 
 ### Tasks
-- [ ] [If R2/S3] Install JB File Storage UI: `pnpm dlx shadcn@latest add https://file-storage-registry.vercel.app/r/file-storage.json`
+- [ ] [If R2/S3] Install JB File Storage UI: `pnpm dlx shadcn@latest add https://file-storage.desishub.com/r/file-storage.json`
 - [ ] [If R2/S3] Configure storage env vars (R2 or S3 credentials)
 - [ ] [If UploadThing] Install UploadThing SDK and follow https://jb.desishub.com/blog/image-upload-with-uploadthing
 - [ ] Build upload UI in relevant feature pages

@@ -177,26 +177,21 @@ When starting a new project, copy these from the VibeKit repo into your project 
 
 Claude (in the planning step) will generate `project-description.md`, `project-phases.md`, `design-style-guide.md`, and `prompt.md` for you.
 
-### Install the /vibekit Claude Code skill (one curl)
+### Install the VibeKit rules for your AI agent (one curl, every major agent)
 
-After copying the framework files, install the [`/vibekit` Claude Code skill](./skill) so the rules auto-load whenever you open Claude Code in this project — no need to paste long prompts every session.
+After copying the framework files, install the VibeKit agent rules so they auto-load every session — no need to paste long prompts. Same rules content for every agent, just a different filename / install path.
 
-```bash
-# Project-local install (recommended — travels with the repo)
-mkdir -p .claude/skills/vibekit
-curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md \
-  -o .claude/skills/vibekit/SKILL.md
-```
+| Agent | One-line install |
+|---|---|
+| **Claude Code** | `mkdir -p .claude/skills/vibekit && curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md -o .claude/skills/vibekit/SKILL.md` |
+| **Cursor** | `mkdir -p .cursor/rules && curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o .cursor/rules/vibekit.mdc` |
+| **OpenAI Codex CLI** | `curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o AGENTS.md` |
+| **Cline** | `curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o .clinerules` |
+| **Windsurf** | `curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o .windsurfrules` |
+| **Gemini CLI** | `curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o GEMINI.md` |
+| **Aider, Continue, Cody, Junie, others** | See [`skill/README.md`](./skill/README.md) |
 
-Or install globally so it loads in every Claude Code session:
-
-```bash
-mkdir -p ~/.claude/skills/vibekit
-curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md \
-  -o ~/.claude/skills/vibekit/SKILL.md
-```
-
-Using Cursor, Cline, or Windsurf instead? See [`skill/README.md`](./skill/README.md) for the equivalent setup.
+Using multiple agents on the same project? Symlink one canonical `AGENTS.md` to the per-agent paths — see [`skill/README.md`](./skill/README.md) → "Multi-agent setup".
 
 ---
 

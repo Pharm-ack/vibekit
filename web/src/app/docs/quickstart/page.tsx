@@ -6,6 +6,7 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { CopyBlock } from "@/components/copy-block";
+import { AgentInstallTabs } from "@/components/agent-install-tabs";
 import { readPrompt } from "@/lib/read-prompt";
 import { SITE } from "@/lib/utils";
 
@@ -158,34 +159,17 @@ export default function Quickstart() {
                         </p>
                       </div>
 
-                      {/* Skill install */}
+                      {/* Agent rules install — works with every major AI agent */}
                       <div className="rounded-md border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-5">
                         <h3 className="font-mono text-[11px] uppercase tracking-wider text-[color:var(--accent)]">
-                          + Install the /vibekit Claude Code skill
+                          + Install the VibeKit rules for your AI agent
                         </h3>
                         <p className="mt-3 text-[14px] leading-relaxed text-[color:var(--text-primary)]">
-                          One curl command. Auto-loads the framework rules into Claude Code (or any agent that supports skills) so you don't have to paste long prompts every session.
+                          One curl command. Auto-loads the framework rules into your agent so you don't have to paste long prompts every session. Pick your agent below.
                         </p>
-                        <div className="mt-3">
-                          <CopyBlock
-                            filename="terminal"
-                            label="Project-local install (recommended)"
-                            code={`mkdir -p .claude/skills/vibekit
-curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md -o .claude/skills/vibekit/SKILL.md`}
-                          />
+                        <div className="mt-4">
+                          <AgentInstallTabs />
                         </div>
-                        <p className="mt-3 text-[12.5px] text-[color:var(--text-tertiary)]">
-                          For the full install guide (global vs project-local, plus how to use it with Cursor / Cline / Windsurf), see{" "}
-                          <a
-                            href={`${SITE.github}/tree/main/skill`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[color:var(--accent)] underline underline-offset-4"
-                          >
-                            github.com/MUKE-coder/vibekit/tree/main/skill
-                          </a>
-                          .
-                        </p>
                       </div>
                     </div>
                   ) : null}

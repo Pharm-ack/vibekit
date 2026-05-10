@@ -1,36 +1,31 @@
-# /vibekit Claude Code Skill
+# VibeKit — Agent Rules Installation
 
-A Claude Code skill that auto-loads the VibeKit framework rules whenever Claude Code (or Cursor / Cline / any agent that supports skills) starts in a VibeKit project. The skill reinforces the form rules, JB component conventions, env-file requirements, and phase-by-phase build discipline.
+This folder ships TWO files that contain the same rules in two formats:
 
-When installed, you can trigger it explicitly by typing `/vibekit` in the agent, OR it loads automatically when the agent detects VibeKit framework files (`master_prompt.md`, `project-phases.md`, etc.) in the project root.
+| File | For | Format |
+|---|---|---|
+| [`SKILL.md`](./SKILL.md) | **Claude Code** | YAML frontmatter (`name`, `description`) — registers as the `/vibekit` slash-command skill |
+| [`AGENTS.md`](./AGENTS.md) | **Every other agent** (Cursor, Codex CLI, Cline, Windsurf, Gemini CLI, Aider, Continue, Cody, Junie) | Plain markdown — drop into the agent's auto-loaded rules path |
+
+Pick the install for your agent below. All commands assume you're at the root of your VibeKit project.
 
 ---
 
-## Two install options
+## Claude Code
 
-### Option A — Project-local (recommended)
+Two install options.
 
-Installs the skill inside your project's `.claude/skills/vibekit/` folder. The skill travels with the project — anyone who clones the repo gets it automatically.
+### Project-local (recommended — travels with the repo)
 
 ```bash
-# From your project root, after copying master_prompt.md / jb-components.md / pre-deploy-review.md
 mkdir -p .claude/skills/vibekit
 curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md \
   -o .claude/skills/vibekit/SKILL.md
 ```
 
-**Or** if you've already cloned the VibeKit repo:
+After install, restart Claude Code. Type `/vibekit` to invoke it explicitly, or it auto-loads when Claude Code detects the framework files.
 
-```bash
-mkdir -p .claude/skills/vibekit
-cp /tmp/vibekit/skill/SKILL.md .claude/skills/vibekit/SKILL.md
-```
-
-Commit it with the rest of your project so collaborators get the skill on `git clone`.
-
-### Option B — Global (every Claude Code session)
-
-Installs the skill at `~/.claude/skills/vibekit/`. It loads in every Claude Code session you start anywhere on your machine — useful if you build VibeKit projects often.
+### Global (every Claude Code session anywhere on your machine)
 
 ```bash
 mkdir -p ~/.claude/skills/vibekit
@@ -38,49 +33,168 @@ curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL
   -o ~/.claude/skills/vibekit/SKILL.md
 ```
 
-You can have BOTH installed — project-local takes precedence over global if both exist.
-
 ---
 
-## Verify it's loaded
+## Cursor
 
-After installing, restart Claude Code in your project. Type `/help` — you should see `vibekit` listed under available skills. Or just type `/vibekit` and it should activate.
-
----
-
-## Updating the skill
-
-The skill's content lives in [`skill/SKILL.md`](./SKILL.md) in this repo. To pull updates:
+Cursor reads `.cursor/rules/*.mdc` (newer) and the legacy root `.cursorrules` file. Both work; we recommend the newer path.
 
 ```bash
-# Project-local
+mkdir -p .cursor/rules
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o .cursor/rules/vibekit.mdc
+```
+
+Restart Cursor (or reload the rules from Settings → Cursor Settings → Rules).
+
+---
+
+## OpenAI Codex CLI
+
+Codex CLI auto-loads `AGENTS.md` from the project root. This is the simplest install:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o AGENTS.md
+```
+
+Run `codex` in the project — the rules load automatically. (Note: you may already have an `AGENTS.md` from another tool — if so, append the contents instead of overwriting.)
+
+---
+
+## Cline (VS Code)
+
+Cline auto-loads `.clinerules` from the project root.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o .clinerules
+```
+
+Reload Cline.
+
+---
+
+## Windsurf
+
+Windsurf auto-loads `.windsurfrules` from the project root.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o .windsurfrules
+```
+
+Restart Windsurf.
+
+---
+
+## Gemini CLI
+
+Gemini CLI auto-loads `GEMINI.md` from the project root.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o GEMINI.md
+```
+
+---
+
+## Aider
+
+Aider doesn't auto-load — you reference the file via config. Add to `.aider.conf.yml`:
+
+```yaml
+read:
+  - AGENTS.md
+  - master_prompt.md
+  - jb-components.md
+```
+
+Then download the rules:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o AGENTS.md
+```
+
+---
+
+## Continue (VS Code / JetBrains)
+
+Continue reads rules from `~/.continue/config.json`. Add a `rules` entry referencing the file:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o AGENTS.md
+```
+
+Then in `~/.continue/config.json`:
+
+```json
+{
+  "rules": [
+    { "name": "vibekit", "rule": "Always read AGENTS.md at the start of every task and follow it strictly." }
+  ]
+}
+```
+
+---
+
+## Cody (Sourcegraph)
+
+```bash
+mkdir -p .cody
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o .cody/instructions.md
+```
+
+Reference `.cody/instructions.md` in your custom commands.
+
+---
+
+## Junie (JetBrains)
+
+```bash
+mkdir -p .junie
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o .junie/guidelines.md
+```
+
+---
+
+## Multi-agent setup (use VibeKit with multiple agents)
+
+If you switch between agents on the same project, install for all of them at once:
+
+```bash
+# One-shot: install for Claude Code (project-local), Cursor, Codex/Gemini, Cline, Windsurf
+mkdir -p .claude/skills/vibekit .cursor/rules
+
 curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md \
   -o .claude/skills/vibekit/SKILL.md
 
-# Global
-curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md \
-  -o ~/.claude/skills/vibekit/SKILL.md
+curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md \
+  -o AGENTS.md
+
+# Symlink AGENTS.md to the per-agent filenames
+ln -sf AGENTS.md .cursor/rules/vibekit.mdc
+ln -sf AGENTS.md .clinerules
+ln -sf AGENTS.md .windsurfrules
+ln -sf AGENTS.md GEMINI.md
 ```
+
+(On Windows PowerShell, replace `ln -sf` with `New-Item -ItemType SymbolicLink -Path <link> -Target <target>` or just `Copy-Item`.)
+
+---
+
+## Updating the rules
+
+The rules content changes as the framework evolves. To pull the latest version, re-run the same `curl` command for your agent. The new file overwrites the old one — your project files are untouched.
 
 ---
 
 ## Where this fits in the VibeKit workflow
 
-Install the skill in **Module 03 — Initialize the project** of the [tutorial](https://vibekit.desishub.com/tutorial), right after copying `master_prompt.md` and the other framework files into your project root. It's a one-line `curl` you run once per project.
+Install the rules in **Module 03 — Initialize the project** of the [tutorial](https://vibekit.desishub.com/tutorial), right after copying `master_prompt.md` and the other framework files into your project root. It's a one-line `curl` you run once per project, per agent.
 
-If you skip the skill, VibeKit still works — the agent reads the framework files manually when you paste `prompt.md`. The skill just makes the rules fire automatically without a long paste.
-
----
-
-## Other AI coding agents
-
-The skill format is Claude Code-specific, but the patterns it enforces work anywhere. For other agents:
-
-| Agent | What to do instead |
-|---|---|
-| **Cursor** | Save `SKILL.md` as `.cursorrules` (or in `.cursor/rules/` for newer versions) |
-| **Cline** | Reference `master_prompt.md` in your custom instructions |
-| **Windsurf** | Add `master_prompt.md` to the project context |
-| **Aider** | Add `master_prompt.md` and `jb-components.md` to `.aider.conf.yml` aider files list |
-
-The point is the same — get the rules into the agent's permanent context for the project so it doesn't drift mid-build.
+If you skip this step, VibeKit still works — the agent reads the framework files manually when you paste `prompt.md` (the build prompt). Installing the rules just makes them load automatically without a long paste.

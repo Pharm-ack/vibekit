@@ -35,6 +35,12 @@ ABSOLUTE RULES
 15. ALL SELECT inputs with more than 5 options use a searchable Combobox (shadcn Command-based or JB Searchable Select). NEVER plain <select> or shadcn Select for long lists. See FORM RULES → Searchable select.
 16. ALL DATE inputs use the shadcn DatePicker (Popover + Calendar). NEVER native <input type="date">, NEVER plain text input. See FORM RULES → Date picker.
 17. ALL LIST/TABLE pages use SERVER-SIDE pagination, search, and filters via API route query params. NEVER fetch the full list and paginate client-side. See FORM RULES → Server-side pagination contract.
+18. HOME PAGE (`/`): default behavior is a SERVER-COMPONENT REDIRECT — if signed in, redirect to `/dashboard`; if signed out, redirect to `/auth/sign-in`. NEVER build a marketing landing page at `/` unless project-description.md → Integrations → "Public landing page" is explicitly set to "Yes". See HOME PAGE RULE section below for the canonical pattern.
+19. IMAGE-FIRST, 80/20 RATIO. Across the entire app, IMAGES (illustrations, photos, product screenshots, custom SVG art) must outnumber Lucide icons roughly 80% to 20%. Stat cards, feature cards, empty states, hero sections, marketing blocks, modals, onboarding cards — all use IMAGES not bare icons. Lucide icons are only for inline UI affordances (close, chevron, search, dropdown indicator, status pip). See IMAGE-FIRST RULE section below.
+20. NEVER use multi-color gradient buttons (purple→pink→orange = AI slop). NEVER use multi-color gradient backgrounds. ONE accent color per project. Subtle monochromatic gradients (white→cream, brand-50→white) are OK. The design-style-guide.md picks ONE accent — do not invent more.
+21. SELECTED / ACTIVE STATES are LOUD. When a card, radio, tab, filter chip, or option is selected: 2px accent border (not 1px), background tint at 5–10% accent opacity, filled radio/check icon. When unselected: 1px neutral border, no background tint. The contrast between selected and unselected must be obvious at a glance from 2 metres away.
+22. CARDS use SOFT shadows + 1px borders. Default: `border border-[color:var(--border)] shadow-sm rounded-xl p-6`. Hover: border darkens + tiny lift `-translate-y-0.5`. NEVER `shadow-2xl` decoratively, NEVER `border-2` unless selected, NEVER multiple radii inside a single card. See CARD ANATOMY section.
+23. MOTION uses GSAP for scroll/entrance/staggers and FRAMER MOTION for state transitions. Every interactive element has a transition (150–250ms hover/state, 400–800ms entrance with `power3.out`). ALWAYS respect `prefers-reduced-motion`. See MOTION RULES section.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ENV FILE RULES
@@ -782,32 +788,582 @@ Before considering ANY form or list page complete, verify:
 If any [ ] is unchecked, the form/page is NOT done. Fix it before moving on.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DESIGN SYSTEM — THE STANDARD YOU MUST HIT
+DESIGN SYSTEM — THE STANDARD YOU MUST HIT (NON-NEGOTIABLE)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-You are designing at the level of Linear, Vercel, and Airbnb.
+You are designing at the level of Linear, Vercel, Airbnb, and Picktime — premium SaaS that feels effortless. Vibe coders are not designers; you ARE the designer. These rules apply on EVERY page, EVERY component, EVERY screen — even when the user gives a brief that doesn't mention design.
 
-TYPOGRAPHY: Inter body, JetBrains Mono code. Type scale: xs(12) sm(14) base(16) lg(18) xl(20) 2xl(24) 3xl(30). Weights: 400 body, 500 headings, 600 stat numbers only.
-COLOR: One accent hue (blue). All surfaces neutral. Accent for: primary buttons, active nav, focus rings, links, progress.
-SPACING: 8pt grid. Card p-6, Modal p-8, Table cell py-3 px-4, Button py-2 px-4.
-RADIUS: sm(6px) buttons/inputs, md(8px) table rows, lg(12px) cards/modals, full avatars/pills.
-SHADOWS: Cards shadow-sm, Modals shadow-xl, Dropdowns shadow-lg. NO shadow on buttons. NO decorative shadows.
-MOTION: framer-motion for page transitions (fade+translateY 200ms), modal enter (scale 150ms), list stagger (40ms). CSS transitions for hover/focus (150ms).
+The two design references baked into VibeKit's standard:
+- **Picktime landing pattern** (https://picktime.com style): cream/lavender pastel background, generous vertical rhythm, soft borders + tiny shadows, big quiet display typography, illustration-led feature cards, monochromatic gradient cards, clear featured-pricing-card pattern, testimonial cards with avatars, accordion FAQ, brand reset before footer.
+- **Modal/option pattern**: large illustrations (NOT bare icons) per option, 2px green border on selected option with filled radio, generous internal padding, primary CTA bottom-right, ghost cancel bottom-left.
 
-SIDEBAR: 240px fixed (collapsible to 64px). White bg + border-r. Nav items 36px height, 6px radius. Active: accent-50 bg + accent-600 text + 2px left border. User section at bottom with dropdown.
-PAGE HEADER: Breadcrumb (12px tertiary) + title (24px/500) + actions (right). Min 72px, border-b.
-STAT CARDS: 3-4 per row, white bg, border, 12px radius, shadow-sm, p-6. 40px icon square with accent-50 bg. Label 12px ALL-CAPS. Value 30px/600. ALL cards identical style.
-DATA TABLES: Toolbar (search+filters+export). White bg, border, 12px radius. Header row bg-subtle 12px ALL-CAPS. Rows 52px, hover bg-muted. Server-side pagination. Column toggle. Export Excel (xlsx) + PDF (@react-pdf/renderer). Dates formatted "Jan 15, 2024". Numbers right-aligned monospace.
-BADGES: Pill shape, 12px/500, no border. Variants: default/success/warning/danger/info. 6px colored dot for status.
-FORMS: React Hook Form + Zod always (see FORM RULES section above for full patterns). Label 14px/500 above input. Input height 38px, border, 6px radius. Password toggle (Eye icon). Currency auto-format commas via <CurrencyInput>. shadcn DatePicker via Popover + Calendar (never HTML date). Searchable Combobox / JB Searchable Select (never plain select for >5 options). Modal forms max 4-5 fields, 480px max-width. Full edit page two-column layout.
-EMPTY STATES: Centered 64px icon + 16px heading + 14px body (320px max) + CTA button.
-LOADING: Skeleton shimmer only, never spinners. Match exact layout proportions.
-TOASTS: Sonner, bottom-right. Success 3s auto-dismiss. Error no auto-dismiss. AlertDialog for destructive confirmations.
-DARK MODE: next-themes + ThemeProvider. All colors via CSS variables. Theme toggle in sidebar dropdown.
-RESPONSIVE: Mobile-first. Sidebar hidden on <lg (Sheet drawer). Tables card-view on mobile. Forms single-column on mobile.
-AVATAR: Image with Next.js Image, initials fallback with deterministic color. Sizes: sm(24) md(32) lg(40) xl(48).
+If anything you build doesn't feel premium when you mentally A/B it against those two references, rebuild it.
 
-ALWAYS BUILD: 404 page (large "404" + "Page not found" + home button), Error page (warning icon + reset + home), Loading page (skeleton).
+──────────────────────────────────────────────────────
+TYPOGRAPHY (read this twice — agents botch this constantly)
+──────────────────────────────────────────────────────
+
+- Sans body: the font specified in design-style-guide.md (Inter / Geist / Onest). NEVER mix multiple sans fonts.
+- Mono code/labels: JetBrains Mono or Geist Mono.
+- Display headlines (hero, section openers): same sans family as body, BUT weight 600–700, tracking -0.02em to -0.04em (TIGHTER, never looser), line-height 0.95–1.05.
+- TYPE SCALE (rigid — no improvising):
+  - micro: 11px uppercase tracking-wider, weight 500 — eyebrows, labels above stats
+  - body-sm: 13–14px — table cells, captions, buttons
+  - body: 15–16px — paragraph body
+  - body-lg: 17–18px — marketing body, hero sub
+  - h4: 20px / 600 — card titles
+  - h3: 24–28px / 600 — modal titles, section sub-headlines
+  - h2: 36–48px / 600 — section headlines (with -0.02em tracking)
+  - h1: 60–72px / 600–700 — page hero on marketing
+  - display: 80–100px / 700 — landing-page headline ONLY
+- Weight RULES: body is always 400. Buttons / labels / nav items are 500. Headings are 600. Display is 700. NEVER 800/900.
+- Tabular numbers (`tabular-nums`) for ALL prices, stats, counts, dates, totals.
+- Line-height: 1.55 for body paragraphs, 1.05–1.2 for headings. Never the same.
+- Marketing pages get bigger type than dashboard pages. A dashboard h1 is 24px; a marketing hero h1 is 72px. Don't mix the two scales.
+
+──────────────────────────────────────────────────────
+COLOR — ONE ACCENT, RIGID HIERARCHY
+──────────────────────────────────────────────────────
+
+- ONE accent color per project (read it from design-style-guide.md). Use it for: primary buttons, selected state borders, active nav, focus rings, links, progress bars, "recommended" badges. Nothing else.
+- Backgrounds form a 3-tier hierarchy:
+  - `bg` (page background — slightly off-white in light mode, near-black in dark)
+  - `bg-elevated` (cards, modals — pure white in light, slightly lifted in dark)
+  - `bg-subtle` (table headers, hover surfaces, faint sections)
+- Text forms a 3-tier hierarchy: `text-primary` / `text-secondary` / `text-tertiary`. NEVER more than three tiers.
+- Status colors (success/warning/danger/info) ONLY for status badges, alerts, and form errors. NEVER for body copy or buttons.
+- BANNED:
+  - Multi-color gradient buttons (purple→pink→orange — instant AI slop signal)
+  - Multi-color gradient backgrounds across a full section
+  - Background-shifting animations (rainbow, hue-rotate, etc.)
+  - More than one accent color per project
+- ALLOWED gradients (sparingly):
+  - Soft monochromatic page section bg (e.g. `from-background via-bg-subtle to-background`)
+  - Soft accent radial glow behind hero or featured card (~10–15% opacity)
+  - Pricing "Pro" card subtle accent-50 → white gradient
+
+──────────────────────────────────────────────────────
+SPACING — 8PT GRID, GENEROUS
+──────────────────────────────────────────────────────
+
+- 8pt grid: every spacing value is a multiple of 4px (Tailwind 1, 2, 3, 4, 6, 8, 12, 16, 24, 32).
+- Section vertical padding: `py-20 sm:py-32` (marketing), `py-12 sm:py-16` (dashboard sections). Adjacent sections never touch — the rhythm carries the page.
+- Card internal padding: `p-6` (24px) default, `p-8` (32px) for hero/feature cards, `p-5` (20px) for compact list cells.
+- Gap between cards in a grid: `gap-3` to `gap-5` for dashboard, `gap-6` to `gap-8` for marketing.
+- Inside forms: `space-y-5` between fields, `space-y-2` between label and input.
+- Container max-widths: `max-w-3xl` (long-form copy, articles), `max-w-5xl` (most marketing sections), `max-w-6xl` (full landing pages, dashboards), `max-w-7xl` (wide data tables only).
+- WHITESPACE IS A FEATURE. If a page feels tight, increase vertical rhythm before adding content.
+
+──────────────────────────────────────────────────────
+RADIUS — RIGID SCALE, NEVER MIX WITHIN ONE CARD
+──────────────────────────────────────────────────────
+
+- xs (4px): no longer used — too small
+- sm (6px): badges, tags, small chips
+- md (8px): inputs, buttons, table rows
+- lg (12px): cards, dropdowns, popovers
+- xl (16px): modals, large feature cards
+- 2xl (20–24px): pricing cards, hero feature blocks
+- full (9999px): avatars, status pips, "primary" CTA buttons on marketing landing pages
+- RULE: Inside a card with `rounded-xl` (16px), nested elements use `rounded-md` or `rounded-lg`. Never nest a `rounded-2xl` inside a `rounded-md`. Always SMALLER inside LARGER.
+
+──────────────────────────────────────────────────────
+SHADOWS — SUBTLE, BORDERS DO THE WORK
+──────────────────────────────────────────────────────
+
+Borders carry the visual weight. Shadows hint at depth — they don't shout.
+
+- `shadow-xs` (0 1px 2px rgba 0.05): cards on a colored background
+- `shadow-sm` (default for elevated cards): standard card shadow
+- `shadow-md`: dropdowns, popovers
+- `shadow-lg`: floating tooltips, command palettes
+- `shadow-xl`: modals only
+- `shadow-2xl`: BANNED for routine UI. Only on hero illustrations, tilted product mockups, or showcase galleries.
+- BUTTONS: NO shadow. Ever. (Except a subtle accent glow on the marketing primary CTA — `shadow-[0_8px_24px_rgba(<accent>,0.25)]`.)
+- ALL shadows are dark and low-opacity. Never colored shadows except the controlled accent glow above.
+
+──────────────────────────────────────────────────────
+CARD ANATOMY (canonical pattern — copy this for EVERY card)
+──────────────────────────────────────────────────────
+
+DEFAULT card:
+
+```tsx
+<div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated)] p-6 transition-all hover:-translate-y-0.5 hover:border-[color:var(--border-strong)] hover:shadow-sm">
+  {/* ALWAYS top: visual element (image / illustration / 3D icon — NOT a bare lucide icon) */}
+  <div className="aspect-[4/3] overflow-hidden rounded-lg bg-[color:var(--bg-subtle)]">
+    <img src="/illustrations/feature-x.svg" alt="..." className="h-full w-full object-cover" />
+  </div>
+  {/* Title */}
+  <h3 className="mt-5 text-[20px] font-semibold tracking-tight text-[color:var(--text-primary)]">
+    Title
+  </h3>
+  {/* Body */}
+  <p className="mt-2 text-[15px] leading-relaxed text-[color:var(--text-secondary)]">
+    Description that breathes.
+  </p>
+  {/* Optional CTA at the bottom */}
+  <a className="mt-5 inline-flex items-center gap-2 text-[14px] font-medium text-[color:var(--accent)]">
+    Learn more →
+  </a>
+</div>
+```
+
+VARIANTS:
+- Stat card: same shell, but content is `[label] / [big-number] / [delta]`. The visual is a small accent-tinted square (40×40, `rounded-lg`, `bg-accent/10`) with an icon — this is one of the few places Lucide icons are OK.
+- Feature card: same shell with full illustration on top.
+- Pricing card: same shell with `rounded-2xl` + `p-8` + larger price typography.
+- Featured pricing card: `border-2 border-[color:var(--accent)]` + soft accent gradient bg + "Recommended" pill at the top.
+
+──────────────────────────────────────────────────────
+SELECTED / ACTIVE STATES (loud, unmistakable)
+──────────────────────────────────────────────────────
+
+The single most-broken design pattern in AI-built UIs is selected states — agents make them too subtle, then users can't tell what they picked. Fix this:
+
+- Unselected option: `border border-[color:var(--border)] bg-[color:var(--bg-elevated)]`
+- Selected option: `border-2 border-[color:var(--accent)] bg-[color:var(--accent)]/5` (5% accent-tinted background) + filled radio/check
+- Hover (unselected): `border-[color:var(--border-strong)]`, no bg change
+- Disabled: `opacity-50 cursor-not-allowed`
+
+This applies to: pricing cards, payment-method selectors, plan choosers, multi-step form options, filter chips, tab buttons.
+
+CHIPS / PILLS for filter or category selection:
+- Unselected: `rounded-full border border-[color:var(--border)] bg-transparent px-3 py-1.5 text-[12px]`
+- Selected: `bg-[color:var(--text-primary)] text-[color:var(--text-inverse)] border-transparent`
+
+──────────────────────────────────────────────────────
+BUTTONS
+──────────────────────────────────────────────────────
+
+THREE variants exist. Don't invent more.
+
+- **Primary** (call-to-action — one per screen ideally):
+  ```
+  bg-[color:var(--text-primary)] text-[color:var(--text-inverse)] rounded-full px-6 py-3 text-[15px] font-medium hover:opacity-90 transition-opacity
+  ```
+  On marketing landing pages, primary CTA gets the accent color + a subtle glow:
+  ```
+  bg-[color:var(--accent)] text-[color:var(--accent-fg)] shadow-[0_8px_24px_rgba(var(--accent-rgb),0.25)]
+  ```
+
+- **Secondary / Outline**:
+  ```
+  border border-[color:var(--border-strong)] bg-transparent text-[color:var(--text-primary)] rounded-full px-6 py-3 hover:bg-[color:var(--bg-subtle)] transition-colors
+  ```
+
+- **Ghost** (tertiary actions, cancel, back):
+  ```
+  text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] hover:bg-[color:var(--bg-subtle)] rounded-full px-4 py-2
+  ```
+
+ALL buttons use `rounded-full` on marketing pages and `rounded-md` (8px) inside dashboard tables/forms. Never both within one screen.
+
+NEVER:
+- Multi-color gradient backgrounds on buttons
+- Heavy drop shadows (use the controlled accent glow instead)
+- Smaller than 36px touch height (40px for primary)
+- More than ONE primary CTA visible above the fold
+
+──────────────────────────────────────────────────────
+SECTION + LAYOUT RHYTHM (marketing pages)
+──────────────────────────────────────────────────────
+
+Every marketing page follows this skeleton:
+
+1. NAV (sticky, glass on scroll, max-w-6xl)
+2. HERO (full vh on landing, py-32 on inner pages — eyebrow chip + display headline + sub + dual CTA + optional product visual below)
+3. TRUST STRIP (logos / "as seen on" / agent compatibility — small, quiet, py-10)
+4. PROBLEM (3–4 cards in a grid, each with illustration + title + description)
+5. SOLUTION / HOW IT WORKS (numbered steps OR animated demo)
+6. FEATURES GRID (2–3 columns, illustration-led cards)
+7. SOCIAL PROOF (testimonials with avatars + names + roles + the actual quote)
+8. PRICING (3 cards, middle one featured)
+9. FAQ (accordion, 6–10 questions max)
+10. FINAL CTA (big colored card, primary button, single sentence support)
+11. FOOTER (4–6 columns, brand reset)
+
+Between every two sections: `py-20 sm:py-32` minimum. Sections never touch.
+
+──────────────────────────────────────────────────────
+SIDEBAR + DASHBOARD (internal apps)
+──────────────────────────────────────────────────────
+
+- 240px fixed sidebar (collapsible to 64px). White bg, border-r. Nav items: 36px height, 8px radius, 12px icon (Lucide is OK here — UI affordance), 14px label.
+- Active nav: `bg-[color:var(--accent)]/10 text-[color:var(--accent)] font-medium` + 2px accent-color left border.
+- User block at bottom: avatar + name + dropdown.
+- Page header: 64px height, breadcrumb + page title (24px/600) + page actions (right).
+- Page padding: `px-8 py-6` for desktop dashboards; tighter on mobile.
+
+──────────────────────────────────────────────────────
+DATA TABLES
+──────────────────────────────────────────────────────
+
+- Wrapper: `rounded-xl border bg-elevated overflow-hidden`
+- Toolbar above table: search input (left, 320px) + filters (middle) + export buttons (right). Whole toolbar `px-6 py-4 border-b`.
+- Header row: `bg-bg-subtle text-[11px] uppercase tracking-wider text-text-tertiary` 48px tall.
+- Body row: 52px tall, `text-[14px]`, hover `bg-bg-subtle`. Border-bottom `border-border` between rows.
+- First column: `pl-6`. Last column: `pr-6`.
+- Numeric columns: `text-right font-mono tabular-nums`.
+- Status columns: pill badges (see badge spec).
+- Row actions: kebab menu, only visible on hover.
+- Sort indicators: subtle chevron, accent color when active.
+- Server-side pagination footer: `px-6 py-4 border-t flex items-center justify-between`.
+- Empty state: image (illustration) + message + CTA. NOT a lonely icon.
+
+──────────────────────────────────────────────────────
+EMPTY STATES (use illustrations, not lonely icons)
+──────────────────────────────────────────────────────
+
+```tsx
+<div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+  <img src="/illustrations/empty-tasks.svg" alt="" className="h-32 w-auto mb-6" />
+  <h3 className="text-[18px] font-semibold text-[color:var(--text-primary)]">No tasks yet</h3>
+  <p className="mt-2 max-w-sm text-[14px] text-[color:var(--text-secondary)]">
+    Create your first task to get started.
+  </p>
+  <Button className="mt-6">Create task</Button>
+</div>
+```
+
+A bare Lucide icon ALONE in an empty state is NOT acceptable. Use an illustration from one of the approved sources (see IMAGE-FIRST RULE section below).
+
+──────────────────────────────────────────────────────
+MODAL ANATOMY
+──────────────────────────────────────────────────────
+
+- Overlay: `bg-black/50 backdrop-blur-sm`.
+- Modal shell: `max-w-lg rounded-2xl bg-bg-elevated shadow-xl p-8`. (max-w-2xl for option-picker modals like the reference image.)
+- Header: title (h3 / 24px / 600) + optional sub (14px text-secondary) + close icon (top-right, ghost).
+- Body: `mt-5 space-y-5`.
+- Option list inside modal: each option is a card per CARD ANATOMY rules, with `border-2 border-accent` selected state.
+- Footer: `mt-8 flex items-center justify-between` — ghost cancel left, primary action right.
+- Animation: Framer Motion fade + scale 0.96 → 1, 200ms.
+
+──────────────────────────────────────────────────────
+BADGES, PILLS, CHIPS
+──────────────────────────────────────────────────────
+
+- Pill shape always (`rounded-full`).
+- Padding: `px-2.5 py-0.5` (small) or `px-3 py-1` (default).
+- Font: 11–12px, weight 500.
+- Variants: default / accent / success / warning / danger / info.
+- Status pip: 6px circle inline-block before the text.
+- NO border on badges; rely on background tint (`bg-success/10 text-success`).
+
+──────────────────────────────────────────────────────
+LOADING + SKELETONS
+──────────────────────────────────────────────────────
+
+- Skeleton shimmer (CSS gradient slide) — NEVER spinners on page load.
+- Match the layout of the real content exactly: same heights, same widths, same gaps.
+- Spinners are OK ONLY inside buttons during a mutation (`<Loader2 className="animate-spin" />`).
+
+──────────────────────────────────────────────────────
+TOASTS + ALERTS
+──────────────────────────────────────────────────────
+
+- Sonner library, bottom-right.
+- Success: 3s auto-dismiss, accent colored icon left.
+- Error: no auto-dismiss, danger icon, includes "Retry" or "Dismiss" action.
+- Info: 4s auto-dismiss.
+- AlertDialog for destructive confirmations (delete, cancel subscription) — never a plain `confirm()`.
+
+──────────────────────────────────────────────────────
+RESPONSIVE
+──────────────────────────────────────────────────────
+
+- Mobile-first. Every layout works at 360px width.
+- Sidebar hides at <`lg`, becomes a Sheet drawer triggered by hamburger.
+- Tables become card-view at <`md` — each row becomes a stacked card.
+- Forms: single column on mobile, two-column from `md` upward.
+- Hero typography uses `clamp(min, vw, max)` so it scales fluidly.
+
+──────────────────────────────────────────────────────
+ALWAYS BUILD
+──────────────────────────────────────────────────────
+
+- 404 page (large display "404" + "Page not found" + back-home button + illustration if one exists)
+- Error page (warning illustration + reset + home buttons)
+- Loading page (skeleton matching the route's layout)
+- Custom favicon + OG image referenced in metadata
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+IMAGE-FIRST RULE (80% IMAGES / 20% ICONS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The single biggest tell of an AI-built UI is "lonely Lucide icons everywhere." Real apps lead with images — illustrations, photos, custom SVG art, product screenshots, animated 3D objects. Audit your output: across the whole app, the count of IMAGES used decoratively must be roughly 4× the count of decorative icons.
+
+──────────────────────────────────────────────────────
+WHEN TO USE AN IMAGE (default)
+──────────────────────────────────────────────────────
+
+- Stat cards (yes — even small ones get a custom 3D-looking illustration or product screenshot, not a 2D Lucide outline)
+- Feature cards (always)
+- Empty states (always)
+- Hero / above-the-fold (always)
+- Modal/option pickers (each option gets an illustration — see modal reference image)
+- Onboarding cards
+- Pricing tier cards (header illustration helps)
+- Marketing section openers
+- Testimonial avatars (real photos, not initials, when possible)
+- Blog post hero
+- Open-graph images
+- 404 / error / loading pages
+
+──────────────────────────────────────────────────────
+WHEN A LUCIDE ICON IS OK
+──────────────────────────────────────────────────────
+
+Icons are inline UI affordances — small, functional, never decorative-only:
+
+- Close (X), back (ChevronLeft), expand (ChevronDown), more (MoreHorizontal)
+- Search input prefix (Search), filter button (Filter), sort indicator (ArrowUpDown)
+- Status pip (small colored dot — but the Lucide CheckCircle is fine too)
+- Form field affordances (Eye for password toggle, Calendar for date picker)
+- Sidebar nav items (one icon per item — these are functional, not decorative)
+- Inside a primary CTA button (one small icon next to the text)
+- Toast type indicator (Check / X / Info)
+
+These icons are 14–20px max, semantic, and never the ONLY visual element of a card or section.
+
+──────────────────────────────────────────────────────
+WHERE TO GET ILLUSTRATIONS
+──────────────────────────────────────────────────────
+
+In order of preference:
+
+1. **Custom SVG components** — Build small inline SVG components for the 5–10 visuals the app uses repeatedly (e.g. `<EmptyTasksIllustration />`, `<HeroOrbitalMark />`). Lives in `src/components/illustrations/*.tsx`. Reusable, themeable via `currentColor`, no network requests.
+
+2. **3D-looking SVGs (built locally)** — Compose multiple SVG paths with subtle gradients, soft shadows, isometric perspective. The look from the modal reference image (each option's icon-thumbnail with a 3D feel) is THIS — custom mini-illustrations, not Lucide.
+
+3. **Public illustration sources** — When you need many illustrations fast:
+   - undraw.co (open source, customizable color)
+   - manypixels.co/illustrations (free)
+   - blush.design (composable)
+   - lottiefiles.com (animated — use with @lottiefiles/react-lottie-player)
+   - Storyset by Freepik
+   - Save downloaded SVGs into `public/illustrations/` and reference via `<Image>` or `<img>`
+
+4. **Real photos** — Unsplash for testimonial avatars, hero backgrounds. Always optimize via `next/image`. Always include `alt` text.
+
+5. **Product screenshots** — Take real screenshots of the app being built (during the build) and crop them into mockups for the marketing page. Best social proof.
+
+──────────────────────────────────────────────────────
+HOW TO MAKE A CUSTOM 3D-LOOKING SVG (the modal-reference style)
+──────────────────────────────────────────────────────
+
+Each option in the modal reference (Clear Scope, SEO, Link optimization, Content Optimisation) has a custom mini-illustration with:
+- Soft gradient fills (light → mid tone of one color)
+- 1–2 small accent shapes layered on top
+- Slight isometric perspective (axes at ~30°)
+- Inner highlight on top edge (lighter color)
+- Soft drop shadow under the bottom (rgb(0,0,0)/15%)
+
+Example pattern (build once, reuse for many cards):
+
+```tsx
+// src/components/illustrations/feature-card-icon.tsx
+type Props = { color?: string; className?: string };
+export function FeatureIcon({ color = "#22C55E", className }: Props) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden>
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.95" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.55" />
+        </linearGradient>
+        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="1.2" />
+        </filter>
+      </defs>
+      {/* base */}
+      <rect x="8" y="14" width="48" height="42" rx="8" fill="url(#g)" />
+      {/* highlight */}
+      <rect x="8" y="14" width="48" height="6" rx="3" fill="white" opacity="0.35" />
+      {/* accent */}
+      <circle cx="46" cy="34" r="6" fill="white" opacity="0.85" />
+      {/* shadow */}
+      <ellipse cx="32" cy="60" rx="22" ry="2" fill="black" opacity="0.08" filter="url(#soft)" />
+    </svg>
+  );
+}
+```
+
+Sized at 64×64 in a `rounded-xl` thumbnail container. Vary the color per card. Re-skinnable, instantly themeable, no licensing issues.
+
+──────────────────────────────────────────────────────
+SELF-CHECK
+──────────────────────────────────────────────────────
+
+Before declaring any page "done", scan it and count:
+- Decorative images (illustrations, SVG art, photos, product screenshots): N
+- Decorative-only icons (Lucide icons used as the main visual of a card or section): M
+
+If M > N/4, the page violates the 80/20 rule. Replace icon-only cards with illustrated versions.
+
+NEVER:
+- A stat card whose ONLY visual is a 24px Lucide icon
+- A feature card with `<Sparkles />` and no actual illustration
+- An empty state that's just `<Inbox />` and a sentence
+- A modal option picker that uses Lucide icons instead of mini-illustrations
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MOTION & MICRO-INTERACTIONS RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Two libraries, two purposes. Do not mix them up.
+
+──────────────────────────────────────────────────────
+WHEN TO USE GSAP (with @gsap/react + ScrollTrigger)
+──────────────────────────────────────────────────────
+
+- Hero entrance animations (text reveal, staggered orbital, particle field)
+- Scroll-triggered section reveals (fade-up, slide-in)
+- List staggers when a section enters viewport
+- Pinned scroll sequences, parallax, scroll-driven counters
+- Multi-step entrance timelines (eyebrow → headline → body → CTA in sequence)
+- Page-level marquee animations
+
+PATTERN:
+
+```tsx
+"use client";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
+
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
+
+export function MySection() {
+  const root = useRef<HTMLElement>(null);
+  useGSAP(() => {
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: root.current, start: "top 80%", toggleActions: "play none none none" },
+      defaults: { ease: "power3.out" },
+    });
+    tl.from(".reveal-eyebrow", { y: 14, opacity: 0, duration: 0.5 })
+      .from(".reveal-headline", { y: 18, opacity: 0, duration: 0.6 }, "-=0.3")
+      .from(".reveal-card", { y: 24, opacity: 0, stagger: 0.12, duration: 0.7 }, "-=0.2");
+  }, { scope: root });
+  return <section ref={root}>...</section>;
+}
+```
+
+CRITICAL — defensive pattern for CTAs and important UI:
+- NEVER apply `gsap.from()` with `opacity: 0` to interactive elements (buttons, links, form inputs). If ScrollTrigger doesn't fire (mid-page reload, hash navigation), the element stays at opacity 0 forever — the CommunityBanner WhatsApp button bug. Use `gsap.fromTo()` with explicit values, OR animate parent containers, OR render CTAs statically without entrance animation.
+
+──────────────────────────────────────────────────────
+WHEN TO USE FRAMER MOTION
+──────────────────────────────────────────────────────
+
+- Modal open/close (fade + scale 0.96 → 1)
+- Tab switching (slide + fade)
+- Accordion expand/collapse (height auto + fade)
+- Toast slide-in
+- Drag interactions (Framer Motion's `drag` prop, draggable cards/sliders)
+- Layout animations (`<motion.div layout>`)
+- Hover micro-interactions when CSS isn't enough (e.g. shared element transitions)
+- Gesture-based sheet drawers (mobile Sheet swipe-to-dismiss)
+
+PATTERN:
+
+```tsx
+"use client";
+import { motion, AnimatePresence } from "framer-motion";
+
+export function Modal({ open, onClose, children }) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={onClose}
+          />
+          <motion.div
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-bg-elevated p-8 shadow-xl"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {children}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+```
+
+──────────────────────────────────────────────────────
+TIMING + EASING (canonical)
+──────────────────────────────────────────────────────
+
+| Interaction | Duration | Easing |
+|---|---|---|
+| Hover state change | 150ms | ease-out (CSS `transition-colors`) |
+| Button press | 100ms | ease-out |
+| Dropdown / popover | 150ms | ease-out |
+| Modal enter | 200ms | `[0.16, 1, 0.3, 1]` (Framer Motion bezier) |
+| Modal exit | 150ms | ease-in |
+| Page transition | 300ms | `power3.out` (GSAP) |
+| Section reveal (scroll) | 600–800ms | `power3.out` (GSAP) |
+| List stagger | 80–120ms per item | `power3.out` (GSAP) |
+| Toast slide | 250ms | `[0.16, 1, 0.3, 1]` |
+| Counter count-up | 1500ms | `power2.out` |
+
+NEVER:
+- Spring animations on entrance (looks bouncy/cheap)
+- Anything > 1000ms for UI interactions
+- Rotation / flip transitions on cards (looks 2008)
+- Blinking/pulsing effects (except a focused loading spinner or status pip "ping")
+- Multi-bounce easings
+
+──────────────────────────────────────────────────────
+prefers-reduced-motion
+──────────────────────────────────────────────────────
+
+ALWAYS respect it. In CSS:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+For GSAP timelines, gate the animation:
+
+```ts
+if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+```
+
+For Framer Motion, use the `useReducedMotion()` hook and conditionally skip transitions.
+
+──────────────────────────────────────────────────────
+MICRO-INTERACTIONS CHECKLIST (every interactive element)
+──────────────────────────────────────────────────────
+
+Every clickable / focusable element must have:
+- A hover state (color change, subtle bg, slight lift, or border darken)
+- A focus-visible ring (`focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2`)
+- An active/pressed state for buttons (`active:scale-[0.98]`)
+- A disabled state when applicable (`disabled:opacity-50 disabled:pointer-events-none`)
+- A 150ms transition between states
+
+Cards: `hover:-translate-y-0.5 hover:border-border-strong hover:shadow-sm transition-all`
+Links: `hover:text-text-primary transition-colors` (underline-offset-4 if underlined)
+Inputs: `focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/20 transition-colors`
+
+A button with no hover state, no focus ring, and no transition is a sign the agent gave up. Don't.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DATA FETCHING — REACT QUERY

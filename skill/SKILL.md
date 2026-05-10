@@ -39,14 +39,56 @@ Build production-grade Next.js applications following the VibeKit framework stan
 - **Email:** Resend + React Email
 - **Components:** Check `jb-components.md` first
 
-### Design System
+### Design System (NON-NEGOTIABLE — vibe coders are not designers, you are)
 - Follow `design-style-guide.md` exactly — it was customized for this project
 - Every color must come from the palette defined in the style guide
-- Every spacing must match the 8pt grid
-- Every component (buttons, inputs, cards, tables, modals, badges) must match the spec in section 7 of the style guide
-- Typography: use the fonts and scale defined in section 2
-- Radius: never mix radius values in the same container (see section 5)
-- Shadows: borders do the work, shadows are subtle (see section 6)
+- Every spacing must match the 8pt grid (multiples of 4)
+- Every component (buttons, inputs, cards, tables, modals, badges) must match the spec in master_prompt.md → DESIGN SYSTEM
+- Typography: use the fonts and scale defined in master_prompt. Display headlines weight 600–700, tight tracking, NEVER 800/900 weights. ALWAYS tabular-nums on prices, stats, dates
+- Radius: never mix radius values in the same container — smaller inside larger
+- Shadows: borders do the work, shadows are subtle. NEVER `shadow-2xl` decoratively. NO shadow on buttons (except the controlled accent glow on the marketing primary CTA)
+- ONE accent color per project. NEVER multi-color gradient buttons. NEVER multi-color gradient backgrounds. The first AI-slop signal is a purple→pink→orange button.
+- Section vertical padding `py-20 sm:py-32` between marketing sections — generous whitespace is a feature
+
+### Selected / Active States are LOUD
+The single most-broken design pattern in AI-built UIs. Fix it:
+- Unselected: `border border-border bg-elevated`
+- Selected: `border-2 border-accent bg-accent/5` (5% accent-tinted bg) + filled radio/check icon
+- The contrast must be obvious at a glance from 2 metres away
+- Applies to: pricing cards, payment-method pickers, plan choosers, multi-step form options, filter chips, tab buttons
+
+### Image-First Rule (80/20 — IMAGES outnumber ICONS 4:1)
+The biggest tell of an AI-built UI is "lonely Lucide icons everywhere." Audit every page — if a card's only visual is a 24px Lucide icon, that's a violation.
+
+USE IMAGES (illustrations, custom SVG art, photos, product screenshots) for:
+- Stat cards, feature cards, empty states
+- Hero / above-the-fold blocks
+- Modal option pickers (each option gets a mini-illustration, like the VibeKit modal reference)
+- Onboarding cards, pricing tier headers
+- Marketing section openers
+- Testimonial avatars (real photos when possible)
+- 404 / error / loading pages
+
+LUCIDE ICONS are only for inline UI affordances (close X, chevrons, search prefix, sort indicator, sidebar nav items, status pip, password-toggle Eye, in-button icon).
+
+WHERE TO GET illustrations:
+1. Custom inline SVG components in `src/components/illustrations/*.tsx` (preferred — themeable via currentColor, no network requests)
+2. Free libraries: undraw.co, manypixels.co, blush.design, Storyset, lottiefiles.com (Lottie animations)
+3. Real Unsplash photos for testimonial avatars / hero backgrounds (always use `next/image` + alt text)
+4. Product screenshots from the actual app (best social proof)
+
+The canonical 3D-looking SVG pattern (gradient + soft highlight + drop shadow) is in master_prompt.md → IMAGE-FIRST RULE → custom 3D SVG section. Build once, reuse with different colors per card.
+
+### Motion Rules (GSAP for scroll/entrance, Framer Motion for state)
+- **GSAP + ScrollTrigger** for: hero entrance, scroll-triggered section reveals, list staggers, multi-step entrance timelines, parallax. Use `useGSAP({ scope: ref })` from `@gsap/react`.
+- **Framer Motion** for: modal open/close, tab switching, accordion expand, toast slide, drag, layout animations (`<motion.div layout>`).
+- Timing: 150ms hover, 200ms modal enter, 600–800ms section reveal, 80–120ms list stagger.
+- Easing: `power3.out` (GSAP entrances), `[0.16, 1, 0.3, 1]` (Framer Motion).
+- ALWAYS respect `prefers-reduced-motion` — gate GSAP timelines with `window.matchMedia` check, use Framer's `useReducedMotion()` hook.
+- Every interactive element has hover state + focus-visible ring + 150ms transition. A button with no hover and no focus ring is a sign the agent gave up.
+
+### CRITICAL motion bug to avoid
+NEVER apply `gsap.from()` with `opacity: 0` to interactive elements (buttons, links, form inputs). If ScrollTrigger doesn't fire (mid-page reload, hash navigation), the element stays at opacity 0 forever. For CTAs and important UI: render statically OR use `gsap.fromTo()` with explicit values, OR animate parent containers.
 
 ### JB Components — Check First, Build Second
 Before building from scratch, check `jb-components.md`:

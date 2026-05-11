@@ -145,7 +145,7 @@ pnpm dlx shadcn@latest add https://better-auth-ui.desishub.com/r/auth-components
 
 **Install command:**
 ```bash
-pnpm dlx shadcn@latest add https://file-storage-registry.vercel.app/r/file-storage.json
+pnpm dlx shadcn@latest add https://file-storage.desishub.com/r/file-storage.json
 ```
 
 **Prerequisites:** Next.js with shadcn/ui, Prisma ORM, AWS S3 or Cloudflare R2 bucket with credentials. Auto-installs `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`, `uuid`, `@tanstack/react-query`, `react-dropzone`, `react-hook-form`, `zod`.

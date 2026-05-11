@@ -71,7 +71,23 @@ Every project built with this framework uses this stack. Do not deviate unless t
 
 ---
 
+## 📺 Watch the Crash Course
+
+The fastest way to learn VibeKit is to watch the full crash course where I build a real Hardware POS system from scratch in about 3 hours — every prompt, every command, end-to-end.
+
+[![VibeKit Framework Crash Course](https://14j7oh8kso.ufs.sh/f/HLxTbDBCDLwf0VdAvuLtvnF3cx4uPCTU9aqg2f0oY8klybGQ)](https://youtu.be/TvGu_Tu-6UI)
+
+▶ **[Watch on YouTube → VibeKit Framework Crash Course](https://youtu.be/TvGu_Tu-6UI)**
+
+The written version with copyable prompts is also on the site: [vibekit.desishub.com/tutorial](https://vibekit.desishub.com/tutorial).
+
+---
+
 ## How To Use This Framework
+
+### Step 0 — Check your environment (2 min, optional but recommended)
+
+Before anything else, make sure your machine has Node 20+, pnpm 9+, git, and gh CLI installed. The fastest check: copy the OS-specific prompt from [`setup-prompts/`](./setup-prompts) (macOS / Windows / Linux) and paste it into your AI coding agent. It runs a single safe shell command and tells you exactly what's installed and what to fix — without touching your system. Or visit [vibekit.desishub.com/setup](https://vibekit.desishub.com/setup) for the full guide with one-click copy.
 
 ### Step 1 — Copy the planning prompt
 
@@ -138,6 +154,7 @@ vibekit/
 ├── master_prompt.md             ← Coding standards for Claude Code (copy to your project)
 ├── design-style-guide.md        ← Design style guide template (Claude customizes per project)
 ├── jb-components.md             ← JB component registry reference (copy to your project)
+├── pre-deploy-review.md         ← Paste into Claude Code before deploying — security/perf audit
 │
 ├── prompt-engineering.md        ← Token economy, prompt formula, rescue system
 ├── deployment.md                ← Vercel, Netlify, VPS, Cloudflare, SSL
@@ -145,25 +162,49 @@ vibekit/
 ├── database-guide.md            ← Neon, Prisma, schema patterns, migrations
 ├── design-system-guide.md       ← Design principles, color palettes, component styles
 ├── troubleshooting.md           ← Symptoms → fixes, AI rescue protocols
-├── monetization-guide.md        ← Stripe, webhooks, feature gating, billing
-│
-└── templates/
-    ├── design-system.md
-    ├── prd-saas.md
-    ├── prd-ecommerce.md
-    └── prd-school.md
+└── monetization-guide.md        ← Stripe, webhooks, feature gating, billing
 ```
 
 ### Files to copy into your project
 
 When starting a new project, copy these from the VibeKit repo into your project root:
 
-| File               | Purpose                                                  |
-| ------------------ | -------------------------------------------------------- |
-| `master_prompt.md` | Claude Code reads this first — tech stack + coding rules |
-| `jb-components.md` | Reference for when to install which JB component         |
+| File                   | Purpose                                                  |
+| ---------------------- | -------------------------------------------------------- |
+| `master_prompt.md`     | Claude Code reads this first — tech stack + coding rules |
+| `jb-components.md`     | Reference for when to install which JB component         |
+| `pre-deploy-review.md` | Paste into Claude Code before deploying for an audit     |
 
 Claude (in the planning step) will generate `project-description.md`, `project-phases.md`, `design-style-guide.md`, and `prompt.md` for you.
+
+### Install the VibeKit rules for your AI agent (one curl, every major agent)
+
+After copying the framework files, install the VibeKit agent rules so they auto-load every session — no need to paste long prompts. Same rules content for every agent, just a different filename / install path.
+
+| Agent | One-line install |
+|---|---|
+| **Claude Code** | `mkdir -p .claude/skills/vibekit && curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/SKILL.md -o .claude/skills/vibekit/SKILL.md` |
+| **Cursor** | `mkdir -p .cursor/rules && curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o .cursor/rules/vibekit.mdc` |
+| **OpenAI Codex CLI** | `curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o AGENTS.md` |
+| **Cline** | `curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o .clinerules` |
+| **Windsurf** | `curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o .windsurfrules` |
+| **Gemini CLI** | `curl -fsSL https://raw.githubusercontent.com/MUKE-coder/vibekit/main/skill/AGENTS.md -o GEMINI.md` |
+| **Aider, Continue, Cody, Junie, others** | See [`skill/README.md`](./skill/README.md) |
+
+Using multiple agents on the same project? Symlink one canonical `AGENTS.md` to the per-agent paths — see [`skill/README.md`](./skill/README.md) → "Multi-agent setup".
+
+---
+
+## Pre-Deploy Code Review
+
+Before shipping to production, run [`pre-deploy-review.md`](./pre-deploy-review.md) in Claude Code. It performs a senior-level audit covering:
+
+- **Performance** — N+1 queries, missing pagination, expensive operations
+- **Security** — unauthenticated routes, SQL injection, missing rate limiting, exposed secrets
+- **Background tasks** — webhook idempotency, job retries, distributed locks
+- **Resource consumption** — memory leaks, unclosed streams, missing timeouts
+
+Claude Code writes the findings to `pre-deploy-review-report.md`. Address every Critical issue before deploying. This is a phase task in every VibeKit project.
 
 ---
 
@@ -179,7 +220,24 @@ Production-ready shadcn components for auth, data tables, forms, file uploads, e
 
 ## Contributing
 
-If you build something with this framework and want to contribute a template, component suggestion, or improvement — PRs are welcome.
+VibeKit is community-driven — every component in the registry was built by someone shipping with AI in production. **We're actively looking for new components.**
+
+If you've built something reusable — auth flow, payment widget, AI feature, dashboard primitive, search component — please contribute it. Once merged:
+
+- Your component gets a permanent doc page at `vibekit.desishub.com/components/<slug>`
+- It's listed in [`jb-components.md`](./jb-components.md), which every Claude Code agent reads
+- It becomes part of the framework's default toolkit across thousands of builds
+
+**Read the full contribution guide:** [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+**Quick start:**
+
+1. Build & host your component (shadcn-compatible registry)
+2. Write a doc page anywhere accessible
+3. Fork, edit `web/src/lib/components-data.ts`, append your entry using [the schema](./CONTRIBUTING.md#the-component-schema)
+4. Open a PR with the `new-component.md` template — we review weekly
+
+Other contributions (docs fixes, framework refinements, bug reports) are also welcome — open an issue or PR.
 
 ---
 

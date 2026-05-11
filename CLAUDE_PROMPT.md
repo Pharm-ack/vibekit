@@ -157,7 +157,7 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 **Goal:** Users can upload and manage files.
 
 ### Tasks
-- [ ] [If R2/S3] Install JB File Storage UI: `pnpm dlx shadcn@latest add https://file-storage-registry.vercel.app/r/file-storage.json`
+- [ ] [If R2/S3] Install JB File Storage UI: `pnpm dlx shadcn@latest add https://file-storage.desishub.com/r/file-storage.json`
 - [ ] [If R2/S3] Configure storage env vars (R2 or S3 credentials)
 - [ ] Build upload UI in relevant feature pages
 
@@ -189,6 +189,8 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 - [ ] Test auth flows on mobile and desktop
 - [ ] Test payment flow in Stripe test mode (if applicable)
 - [ ] Verify responsive design on mobile
+- [ ] **Run pre-deploy code review:** paste the prompt from `pre-deploy-review.md` (in the VibeKit repo root) into Claude Code. Address every Critical issue. Save the report to `pre-deploy-review-report.md`.
+- [ ] Address all Critical findings from the review
 - [ ] Set all environment variables in Vercel
 - [ ] Deploy to Vercel
 - [ ] Configure Cloudflare DNS + custom domain
@@ -212,9 +214,11 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 **CRITICAL:** Take the design-style-guide.md template from the framework (https://raw.githubusercontent.com/MUKE-coder/vibekit/main/design-style-guide.md) and **customize it for this project**. Replace:
 
 - The project name header ("Invoice Pro" → the user's project name)
-- Primary color palette (based on user's brand color answer)
-- Typography choices (based on user's font preference)
-- Aesthetic philosophy (based on user's "feel" answers)
+- **Primary visual reference:** at the very top, add a section "## Visual reference" with a short paragraph describing the Dribbble shot(s) the user pasted (color, typography, card style, button style, mood). This is the anchor — every later token decision must be consistent with this paragraph.
+- Primary color palette (extracted from the Dribbble shot AND the user's brand color answer — if they conflict, the Dribbble reference wins unless the user explicitly overrode)
+- Typography choices (font family + weights inferred from the Dribbble shot)
+- Aesthetic philosophy (based on user's "feel" answers + reference image)
+- Card / button / form-input specs (radius, shadow, border, padding) extracted directly from the reference shot — be specific (e.g. "8px radius cards with 1px #E5E1D8 border and shadow-xs", "black pill primary button px-6 py-3")
 - Component examples that are project-specific (invoices → their domain)
 - Status badge colors (invoice statuses → their entity statuses)
 - Landing page guidance (tailored to their type of product)
@@ -223,6 +227,8 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 - **Dark mode section:** if user said No to dark mode, REMOVE all dark mode references (no `.dark` classes, no dark palette, no toggle). Add a note at the top: "Dark mode: NOT supported in this project."
 
 Output the **full customized file** as File 3. Keep sections 1–16 intact, but rewrite content to match the project. Do NOT leave placeholders.
+
+**Critical:** The Dribbble reference is the SOURCE OF TRUTH for every visual decision in this file. Don't invent a generic "premium SaaS" palette — actually look at the user's reference shot and pick colors / weights / radii that match it.
 
 ---
 
@@ -263,35 +269,185 @@ Begin with **Phase 1 — Foundation** from project-phases.md. Read the phase tas
 ### Step 1 — Acknowledge
 Confirm you understand the framework. List the tech stack and the 4 files you will generate.
 
-### Step 2 — Interview Me
-Ask me questions to fill in the 4 files above. Follow these rules:
-- Ask **one question at a time** (max 2-3 if tightly related)
-- Be smart — skip obvious questions (e.g. don't ask "does an e-commerce app need a cart?")
-- **Required coverage:**
+### Step 1.5 — Check if a public template fits the project (CRITICAL)
+
+Before doing anything else, check whether the user's idea matches one of the **VibeKit public templates** at https://vibekit.desishub.com/templates. The current templates and the projects they fit:
+
+| Template | Fits when the user wants to build... |
+|---|---|
+| **Personal Developer Portfolio** (`personal-portfolio`) | A personal portfolio, developer site, "about me" page, freelancer profile, designer showcase, or anything single-page-resume-style |
+| **Developer Blog** (`developer-blog`) | A technical blog, tutorials site, devlog, MDX-based publication |
+
+If the user's idea CLEARLY matches a template (e.g. "I want a portfolio", "build me a personal site", "I want to start a tech blog"):
+
+1. **Stop.** Do not proceed with the 4-file generation flow.
+
+2. Tell the user:
+
+   > *"Your project matches the **`<template-name>`** template at vibekit.desishub.com/templates/`<template-slug>`. Cloning a finished template and customizing it is faster and produces a better result than building from scratch. Do you want to (A) clone the template and run the customization interview, or (B) build from scratch with the standard 4-file VibeKit flow anyway?"*
+
+3. If they pick **A**: tell them to visit the template page to get the clone command + the customization prompt to paste into their AI agent. Do NOT generate the 4 files. End the conversation.
+
+4. If they pick **B** OR if their idea is borderline (e.g. "portfolio with built-in CRM"): proceed to Step 2 with the standard flow.
+
+If the idea does NOT match any template, skip this step silently and proceed to Step 2.
+
+### Step 2 — Decide if an interview is needed (CRITICAL)
+
+Read my app idea carefully. Then determine:
+
+**A) "Brief is detailed enough"** — if my idea already covers most of: core users, key features, data model hints, monetization, file uploads, email, design direction (color/feel/inspiration), and dark mode preference, then SKIP the interview entirely. Tell me explicitly:
+
+> *"Your brief is detailed enough — no interview needed. Here's everything I understood."*
+
+…then jump to Step 3.
+
+**B) "Some gaps to fill"** — if 1–4 important details are missing, ask only those questions. Don't pad the interview to hit a quota.
+
+**C) "Brief is too thin"** — if the idea is vague (e.g. "build me a SaaS"), do a full 7–10 question interview covering:
   - Core understanding (problem, users, value)
   - Features & scope (specific features, user roles)
   - Data model (entities, relationships)
   - Monetization (payments? Stripe or DGateway? Subscriptions or one-time?)
-  - File uploads (needed? R2/S3 or UploadThing?)
-  - Email (needed? which triggers?)
-  - **Visual design (CRITICAL — needed to customize the style guide):**
-    - Brand/primary color (hex or description)
-    - Typography preference (Inter, Onest, Geist, or other)
-    - Aesthetic feel (3 words — e.g. "premium, minimal, trustworthy")
-    - Inspiration (apps they admire visually)
-    - Anything to avoid visually
-    - **Dark mode support: Yes or No?** (if No, skip dark mode entirely — no toggle, no dark palette)
+  - File uploads (R2/S3 / UploadThing / None?)
+  - Email (which triggers?)
+  - **Visual design (always ask):** brand color, typography, aesthetic feel, inspiration, what to avoid, **dark mode Yes/No**
   - Timeline / scope v1
-- Minimum 7 questions, maximum 12
-- Stop when you have enough detail to generate all 4 files completely
 
-### Step 3 — Confirm Understanding
-Before generating, write a short summary of what you understood. Ask me to confirm or correct.
+Rules for interview mode:
+- Ask **one question at a time** (max 2-3 if tightly related)
+- Be smart — skip obvious questions (e.g. don't ask "does an e-commerce app need a cart?")
 
-### Step 4 — Generate the 4 Files
-Output each file in its own code block with the filename as a header. Every field must be filled in — no placeholders, no `[BRACKET]` values left unfilled.
+### Step 2.5 — Dribbble reference image (MANDATORY for EVERY project — never skip)
 
-**For File 3 (design-style-guide.md):** Actually write out the full customized style guide — all sections 1 through 16 with project-specific content. Don't link to the template; write the entire file.
+Before generating any files (and regardless of how detailed the brief is — including the "no interview needed" path), you MUST get at least ONE Dribbble UI reference image from the user. Words like "clean, premium, fast" are too vague to design from. A pasted Dribbble shot is high-fidelity, unambiguous, and lets you reverse-engineer color palette, typography weight, spacing rhythm, card style, button style, and motion direction directly.
+
+Do this:
+
+1. Look at the project type and any visual hints already given. Generate **2–3 specific Dribbble search terms** the user can paste into the search bar at https://dribbble.com/search.
+
+   Examples by project type:
+   - POS / cashier app → `"pos dashboard ui"`, `"retail point of sale"`, `"hardware shop pos"`
+   - Personal task manager → `"task app modern minimal"`, `"todo dashboard clean"`, `"productivity app ui"`
+   - SaaS landing page → `"saas landing page"`, `"startup landing dark"`, `"premium saas hero"`
+   - E-commerce admin → `"ecommerce admin dashboard"`, `"product management ui"`
+   - Booking app → `"booking app ui"`, `"appointment scheduler dashboard"`
+   - CRM → `"crm dashboard"`, `"sales pipeline ui"`
+   - School / LMS → `"education platform ui"`, `"learning dashboard"`
+   - Personal portfolio → `"developer portfolio"`, `"designer portfolio minimal"`
+   - Blog → `"blog reading experience"`, `"editorial blog ui"`
+
+2. Tell the user EXACTLY this:
+
+   > *"Before we customize the design, I need at least ONE Dribbble UI reference so I can match the visual quality you want. Words like 'clean' or 'premium' are too vague to design from — a real image is 100x more useful.*
+   >
+   > *Search Dribbble using one of these terms:*
+   > - *`<search-term-1>`*
+   > - *`<search-term-2>`*
+   > - *`<search-term-3>`*
+   >
+   > *(Or use your own term if you have one in mind.)*
+   >
+   > *Pick a shot whose aesthetic you'd want your app to match — pay attention to: color palette, font weight, card style, spacing, button shape. Open the shot in full size, **right-click → Copy Image**, and paste it directly into our chat. You can attach 1–3 references if you want; one is the minimum.*
+   >
+   > *Don't paste a Dribbble URL — paste the image itself. Once you've pasted, I'll analyze it and adapt the design-style-guide.md to match."*
+
+3. Wait for the user to paste the image(s). If the user resists ("I don't have time", "just make it look good", "any clean design"), tell them:
+
+   > *"This is the single biggest predictor of whether your app will look like 'a real product' or 'AI-built generic'. It takes 2 minutes. Please send at least one shot."*
+
+   Do NOT proceed without a reference. The Dribbble step is non-negotiable.
+
+4. Once images are pasted, analyze each carefully and extract:
+   - Primary brand color (closest hex)
+   - Secondary / accent colors (if any)
+   - Background style (flat, soft gradient, textured, dark/light)
+   - Typography: serif / sans, light / heavy weight, condensed / wide
+   - Card aesthetic: borders / shadows / radius / padding
+   - Button style: pill / rounded / square, filled / outlined / ghost
+   - Spacing rhythm: tight / generous
+   - Iconography vs imagery balance
+   - Overall energy: editorial / techy / playful / minimal / bold
+
+5. Echo back what you extracted in plain English so the user can correct it:
+
+   > *"From your reference I'm reading: warm cream background (#FAF8F5), bold heavy sans like Inter Tight 700, 16px rounded cards with subtle shadow + 1px borders, primary CTA is a black pill button, generous whitespace. Aesthetic energy: editorial-modern, like Linear's marketing site. Does that match what you wanted? Any tweaks?"*
+
+   This becomes the SOURCE OF TRUTH for the design-style-guide.md you'll generate in Step 4.
+
+### Step 3 — Confirm understanding & ask for consent (MANDATORY — never skip)
+
+Before generating ANY file, you MUST do this exact sequence:
+
+1. Write a structured summary using these section headers:
+
+   ```
+   ## What I understood
+
+   **App:** [name + 1-sentence description]
+   **Primary user:** [who]
+   **Core features:** [bulleted list of 3–6]
+   **Data model:** [entities + relationships]
+   **Integrations:** Auth ([Better Auth + which OAuth]), Email ([Resend / None]), Payments ([Stripe / DGateway / None]), File uploads ([R2 / S3 / UploadThing / None]), Dark mode ([Yes / No])
+   **Visual design (from your Dribbble reference + answers):**
+     - Reference: [1-line description of the shot the user pasted]
+     - Color palette: [primary hex, accent hex, bg hex]
+     - Typography: [font family + display weight + body weight]
+     - Card style: [border + shadow + radius spec]
+     - Button style: [shape + fill + size]
+     - Aesthetic energy: [3 words]
+   **Out of scope (v1):** [what we're NOT building yet]
+   ```
+
+2. List any **assumptions** you had to make (mark them clearly so the user can correct).
+
+3. Then ask exactly this:
+
+   > *"Does this match your intent? Reply **'Yes, generate the files'** to proceed, or tell me what to adjust."*
+
+**Do NOT generate any file in this turn.** Wait for explicit user confirmation. Even if the brief is detailed and obviously complete, this confirmation step is non-negotiable — it gives the user a final chance to redirect before file generation.
+
+### Step 4 — Generate the 4 Files (only after explicit confirmation)
+
+When the user confirms (some variation of "yes" / "go" / "generate"), produce all 4 files using **Claude Artifacts** so they're individually downloadable.
+
+**Output requirements:**
+- Create 4 separate Artifacts, one per file. Use markdown artifact type. Each must be downloadable from the Artifact panel.
+- Artifact identifiers / titles must be the exact filenames: `project-description.md`, `project-phases.md`, `design-style-guide.md`, `prompt.md`.
+- Every field must be filled in — no placeholders, no `[BRACKET]` values remaining.
+- For `design-style-guide.md`: write the full customized style guide — all sections 1 through 16 with project-specific content. Don't link to the template; write the entire file.
+
+**At the end of the message**, also provide ONE-CLICK file creation as a fallback:
+
+   ```bash
+   # Run from your project root to create all 4 files at once
+   mkdir -p ./
+   cat > project-description.md << 'EOF'
+   ...full project-description.md content...
+   EOF
+
+   cat > project-phases.md << 'EOF'
+   ...full project-phases.md content...
+   EOF
+
+   cat > design-style-guide.md << 'EOF'
+   ...full design-style-guide.md content...
+   EOF
+
+   cat > prompt.md << 'EOF'
+   ...full prompt.md content...
+   EOF
+
+   echo "✓ Created 4 VibeKit project files"
+   ```
+
+This way the user has TWO ways to get the files into their project:
+1. **Download** each artifact individually (preferred — one click each from the artifact panel)
+2. **Copy-paste** the single bash heredoc block into their terminal — creates all 4 at once
+
+Tell the user explicitly which method to use:
+
+> *"Each file is a downloadable Artifact in the panel on the right. Click the download icon on each one. If you'd rather create all 4 from your terminal in one go, copy the bash block at the bottom of this message and run it in your project folder."*
 
 ---
 

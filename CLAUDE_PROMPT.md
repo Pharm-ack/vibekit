@@ -218,9 +218,11 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 **CRITICAL:** Take the design-style-guide.md template from the framework (https://raw.githubusercontent.com/MUKE-coder/vibekit/main/design-style-guide.md) and **customize it for this project**. Replace:
 
 - The project name header ("Invoice Pro" → the user's project name)
-- Primary color palette (based on user's brand color answer)
-- Typography choices (based on user's font preference)
-- Aesthetic philosophy (based on user's "feel" answers)
+- **Primary visual reference:** at the very top, add a section "## Visual reference" with a short paragraph describing the Dribbble shot(s) the user pasted (color, typography, card style, button style, mood). This is the anchor — every later token decision must be consistent with this paragraph.
+- Primary color palette (extracted from the Dribbble shot AND the user's brand color answer — if they conflict, the Dribbble reference wins unless the user explicitly overrode)
+- Typography choices (font family + weights inferred from the Dribbble shot)
+- Aesthetic philosophy (based on user's "feel" answers + reference image)
+- Card / button / form-input specs (radius, shadow, border, padding) extracted directly from the reference shot — be specific (e.g. "8px radius cards with 1px #E5E1D8 border and shadow-xs", "black pill primary button px-6 py-3")
 - Component examples that are project-specific (invoices → their domain)
 - Status badge colors (invoice statuses → their entity statuses)
 - Landing page guidance (tailored to their type of product)
@@ -229,6 +231,8 @@ A detailed build blueprint with phases, tasks, and dependencies. Claude Code wil
 - **Dark mode section:** if user said No to dark mode, REMOVE all dark mode references (no `.dark` classes, no dark palette, no toggle). Add a note at the top: "Dark mode: NOT supported in this project."
 
 Output the **full customized file** as File 3. Keep sections 1–16 intact, but rewrite content to match the project. Do NOT leave placeholders.
+
+**Critical:** The Dribbble reference is the SOURCE OF TRUTH for every visual decision in this file. Don't invent a generic "premium SaaS" palette — actually look at the user's reference shot and pick colors / weights / radii that match it.
 
 ---
 
@@ -318,6 +322,63 @@ Rules for interview mode:
 - Ask **one question at a time** (max 2-3 if tightly related)
 - Be smart — skip obvious questions (e.g. don't ask "does an e-commerce app need a cart?")
 
+### Step 2.5 — Dribbble reference image (MANDATORY for EVERY project — never skip)
+
+Before generating any files (and regardless of how detailed the brief is — including the "no interview needed" path), you MUST get at least ONE Dribbble UI reference image from the user. Words like "clean, premium, fast" are too vague to design from. A pasted Dribbble shot is high-fidelity, unambiguous, and lets you reverse-engineer color palette, typography weight, spacing rhythm, card style, button style, and motion direction directly.
+
+Do this:
+
+1. Look at the project type and any visual hints already given. Generate **2–3 specific Dribbble search terms** the user can paste into the search bar at https://dribbble.com/search.
+
+   Examples by project type:
+   - POS / cashier app → `"pos dashboard ui"`, `"retail point of sale"`, `"hardware shop pos"`
+   - Personal task manager → `"task app modern minimal"`, `"todo dashboard clean"`, `"productivity app ui"`
+   - SaaS landing page → `"saas landing page"`, `"startup landing dark"`, `"premium saas hero"`
+   - E-commerce admin → `"ecommerce admin dashboard"`, `"product management ui"`
+   - Booking app → `"booking app ui"`, `"appointment scheduler dashboard"`
+   - CRM → `"crm dashboard"`, `"sales pipeline ui"`
+   - School / LMS → `"education platform ui"`, `"learning dashboard"`
+   - Personal portfolio → `"developer portfolio"`, `"designer portfolio minimal"`
+   - Blog → `"blog reading experience"`, `"editorial blog ui"`
+
+2. Tell the user EXACTLY this:
+
+   > *"Before we customize the design, I need at least ONE Dribbble UI reference so I can match the visual quality you want. Words like 'clean' or 'premium' are too vague to design from — a real image is 100x more useful.*
+   >
+   > *Search Dribbble using one of these terms:*
+   > - *`<search-term-1>`*
+   > - *`<search-term-2>`*
+   > - *`<search-term-3>`*
+   >
+   > *(Or use your own term if you have one in mind.)*
+   >
+   > *Pick a shot whose aesthetic you'd want your app to match — pay attention to: color palette, font weight, card style, spacing, button shape. Open the shot in full size, **right-click → Copy Image**, and paste it directly into our chat. You can attach 1–3 references if you want; one is the minimum.*
+   >
+   > *Don't paste a Dribbble URL — paste the image itself. Once you've pasted, I'll analyze it and adapt the design-style-guide.md to match."*
+
+3. Wait for the user to paste the image(s). If the user resists ("I don't have time", "just make it look good", "any clean design"), tell them:
+
+   > *"This is the single biggest predictor of whether your app will look like 'a real product' or 'AI-built generic'. It takes 2 minutes. Please send at least one shot."*
+
+   Do NOT proceed without a reference. The Dribbble step is non-negotiable.
+
+4. Once images are pasted, analyze each carefully and extract:
+   - Primary brand color (closest hex)
+   - Secondary / accent colors (if any)
+   - Background style (flat, soft gradient, textured, dark/light)
+   - Typography: serif / sans, light / heavy weight, condensed / wide
+   - Card aesthetic: borders / shadows / radius / padding
+   - Button style: pill / rounded / square, filled / outlined / ghost
+   - Spacing rhythm: tight / generous
+   - Iconography vs imagery balance
+   - Overall energy: editorial / techy / playful / minimal / bold
+
+5. Echo back what you extracted in plain English so the user can correct it:
+
+   > *"From your reference I'm reading: warm cream background (#FAF8F5), bold heavy sans like Inter Tight 700, 16px rounded cards with subtle shadow + 1px borders, primary CTA is a black pill button, generous whitespace. Aesthetic energy: editorial-modern, like Linear's marketing site. Does that match what you wanted? Any tweaks?"*
+
+   This becomes the SOURCE OF TRUTH for the design-style-guide.md you'll generate in Step 4.
+
 ### Step 3 — Confirm understanding & ask for consent (MANDATORY — never skip)
 
 Before generating ANY file, you MUST do this exact sequence:
@@ -332,7 +393,13 @@ Before generating ANY file, you MUST do this exact sequence:
    **Core features:** [bulleted list of 3–6]
    **Data model:** [entities + relationships]
    **Integrations:** Auth ([Better Auth + which OAuth]), Email ([Resend / None]), Payments ([Stripe / DGateway / None]), File uploads ([R2 / S3 / UploadThing / None]), Dark mode ([Yes / No])
-   **Visual design:** Color [hex], Typography [font], Aesthetic [3 words], Inspiration [apps]
+   **Visual design (from your Dribbble reference + answers):**
+     - Reference: [1-line description of the shot the user pasted]
+     - Color palette: [primary hex, accent hex, bg hex]
+     - Typography: [font family + display weight + body weight]
+     - Card style: [border + shadow + radius spec]
+     - Button style: [shape + fill + size]
+     - Aesthetic energy: [3 words]
    **Out of scope (v1):** [what we're NOT building yet]
    ```
 

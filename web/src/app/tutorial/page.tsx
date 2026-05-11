@@ -384,7 +384,22 @@ export default function TutorialPage() {
             code={hardwarePosIdea}
           />
 
-          <h3>Step 3 — Wait for Claude's confirmation summary</h3>
+          <h3>Step 3 — Paste a Dribbble reference (mandatory)</h3>
+          <p>
+            Claude will now ask for a UI reference image. This is non-skippable — even though the HardwarePOS brief is detailed, words like "clean dashboard" are too vague to design from. A real Dribbble shot tells Claude exactly which color palette, font weight, card style, and button shape to match.
+          </p>
+          <ol>
+            <li>Claude will suggest 2–3 search terms (e.g. <code>"pos dashboard ui"</code>, <code>"retail point of sale"</code>).</li>
+            <li>Open <a href="https://dribbble.com/search" target="_blank" rel="noopener noreferrer">dribbble.com/search</a> and search one of them.</li>
+            <li>Pick a shot whose aesthetic you'd want HardwarePOS to match. Open the shot in full size.</li>
+            <li><strong>Right-click → Copy Image</strong>, then paste it into the Claude chat. (Don't paste a Dribbble URL — paste the image itself.)</li>
+            <li>Claude will analyze it and echo back the palette + typography + card spec it extracted. Confirm or correct.</li>
+          </ol>
+          <Tip>
+            For HardwarePOS specifically, look for shots with bold large numbers (cashier-readable totals), clean tables, soft cards. Avoid shots that are too "creative agency" — POS UIs need to be fast and legible, not editorial.
+          </Tip>
+
+          <h3>Step 4 — Wait for Claude's confirmation summary</h3>
           <p>
             The HardwarePOS brief above is detailed, so Claude will probably skip the interview. Instead, it will write a structured summary like this:
           </p>
@@ -416,7 +431,7 @@ or tell me what to adjust.`}
             code={`Yes, generate the files`}
           />
 
-          <h3>Step 4 — Download the 4 files</h3>
+          <h3>Step 5 — Download the 4 files</h3>
           <p>Claude will produce 4 downloadable Artifacts (one per file) in the right-side panel. Each has a download icon — click it to save the file.</p>
 
           <CopyBlock
